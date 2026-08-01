@@ -99,9 +99,9 @@ export const topics: Topic[] = [
       { heading: 'The Rhetorical Power of the Pause', body: 'Great speakers do not fear the pause; they weaponize it. A two-second silence before delivering a key thesis forces the room to physically adjust their breathing to match yours.' },
     ],
     stickyNotes: [
-      { tag: '⚡ Killer Hook', title: 'The 100-Year Noise Experiment', body: 'Remind the audience: our ancestors lived in 90% silence. We are the first generation living inside an unbroken hum.', color: 'yellow', rotate: -2 },
-      { tag: '🔑 Core Analogy', title: 'The White Canvas', body: 'Noise is graffiti on the mind; silence is the blank canvas where original thought actually happens.', color: 'rose', rotate: 2 },
-      { tag: '🎯 Rhetorical Cue', title: 'Do Not Rush', body: 'Take an actual 2-second dead pause at 0:40 to prove silence works live in your talk.', color: 'amber', rotate: -1 },
+      { tag: 'Killer Hook', title: 'The 100-Year Noise Experiment', body: 'Remind the audience: our ancestors lived in 90% silence. We are the first generation living inside an unbroken hum.', color: 'yellow', rotate: -2 },
+      { tag: 'Core Analogy', title: 'The White Canvas', body: 'Noise is graffiti on the mind; silence is the blank canvas where original thought actually happens.', color: 'rose', rotate: 2 },
+      { tag: 'Rhetorical Cue', title: 'Do Not Rush', body: 'Take an actual 2-second dead pause at 0:40 to prove silence works live in your talk.', color: 'amber', rotate: -1 },
     ],
     cinematicVoiceStory: 'Imagine stepping into an old winter cathedral or a dense snowbound birch forest at dusk. The roaring world of notifications, engines, and opinions suddenly drops away like an anchor cutting loose. For the first twenty seconds, your mind scrambles for stimulus. But then, an ancient stillness returns. Silence is not the absence of sound; it is the presence of everything we have been too distracted to feel. Today, choosing silence is the most radical rebellion against a world that profits from our distraction.',
     speechBlueprint: [
@@ -141,9 +141,9 @@ export const topics: Topic[] = [
       { heading: 'The Protestant Work Ethic Distortion', body: 'The industrial clock transformed time into units of monetary exchange. Idleness shifted from an aristocratic virtue to a badge of guilt. We now check email on beaches because stillness triggers acute withdrawal from dopamine loops.' },
     ],
     stickyNotes: [
-      { tag: '💡 Master Quote', title: 'Dolce Far Niente', body: '"The sweetness of doing nothing" is not laziness — it is psychological hygiene.', color: 'yellow', rotate: 2 },
-      { tag: '🧠 Brain Hack', title: 'The Shower Epiphany', body: 'Remind them why great ideas come in showers: because the brain has zero metrics to hit in that moment.', color: 'sage', rotate: -2 },
-      { tag: '🎯 Delivery Tip', title: 'Warm & Reassuring', body: 'Speak with a relaxed, smiling posture to make listeners feel permission to exhale.', color: 'rose', rotate: 1 },
+      { tag: 'Master Quote', title: 'Dolce Far Niente', body: '"The sweetness of doing nothing" is not laziness — it is psychological hygiene.', color: 'yellow', rotate: 2 },
+      { tag: 'Brain Hack', title: 'The Shower Epiphany', body: 'Remind them why great ideas come in showers: because the brain has zero metrics to hit in that moment.', color: 'sage', rotate: -2 },
+      { tag: 'Delivery Tip', title: 'Warm & Reassuring', body: 'Speak with a relaxed, smiling posture to make listeners feel permission to exhale.', color: 'rose', rotate: 1 },
     ],
     cinematicVoiceStory: 'Look at a great tree in winter. It bears no fruit, sprouts no leaves, and performs no visible labour. Yet beneath the frozen loam, deep root systems are drinking, restoring, and storing subterranean vitality for spring. Humans are biological organisms, not industrial machines. When we schedule every second, we starve the soil of our imagination. Doing nothing is not empty time; it is the sacred space where our best thoughts secretly germinate.',
     speechBlueprint: [
@@ -183,8 +183,8 @@ export const topics: Topic[] = [
       { heading: 'The Childhood Summer Paradox', body: 'Childhood summers felt endless because the brain was building novel neural pathways every single day. By age forty, daily commute patterns reuse the same compressed schema, making years flash past in weeks.' },
     ],
     stickyNotes: [
-      { tag: '⏳ Mind-Bender', title: 'The Routine Thief', body: 'Monotony is a time thief. When every day looks the same, your brain deletes redundant days from memory.', color: 'amber', rotate: -2 },
-      { tag: '🔑 Life Formula', title: 'How to Live 2x Longer', body: 'You can’t add calendar years, but you can double subjective years by injecting radical novelty into every week.', color: 'blue', rotate: 2 },
+      { tag: 'Mind-Bender', title: 'The Routine Thief', body: 'Monotony is a time thief. When every day looks the same, your brain deletes redundant days from memory.', color: 'amber', rotate: -2 },
+      { tag: 'Life Formula', title: 'How to Live 2x Longer', body: 'You can’t add calendar years, but you can double subjective years by injecting radical novelty into every week.', color: 'blue', rotate: 2 },
     ],
     cinematicVoiceStory: 'Look at a watch. The second hand advances with cold, unyielding mechanical symmetry. But your mind knows this is a mathematical illusion. Think back to childhood summers — they felt vast, infinite, shimmering with endless afternoons. Why? Because everything was brand new. When you stop learning and surrender to routine, the brain stops recording detail, and decades compress into a blur. Time is not a prison of minutes; it is the currency of our attention.',
     speechBlueprint: [
@@ -224,8 +224,8 @@ export const topics: Topic[] = [
       { heading: 'Simone Weil and Moral Attention', body: 'The philosopher Simone Weil argued that to truly look at another human being without projecting one’s own ego is the purest moral act. Attention is love in its practical, daily form.' },
     ],
     stickyNotes: [
-      { tag: '👁️ The Core Truth', title: 'Attention = Life', body: 'Your life is not the passage of calendar days; it is the sum total of what you actually paid attention to.', color: 'rose', rotate: -2 },
-      { tag: '⚔️ The Battle', title: 'Traded for Pennies', body: 'Remind them: if you don’t direct your attention, an ad-tech server in California will direct it for you.', color: 'yellow', rotate: 2 },
+      { tag: 'The Core Truth', title: 'Attention = Life', body: 'Your life is not the passage of calendar days; it is the sum total of what you actually paid attention to.', color: 'rose', rotate: -2 },
+      { tag: 'The Battle', title: 'Traded for Pennies', body: 'Remind them: if you don’t direct your attention, an ad-tech server in California will direct it for you.', color: 'yellow', rotate: 2 },
     ],
     cinematicVoiceStory: 'Look into the human eye. Behind that lens lies the most scarce, precious resource on Earth: human attention. Every corporation, politician, and notification is in an arms race to hijack your gaze. Why? Because where your attention goes, your life follows. If you attend to rage, you become bitter. If you attend to beauty, you build grace. Attention is not merely a tool for work; it is the ultimate moral act of existence.',
     speechBlueprint: [
@@ -264,8 +264,8 @@ export const topics: Topic[] = [
       { heading: 'The Kintsugi Paradigm', body: 'When 15th-century Japanese craftsmen repaired broken pottery with gold lacquer, they created a metaphor for human resilience: the repaired vessel is more resilient and storied than pristine unblemished clay.' },
     ],
     stickyNotes: [
-      { tag: '🏺 The Golden Rule', title: 'Kintsugi Truth', body: 'A scar with reflection is wisdom. A scar without reflection is just tissue damage.', color: 'yellow', rotate: 2 },
-      { tag: '⚠️ Myth Buster', title: 'Survivorship Bias', body: 'Beware billionaire advice: they tell romantic failure stories because they already survived.', color: 'rose', rotate: -1 },
+      { tag: 'The Golden Rule', title: 'Kintsugi Truth', body: 'A scar with reflection is wisdom. A scar without reflection is just tissue damage.', color: 'yellow', rotate: 2 },
+      { tag: 'Myth Buster', title: 'Survivorship Bias', body: 'Beware billionaire advice: they tell romantic failure stories because they already survived.', color: 'rose', rotate: -1 },
     ],
     cinematicVoiceStory: 'In 15th-century Japan, when a cherished tea bowl shattered, masters did not toss it away. They bound the broken pieces with lacquer dusted in pure gold powder. The fracture did not ruin the vessel; it crowned it. Today we worship flawless success, pretending our mistakes never happened. But the truth is simple: smooth seas never built a skilled navigator. It is the broken and mended places where human wisdom actually lives.',
     speechBlueprint: [
@@ -306,8 +306,8 @@ export const topics: Topic[] = [
       { heading: 'The Bouba/Kiki Experiment', body: 'When shown a sharp jagged shape and a round bulbous shape, 95% of people across every language agree: the sharp shape is "Kiki" and the round one is "Bouba". Our brains naturally map sound sharpness to visual geometry.' },
     ],
     stickyNotes: [
-      { tag: '🎨 Sensory Mashup', title: 'The Bouba/Kiki Test', body: 'Use the Bouba/Kiki test live in your talk — it immediately proves everyone has mild synesthesia.', color: 'blue', rotate: -2 },
-      { tag: '🎻 Composer Fact', title: 'Liszt in Weimar', body: 'Liszt told his orchestra: "A little bluer, gentlemen! This key requires it!"', color: 'yellow', rotate: 2 },
+      { tag: 'Sensory Mashup', title: 'The Bouba/Kiki Test', body: 'Use the Bouba/Kiki test live in your talk — it immediately proves everyone has mild synesthesia.', color: 'blue', rotate: -2 },
+      { tag: 'Composer Fact', title: 'Liszt in Weimar', body: 'Liszt told his orchestra: "A little bluer, gentlemen! This key requires it!"', color: 'yellow', rotate: 2 },
     ],
     cinematicVoiceStory: 'Close your eyes. When a cellist draws a bow across a heavy D-string, what happens? For most of us, we hear acoustic vibration. But for a synesthete, the room explodes in deep amber and burnt cedar. For them, Tuesday is sky-blue, the number seven smells like rain, and a trumpet tastes like fresh brass. Synesthesia is not a disorder; it is a secret backstage pass into how the brain constructs reality from raw sensory code.',
     speechBlueprint: [
@@ -346,8 +346,8 @@ export const topics: Topic[] = [
       { heading: 'The EPICA Dome C Breakthrough', body: 'The European Project for Ice Coring in Antarctica drilled 3,270 metres into the ice, recovering an unbroken 800,000-year climatic record spanning eight full glacial cycles.' },
     ],
     stickyNotes: [
-      { tag: '🧊 The Time Machine', title: 'Real Ancient Air', body: 'Emphasize: scientists aren’t guessing. They are literally releasing and smelling 800,000-year-old atmosphere.', color: 'blue', rotate: -2 },
-      { tag: '📊 The Unbroken Record', title: 'The 280 PPM Ceiling', body: 'For 8,000 centuries, CO2 never passed 280 ppm. Today it’s 425 ppm. The ice proves this is unprecedented.', color: 'amber', rotate: 2 },
+      { tag: 'The Time Machine', title: 'Real Ancient Air', body: 'Emphasize: scientists aren’t guessing. They are literally releasing and smelling 800,000-year-old atmosphere.', color: 'blue', rotate: -2 },
+      { tag: 'The Unbroken Record', title: 'The 280 PPM Ceiling', body: 'For 8,000 centuries, CO2 never passed 280 ppm. Today it’s 425 ppm. The ice proves this is unprecedented.', color: 'amber', rotate: 2 },
     ],
     cinematicVoiceStory: 'Imagine standing on the desolate Antarctic plateau at minus fifty degrees. Scientists lower a diamond drill three kilometres into the ancient ice sheet. When they pull up the core, they are holding a glass-like cylinder filled with microscopic bubbles. Those bubbles were trapped when our ancestors were first discovering fire. When you melt that ice in a vacuum, you hear the faint pop of air from eight hundred thousand years ago. The ice does not lie, it does not argue, and it does not forget.',
     speechBlueprint: [
@@ -386,8 +386,8 @@ export const topics: Topic[] = [
       { heading: 'The Martian Inverse', body: 'Mars has a thin carbon dioxide atmosphere saturated with fine magnetite dust. During the day, the Martian sky glows butterscotch-brown, while the sun sets in a halo of cold electric blue — the exact mirror of Earth.' },
     ],
     stickyNotes: [
-      { tag: '☀️ Easy Hook', title: 'The Child’s Question', body: 'Every child asks "Why is the sky blue?" Most adults can’t answer. Start by answering it in 15 seconds.', color: 'yellow', rotate: 2 },
-      { tag: '🪐 Martian Twist', title: 'Blue Martian Sunsets', body: 'Blow their minds: on Mars, daytime is butterscotch and sunsets are neon blue!', color: 'rose', rotate: -2 },
+      { tag: 'Easy Hook', title: 'The Child’s Question', body: 'Every child asks "Why is the sky blue?" Most adults can’t answer. Start by answering it in 15 seconds.', color: 'yellow', rotate: 2 },
+      { tag: 'Martian Twist', title: 'Blue Martian Sunsets', body: 'Blow their minds: on Mars, daytime is butterscotch and sunsets are neon blue!', color: 'rose', rotate: -2 },
     ],
     cinematicVoiceStory: 'Every morning you step outside, look up, and see an azure ceiling. But space is pitch black. Why is our sky blue? Sunlight arrives as a pure white beam containing every color of the rainbow. When that beam strikes nitrogen molecules in our air, the short, hyperactive blue waves shatter and bounce like millions of tiny mirrors. At sunset, the light must travel through thicker air, stripping the blue away and leaving only fiery reds. Science does not rob the world of magic; it reveals the magic was physics all along.',
     speechBlueprint: [
@@ -426,8 +426,8 @@ export const topics: Topic[] = [
       { heading: 'Sleep as Overnight Therapy', body: 'Matthew Walker’s research demonstrates that REM sleep is the only time the brain is completely free of noradrenaline (stress neurochemical). It replays painful memories in a safe neurochemical bath, filing them away without the panic.' },
     ],
     stickyNotes: [
-      { tag: '🧠 Brain Wash', title: 'The Glymphatic Flush', body: 'Use the visual: your brain literally power-washes itself in cerebrospinal fluid every night.', color: 'sage', rotate: -1 },
-      { tag: '⚠️ Dangerous Myth', title: 'The 5-Hour Hustle', body: 'Remind them: sleeping 5 hours makes your decision-making identical to being legally drunk.', color: 'rose', rotate: 2 },
+      { tag: 'Brain Wash', title: 'The Glymphatic Flush', body: 'Use the visual: your brain literally power-washes itself in cerebrospinal fluid every night.', color: 'sage', rotate: -1 },
+      { tag: 'Dangerous Myth', title: 'The 5-Hour Hustle', body: 'Remind them: sleeping 5 hours makes your decision-making identical to being legally drunk.', color: 'rose', rotate: 2 },
     ],
     cinematicVoiceStory: 'Tonight, eight billion human beings will lay their heads down and vanish into darkness for eight hours. In the wild, being unconscious makes you easy prey for predators. Why did evolution preserve such an insane risk? Because during deep sleep, your brain opens microscopic floodgates. Cerebrospinal fluid rushes through your synapses, washing away toxic proteins and consolidating everything you learned today into permanent memory. Sleep is not lost time; it is the price of keeping a conscious mind.',
     speechBlueprint: [
@@ -466,8 +466,8 @@ export const topics: Topic[] = [
       { heading: 'The Theatre of Medicine', body: 'Two sugar pills beat one sugar pill. A fake injection beats a fake pill. A fake surgery with sham incisions beats an injection. The ritual, the white coat, and the social transaction are active therapeutic ingredients.' },
     ],
     stickyNotes: [
-      { tag: '💊 Mind Over Matter', title: 'The Naloxone Proof', body: 'Give the killer proof: if you block endorphins with naloxone, the placebo stops working! It is pure chemistry.', color: 'amber', rotate: -2 },
-      { tag: '💉 The Theatre', title: 'Ritual as Medicine', body: 'Fake surgery works better than fake pills. We heal through meaning and ceremony.', color: 'rose', rotate: 2 },
+      { tag: 'Mind Over Matter', title: 'The Naloxone Proof', body: 'Give the killer proof: if you block endorphins with naloxone, the placebo stops working! It is pure chemistry.', color: 'amber', rotate: -2 },
+      { tag: 'The Theatre', title: 'Ritual as Medicine', body: 'Fake surgery works better than fake pills. We heal through meaning and ceremony.', color: 'rose', rotate: 2 },
     ],
     cinematicVoiceStory: 'A doctor hands a patient in severe pain a white capsule. Within twenty minutes, the pain recedes and their heart rate steadies. But the capsule contained nothing but inert sugar. This is the placebo effect, and it is not an imaginary trick. When your brain believes relief is coming, it manufactures its own endogenous painkillers. The placebo effect proves that human expectation is not just a thought — it is a biological pharmacy.',
     speechBlueprint: [
@@ -508,8 +508,8 @@ export const topics: Topic[] = [
       { heading: 'The Zeigarnik Effect in Art', body: 'In 1927, psychologist Bluma Zeigarnik observed waiters remembering complex unpaid orders perfectly, only to forget them the moment the bill was settled. Our minds crave closure; when art denies it, the artwork lives permanently in our subconscious.' },
     ],
     stickyNotes: [
-      { tag: '🗿 Michelangelo', title: 'Trapped in Stone', body: 'The genius of non-finito: we see the artist’s sweat and the figure’s desperate struggle simultaneously.', color: 'rose', rotate: -2 },
-      { tag: '🧠 Brain Hook', title: 'The Open Loop', body: 'Complete art closes a door. Unfinished art leaves a window open for your imagination.', color: 'yellow', rotate: 2 },
+      { tag: 'Michelangelo', title: 'Trapped in Stone', body: 'The genius of non-finito: we see the artist’s sweat and the figure’s desperate struggle simultaneously.', color: 'rose', rotate: -2 },
+      { tag: 'Brain Hook', title: 'The Open Loop', body: 'Complete art closes a door. Unfinished art leaves a window open for your imagination.', color: 'yellow', rotate: 2 },
     ],
     cinematicVoiceStory: 'In Florence, stand before Michelangelo’s unfinished sculptures. You do not see a polished statue on a pedestal; you see a muscular human form frantically clawing its way out of raw rock. The hammer marks are still visible. Schubert died leaving his Eighth Symphony incomplete, yet it is one of the most played pieces in history. Why? Because a finished work is a monologue, but an unfinished work is an open invitation for your imagination to finish the masterpiece.',
     speechBlueprint: [
@@ -548,8 +548,8 @@ export const topics: Topic[] = [
       { heading: 'The Evolutionary Acoustic Mirror', body: 'Linguistic research shows that sad musical modes (minor thirds) mirror the downward acoustic pitch contours of human sobbing and sadness across virtually all global cultures.' },
     ],
     stickyNotes: [
-      { tag: '🎻 Goosebumps', title: 'The Frisson Wave', body: 'Musical goosebumps happen when a composer delays what your brain expects, then gives it back.', color: 'blue', rotate: 2 },
-      { tag: '🧠 Brain Secret', title: 'Older Than Words', body: 'Before humans invented grammar, our ancestors communicated emotion through pitch contours.', color: 'yellow', rotate: -1 },
+      { tag: 'Goosebumps', title: 'The Frisson Wave', body: 'Musical goosebumps happen when a composer delays what your brain expects, then gives it back.', color: 'blue', rotate: 2 },
+      { tag: 'Brain Secret', title: 'Older Than Words', body: 'Before humans invented grammar, our ancestors communicated emotion through pitch contours.', color: 'yellow', rotate: -1 },
     ],
     cinematicVoiceStory: 'Think of your favorite piece of instrumental music. No lyrics, no explanation, no words. Yet within twenty bars, you feel an ache in your chest or a shiver down your spine. How does vibrating wood and catgut convey tragedy better than a 500-page novel? Because language must travel through your rational prefrontal cortex. Music bypasses that gatekeeper entirely and strikes your ancient limbic brain directly. Music is what feelings sound like when words run out.',
     speechBlueprint: [
@@ -588,8 +588,8 @@ export const topics: Topic[] = [
       { heading: 'Bourdieu and Cultural Capital', body: 'The sociologist Pierre Bourdieu proved that aesthetic preferences — whether for opera or reality television — are taught markers of social class, serving to separate the elite from the masses under the guise of "natural taste".' },
     ],
     stickyNotes: [
-      { tag: '🖼️ History Twist', title: 'The Vermeer Lesson', body: 'Vermeer was a nobody for 200 years. Greatness is not self-evident; it requires champions.', color: 'rose', rotate: 2 },
-      { tag: '📱 The New Judge', title: 'From Critic to Algorithm', body: 'We swapped museum curators for TikTok recommendation algorithms. Taste is now engagement.', color: 'amber', rotate: -2 },
+      { tag: 'History Twist', title: 'The Vermeer Lesson', body: 'Vermeer was a nobody for 200 years. Greatness is not self-evident; it requires champions.', color: 'rose', rotate: 2 },
+      { tag: 'The New Judge', title: 'From Critic to Algorithm', body: 'We swapped museum curators for TikTok recommendation algorithms. Taste is now engagement.', color: 'amber', rotate: -2 },
     ],
     cinematicVoiceStory: 'Step into the Louvre or the Met. We look at the gilded frames and assume history objectively filtered the greatest works ever made. But think of Vermeer. For two centuries after his death, his masterpieces sat neglected in dusty attics. He was declared a genius only because a single French critic decided to champion him in 1866. Greatness is not an absolute law; it is a conversation between the work, the gatekeeper, and the era. The question is: who is curating your taste right now?',
     speechBlueprint: [
@@ -630,8 +630,8 @@ export const topics: Topic[] = [
       { heading: 'Pennebaker Expressive Writing Protocol', body: 'Modern clinical psychology confirms Lincoln\u2019s intuition: writing privately about deep distress for 15 minutes reduces systemic inflammation and improves cognitive function, even if the paper is shredded immediately.' },
     ],
     stickyNotes: [
-      { tag: '✉️ Lincoln’s Trick', title: 'The Hot Letter', body: 'Write with fury at midnight. Sleep on it. File it unsent in the morning. Lincoln saved his presidency this way.', color: 'amber', rotate: -2 },
-      { tag: '🔥 Psychological Gold', title: 'Writing Without An Audience', body: 'The moment someone else reads your words, you start lying to look good. Unsent letters tell the raw truth.', color: 'rose', rotate: 2 },
+      { tag: 'Lincoln’s Trick', title: 'The Hot Letter', body: 'Write with fury at midnight. Sleep on it. File it unsent in the morning. Lincoln saved his presidency this way.', color: 'amber', rotate: -2 },
+      { tag: 'Psychological Gold', title: 'Writing Without An Audience', body: 'The moment someone else reads your words, you start lying to look good. Unsent letters tell the raw truth.', color: 'rose', rotate: 2 },
     ],
     cinematicVoiceStory: 'In July 1863, after the bloody battle of Gettysburg, President Abraham Lincoln took up his pen in rage. He wrote a furious letter to his commanding general, accusing him of cowardice and catastrophic failure. Then Lincoln folded the paper, locked it in his desk drawer, and never sent it. Why? Because the writing discharged his fury, but the silence preserved the union. Some of the most powerful words ever written were meant for only one reader: the person holding the pen.',
     speechBlueprint: [
@@ -670,8 +670,8 @@ export const topics: Topic[] = [
       { heading: 'Railways and the Death of Solar Noon', body: 'Until the mid-19th century, every English and American town set its town clock by the sun at noon. When railways arrived, trains collided because local times differed by 15 minutes across 100 miles. Standardized time zones were invented for locomotives, not humans.' },
     ],
     stickyNotes: [
-      { tag: '⏰ Mind Shift', title: 'The Elastic Hour', body: 'Remind them: for most of history, summer hours were literally longer than winter hours!', color: 'yellow', rotate: 2 },
-      { tag: '🚂 Industrial Shock', title: 'Invented for Trains', body: 'We don’t live by nature’s clock; we live by 19th-century railway logistics.', color: 'amber', rotate: -2 },
+      { tag: 'Mind Shift', title: 'The Elastic Hour', body: 'Remind them: for most of history, summer hours were literally longer than winter hours!', color: 'yellow', rotate: 2 },
+      { tag: 'Industrial Shock', title: 'Invented for Trains', body: 'We don’t live by nature’s clock; we live by 19th-century railway logistics.', color: 'amber', rotate: -2 },
     ],
     cinematicVoiceStory: 'Before mechanical clocks, time was not a number on your wrist; it was the warmth of the sun on your neck. In ancient Rome, summer hours were seventy-five minutes long and winter hours were forty-four. Time breathed with the seasons. Then came monasteries, factories, and railway lines. We standardized time to keep trains from crashing, and in doing so, we turned the gift of living into a commodity to be punched on a timecard.',
     speechBlueprint: [
@@ -710,8 +710,8 @@ export const topics: Topic[] = [
       { heading: 'The Modern Digital Dark Age', body: 'Vint Cerf, a father of the Internet, warned of a 21st-century "Digital Dark Age". Millions of websites, digital archives, and photos stored on proprietary formats from the 1990s are already permanently corrupted and lost.' },
     ],
     stickyNotes: [
-      { tag: '📚 Myth Buster', title: 'No Single Fire', body: 'Alexandria didn’t burn in one night. It died of budget cuts and apathy across 300 years.', color: 'rose', rotate: -2 },
-      { tag: '💾 The Modern Threat', title: 'The Digital Dark Age', body: 'Ancient stone tablets last 4,000 years. Your hard drive fails in 7 years. Which archive is safer?', color: 'yellow', rotate: 2 },
+      { tag: 'Myth Buster', title: 'No Single Fire', body: 'Alexandria didn’t burn in one night. It died of budget cuts and apathy across 300 years.', color: 'rose', rotate: -2 },
+      { tag: 'The Modern Threat', title: 'The Digital Dark Age', body: 'Ancient stone tablets last 4,000 years. Your hard drive fails in 7 years. Which archive is safer?', color: 'yellow', rotate: 2 },
     ],
     cinematicVoiceStory: 'We all know the legend of the Library of Alexandria — half a million scrolls holding the ancient world\u2019s greatest secrets, consumed in one apocalyptic fire. But the real history is far more chilling. The library didn’t vanish in a single blaze; it died slowly from neglect, budget cuts, and indifference across three hundred years. When we stop copying and caring for our knowledge, civilizational memory quietly bleeds away. Today, as we store our history on fragile digital clouds, we must ask: are we building another Alexandria?',
     speechBlueprint: [
@@ -752,8 +752,8 @@ export const topics: Topic[] = [
       { heading: 'Chemical Early Warning Systems', body: 'When an aphid attacks an acacia tree, the tree emits ethylene gas into the air. Nearby acacias detect the gas within minutes and begin pumping toxic tannins into their leaves before the insects even arrive.' },
     ],
     stickyNotes: [
-      { tag: '🌲 Mother Trees', title: 'Suzanne Simard\u2019s Proof', body: 'Old trees feed young saplings through underground fungal cables. It is literal forest care.', color: 'sage', rotate: 2 },
-      { tag: '🍄 The Fungal Net', title: 'The Wood Wide Web', body: 'A single pinch of forest soil has kilometers of fungal threads routing nutrients like fiber optic cables.', color: 'amber', rotate: -2 },
+      { tag: 'Mother Trees', title: 'Suzanne Simard\u2019s Proof', body: 'Old trees feed young saplings through underground fungal cables. It is literal forest care.', color: 'sage', rotate: 2 },
+      { tag: 'The Fungal Net', title: 'The Wood Wide Web', body: 'A single pinch of forest soil has kilometers of fungal threads routing nutrients like fiber optic cables.', color: 'amber', rotate: -2 },
     ],
     cinematicVoiceStory: 'Walk into a dense forest. You see individual oaks and firs standing apart. But look ten inches beneath your boots. Every single root is plugged into a subterranean fungal network spanning hundreds of miles. Through this "wood wide web", an old mother tree sends sugar to a shaded seedling dying in darkness. When a beetle attacks on the eastern ridge, chemical distress signals pulse through the mycelium, priming the defenses of trees miles away. The forest is not a war zone of selfish trees; it is a single, breathing superorganism.',
     speechBlueprint: [
@@ -792,8 +792,8 @@ export const topics: Topic[] = [
       { heading: 'Cosmic Nucleosynthesis', body: 'The Big Bang produced only hydrogen and helium. Every complex atom that makes up human cells, DNA, and smartphones was manufactured inside the nuclear furnace of a massive star that blew itself apart billions of years ago.' },
     ],
     stickyNotes: [
-      { tag: '✨ Cosmic Truth', title: 'Stardust in Your Veins', body: 'The iron in your left hand came from a star; the iron in your right hand came from a different star.', color: 'blue', rotate: -2 },
-      { tag: '⏳ Lookback Time', title: 'Andromeda Lookback', body: 'When Andromeda’s light started traveling, humans hadn’t even discovered fire yet.', color: 'yellow', rotate: 2 },
+      { tag: 'Cosmic Truth', title: 'Stardust in Your Veins', body: 'The iron in your left hand came from a star; the iron in your right hand came from a different star.', color: 'blue', rotate: -2 },
+      { tag: 'Lookback Time', title: 'Andromeda Lookback', body: 'When Andromeda’s light started traveling, humans hadn’t even discovered fire yet.', color: 'yellow', rotate: 2 },
     ],
     cinematicVoiceStory: 'Step out tonight and look up at the constellation Orion. Find the red supergiant star Betelgeuse. The light hitting your retina right now left that star over six hundred years ago, during the Middle Ages. For all we know, that star may have exploded yesterday, and we won’t find out for centuries. Telescopes are not just cameras; they are physical time machines. And the most startling truth of all? Every iron atom in your blood was forged inside the core of a dying star. We are the cosmos observing itself.',
     speechBlueprint: [
@@ -832,8 +832,8 @@ export const topics: Topic[] = [
       { heading: 'The Multigenerational Relay', body: 'The monarch butterfly that leaves Canada in August will never return. It flies to Michoacán, hibernates, mates, and dies. Three generations later, their great-grandchildren navigate back to the identical pine grove without any elder guide.' },
     ],
     stickyNotes: [
-      { tag: '🦅 The 11-Day Flight', title: 'The Godwit Miracle', body: 'The Bar-tailed Godwit flies 7,000 miles across open ocean for 11 straight days with zero rest stops.', color: 'amber', rotate: 2 },
-      { tag: '👁️ Quantum Vision', title: 'Seeing Magnetism', body: 'Birds don’t have a compass; their eyes literally perceive magnetic field lines as glowing bands of light.', color: 'blue', rotate: -2 },
+      { tag: 'The 11-Day Flight', title: 'The Godwit Miracle', body: 'The Bar-tailed Godwit flies 7,000 miles across open ocean for 11 straight days with zero rest stops.', color: 'amber', rotate: 2 },
+      { tag: 'Quantum Vision', title: 'Seeing Magnetism', body: 'Birds don’t have a compass; their eyes literally perceive magnetic field lines as glowing bands of light.', color: 'blue', rotate: -2 },
     ],
     cinematicVoiceStory: 'A small bird weighing less than a coffee cup takes off from Alaska. It flies over the open Pacific Ocean, flapping its wings without stopping for eleven days and nights — no food, no water, no sleep. It lands on a tiny beach in New Zealand without drifting one mile off course. How? In its eyes are quantum proteins that let it literally see the magnetic field lines of the planet. Nature does not need GPS satellites; the compass of life was written into our biology before continents were even formed.',
     speechBlueprint: [
@@ -874,8 +874,8 @@ export const topics: Topic[] = [
       { heading: 'Syntax versus Semantics', body: 'Philosopher John Searle\u2019s "Chinese Room" argument reminds us that manipulating symbols with mathematical perfection does not grant understanding. A machine can craft a sonnet on heartbreak without ever feeling a single pang of sorrow.' },
     ],
     stickyNotes: [
-      { tag: '🤖 The Mirror', title: 'Cognitive Mirror', body: 'AI is not an alien mind; it is an echoing mirror of every book, tweet, and paper humanity ever wrote.', color: 'blue', rotate: 2 },
-      { tag: '⚠️ Human Risk', title: 'The Atrophy Risk', body: 'If machines provide frictionless agreement, will we lose the patience to talk to complicated, messy humans?', color: 'rose', rotate: -2 },
+      { tag: 'The Mirror', title: 'Cognitive Mirror', body: 'AI is not an alien mind; it is an echoing mirror of every book, tweet, and paper humanity ever wrote.', color: 'blue', rotate: 2 },
+      { tag: 'Human Risk', title: 'The Atrophy Risk', body: 'If machines provide frictionless agreement, will we lose the patience to talk to complicated, messy humans?', color: 'rose', rotate: -2 },
     ],
     cinematicVoiceStory: 'For two hundred thousand years, every voice you ever heard came from a living throat — a human, an animal, or the wind. Today, you can type into a glowing box and receive poetry, empathy, and advice from an entity that has never drawn a breath. It doesn’t feel pain, it doesn’t dream, and it doesn’t love. Yet we confide in it. The real revolution of artificial intelligence is not that machines have become human; it is what they reveal about our desperate hunger to be heard.',
     speechBlueprint: [
@@ -914,8 +914,8 @@ export const topics: Topic[] = [
       { heading: 'The Eradication of Serendipity', body: 'When algorithms predict your taste and eliminate wrong turns, they also eliminate the accidental book, the unplanned conversation with a stranger, and the joyful detour that sparks original thought.' },
     ],
     stickyNotes: [
-      { tag: '🗺️ Lost Skills', title: 'The London Cabbie Proof', body: 'London cabbies have bigger brains because they memorize streets. GPS literally shrinks your spatial memory.', color: 'amber', rotate: -2 },
-      { tag: '🛑 Friction is Good', title: 'The Muscle of Waiting', body: 'Friction is the resistance that builds cognitive muscle. Zero friction means cognitive atrophy.', color: 'rose', rotate: 2 },
+      { tag: 'Lost Skills', title: 'The London Cabbie Proof', body: 'London cabbies have bigger brains because they memorize streets. GPS literally shrinks your spatial memory.', color: 'amber', rotate: -2 },
+      { tag: 'Friction is Good', title: 'The Muscle of Waiting', body: 'Friction is the resistance that builds cognitive muscle. Zero friction means cognitive atrophy.', color: 'rose', rotate: 2 },
     ],
     cinematicVoiceStory: 'With a single swipe, dinner appears at your door. With one tap, a car arrives. With one click, your groceries are ordered. We have built a world of zero friction. But consider this: muscles only grow against resistance. When you remove all struggle — navigating without a map, cooking without a microwave, waiting in line with strangers — you don’t just save time. You slowly atrophy the patience, the resilience, and the serendipity that makes life an adventure.',
     speechBlueprint: [
@@ -954,8 +954,8 @@ export const topics: Topic[] = [
       { heading: 'The Architecture of Outrage', body: 'Platforms do not promote outrage because engineers are evil; they promote it because outrage commands the highest click-through rates. The algorithm is an amoral mirror optimizing for whatever prevents you from closing the app.' },
     ],
     stickyNotes: [
-      { tag: '🎰 The Slot Machine', title: 'Variable Reward', body: 'Pull-to-refresh is identical to pulling a Vegas slot machine lever. You never know what reward drops.', color: 'rose', rotate: 2 },
-      { tag: '💰 The Honest Rule', title: 'Free Means You', body: 'If you aren’t paying for the product, you ARE the product being sold to advertisers.', color: 'amber', rotate: -2 },
+      { tag: 'The Slot Machine', title: 'Variable Reward', body: 'Pull-to-refresh is identical to pulling a Vegas slot machine lever. You never know what reward drops.', color: 'rose', rotate: 2 },
+      { tag: 'The Honest Rule', title: 'Free Means You', body: 'If you aren’t paying for the product, you ARE the product being sold to advertisers.', color: 'amber', rotate: -2 },
     ],
     cinematicVoiceStory: 'Next time you pull down on a social feed to refresh it, listen closely. That mechanical drag and release was designed by engineers studying Las Vegas slot machines. When you don’t know whether the next swipe will bring a boring post or an exciting notification, your dopamine spikes. You are not browsing a social network; you are playing a casino game where the currency being wagered is your finite mortal life. The most rebellious thing you can do today is close the tab.',
     speechBlueprint: [
@@ -996,8 +996,8 @@ export const topics: Topic[] = [
       { heading: 'Choice Architecture over Willpower', body: 'Nobel laureate Richard Thaler proved that humans choose the easiest default in their immediate physical environment. If the book is on the pillow, you read; if the phone is on the nightstand, you scroll.' },
     ],
     stickyNotes: [
-      { tag: '📈 The 1% Formula', title: '1.01 vs 0.99', body: '1% better every day = 37x better in a year. 1% worse = near zero. Tiny choices run the math.', color: 'sage', rotate: 2 },
-      { tag: '🏠 Design Your Room', title: 'Cues Beat Willpower', body: 'Put the guitar on the stand, put the phone in another room. Change your space, change your life.', color: 'yellow', rotate: -2 },
+      { tag: 'The 1% Formula', title: '1.01 vs 0.99', body: '1% better every day = 37x better in a year. 1% worse = near zero. Tiny choices run the math.', color: 'sage', rotate: 2 },
+      { tag: 'Design Your Room', title: 'Cues Beat Willpower', body: 'Put the guitar on the stand, put the phone in another room. Change your space, change your life.', color: 'yellow', rotate: -2 },
     ],
     cinematicVoiceStory: 'We wait for the giant, cinematic moments to change our lives — the new year, the promotion, the lightning bolt of inspiration. But destiny is not forged in earthquakes; it is assembled in the quiet, boring decisions you make on a Tuesday morning. Choosing to walk for ten minutes. Choosing to read five pages. Choosing to drink water. A 1% improvement every day makes you thirty-seven times better in a single year. You don’t need a miracle; you just need to win the next five minutes.',
     speechBlueprint: [
@@ -1036,8 +1036,8 @@ export const topics: Topic[] = [
       { heading: 'Epistemic Humility as a Weapon', body: 'The best forecasters in the world do not make dogmatic bets. They update their probabilistic beliefs in tiny increments (from 60% to 64%) as new data trickles in. They have zero ego tied to being right on day one.' },
     ],
     stickyNotes: [
-      { tag: '🧠 Dunning-Kruger', title: 'The Loudest Novice', body: 'The less someone knows about a topic, the more certain they sound. Real masters embrace nuance.', color: 'amber', rotate: -2 },
-      { tag: '🔑 The Superpower', title: 'Four Magic Words', body: '"I do not know" is not weakness. It is the only sentence that makes learning possible.', color: 'rose', rotate: 2 },
+      { tag: 'Dunning-Kruger', title: 'The Loudest Novice', body: 'The less someone knows about a topic, the more certain they sound. Real masters embrace nuance.', color: 'amber', rotate: -2 },
+      { tag: 'The Superpower', title: 'Four Magic Words', body: '"I do not know" is not weakness. It is the only sentence that makes learning possible.', color: 'rose', rotate: 2 },
     ],
     cinematicVoiceStory: 'In modern society, we applaud the person with instant, loud, unshakeable answers on TV and in boardrooms. We treat hesitation as weakness. But look at Socrates in ancient Athens. When the Oracle of Delphi declared him the wisest man alive, Socrates smiled and explained: "I am only wiser than others because I know that I know nothing." The four most courageous words in the English language are not "I am the best." They are: "I do not know."',
     speechBlueprint: [
@@ -1076,8 +1076,8 @@ export const topics: Topic[] = [
       { heading: 'The Proustian Scent Phenomenon', body: 'Unlike vision and hearing, which route through the thalamus, scent molecules travel directly into the olfactory bulb, which has immediate wiring to the amygdala (emotion) and hippocampus (memory).' },
     ],
     stickyNotes: [
-      { tag: '🧠 Brain Secret', title: 'The Editing Booth', body: 'Your memory is not a video camera; it is an active film director constantly recutting old footage.', color: 'rose', rotate: -2 },
-      { tag: '🕯️ Scent Portal', title: 'Proust’s Madeleine', body: 'A single whiff of old perfume or rain on hot asphalt can hurl you 20 years into the past in 0.1 seconds.', color: 'amber', rotate: 2 },
+      { tag: 'Brain Secret', title: 'The Editing Booth', body: 'Your memory is not a video camera; it is an active film director constantly recutting old footage.', color: 'rose', rotate: -2 },
+      { tag: 'Scent Portal', title: 'Proust’s Madeleine', body: 'A single whiff of old perfume or rain on hot asphalt can hurl you 20 years into the past in 0.1 seconds.', color: 'amber', rotate: 2 },
     ],
     cinematicVoiceStory: 'Think back to your favorite childhood memory. You can see the colors, feel the air, hear the laughter. But neuroscience reveals a shocking secret: that memory is not a video recording. Every time you recall an event, your brain pulls the memory into the editing room of your current consciousness, tints it with your present mood, and saves over the original file. The stories we tell the most are the ones we have rewritten the most. Memory is not a library of the past; it is the myth we tell ourselves to survive the present.',
     speechBlueprint: [
@@ -1116,8 +1116,8 @@ export const topics: Topic[] = [
       { heading: 'The Disappearance of "Third Places"', body: 'Sociologist Ray Oldenburg warned of the collapse of "Third Places" — cafes, parks, barbershops, and community halls that are neither home nor work. Replacing physical third places with digital feeds replaces real presence with digital performance.' },
     ],
     stickyNotes: [
-      { tag: '☕ The Barista Chat', title: 'The Power of Weak Ties', body: 'Saying two sentences to your barista boosts mood more than 20 minutes of scrolling Instagram.', color: 'rose', rotate: -2 },
-      { tag: '⚠️ Health Danger', title: 'The 15 Cigarettes Fact', body: 'Chronic loneliness carries the same biological mortality risk as smoking 15 cigarettes a day.', color: 'amber', rotate: 2 },
+      { tag: 'The Barista Chat', title: 'The Power of Weak Ties', body: 'Saying two sentences to your barista boosts mood more than 20 minutes of scrolling Instagram.', color: 'rose', rotate: -2 },
+      { tag: 'Health Danger', title: 'The 15 Cigarettes Fact', body: 'Chronic loneliness carries the same biological mortality risk as smoking 15 cigarettes a day.', color: 'amber', rotate: 2 },
     ],
     cinematicVoiceStory: 'You can sit on a train surrounded by three hundred people, holding a device connected to five billion human beings, and feel completely, utterly alone. We have confused contact with connection. A notification is not an embrace. A text message is not eye contact. A like is not love. Our ancient hunter-gatherer brains do not care about digital follower counts; they crave the sound of a voice, the warmth of presence, and the knowledge that someone truly sees us.',
     speechBlueprint: [
@@ -1158,8 +1158,8 @@ export const topics: Topic[] = [
       { heading: 'Barcelona’s Superblock Revolution', body: 'Barcelona grouped 9 city blocks together, restricting vehicle traffic to perimeter streets at 10 km/h. Within the interior, asphalt was converted into playgrounds, gardens, and cafes. Local retail sales soared, and asthma hospitalizations dropped.' },
     ],
     stickyNotes: [
-      { tag: '🏙️ The Big Question', title: 'Who Owns The Street?', body: 'Why did we give 60% of our public space to empty parked metal boxes?', color: 'yellow', rotate: 2 },
-      { tag: '🚗 Induced Demand', title: 'More Lanes = More Traffic', body: 'Adding lanes to fix traffic is like loosening your belt to cure obesity.', color: 'rose', rotate: -2 },
+      { tag: 'The Big Question', title: 'Who Owns The Street?', body: 'Why did we give 60% of our public space to empty parked metal boxes?', color: 'yellow', rotate: 2 },
+      { tag: 'Induced Demand', title: 'More Lanes = More Traffic', body: 'Adding lanes to fix traffic is like loosening your belt to cure obesity.', color: 'rose', rotate: -2 },
     ],
     cinematicVoiceStory: 'Look down from a skyscraper onto any modern city. More than half of all public land — the space where our children could play, where cafes could spill onto sidewalks, where trees could clean our air — is covered in boiling asphalt and filled with parked cars. For a century, we designed cities for metal machines instead of flesh-and-blood human beings. Cities that ban cars from their centers aren’t going backward; they are finally remembering what a city was built for in the first place: human connection.',
     speechBlueprint: [
@@ -1198,8 +1198,8 @@ export const topics: Topic[] = [
       { heading: 'The UK 4-Day Trial Results', body: 'In 2022, 61 UK companies tested a 32-hour week with 100% pay for 6 months. Revenue rose by 35% compared to previous periods, burnout dropped by 71%, and 92% of firms refused to return to 5 days.' },
     ],
     stickyNotes: [
-      { tag: '⏳ Parkinson’s Law', title: 'Work Expands', body: 'Give someone 40 hours, they do 15 hours of work and 25 hours of meetings and pretending to look busy.', color: 'sage', rotate: -2 },
-      { tag: '📊 The UK Trial', title: '92% Kept It', body: 'In the largest 4-day trial in history, 92% of companies refused to go back to 5 days. Output went UP.', color: 'yellow', rotate: 2 },
+      { tag: 'Parkinson’s Law', title: 'Work Expands', body: 'Give someone 40 hours, they do 15 hours of work and 25 hours of meetings and pretending to look busy.', color: 'sage', rotate: -2 },
+      { tag: 'The UK Trial', title: '92% Kept It', body: 'In the largest 4-day trial in history, 92% of companies refused to go back to 5 days. Output went UP.', color: 'yellow', rotate: 2 },
     ],
     cinematicVoiceStory: 'A hundred years ago, factory workers labored six days a week, ten hours a day. When Henry Ford announced a radical five-day work week in 1926, critics predicted economic ruin. Ford discovered that rested workers built better automobiles. Today, we sit in bloated four-hour Zoom meetings, drowning in performative busywork to fill forty arbitrary hours on a calendar. The five-day week is an industrial dinosaur. We don\u2019t need more hours at a desk; we need the energy to do work that actually matters.',
     speechBlueprint: [
@@ -1238,8 +1238,8 @@ export const topics: Topic[] = [
       { heading: 'Relational Privacy and Genetic Exhaust', body: 'When one person submits their saliva to a commercial genealogy platform, they expose the genetic markers of their siblings, parents, and cousins down to the third degree without their consent.' },
     ],
     stickyNotes: [
-      { tag: '📜 The Terms Myth', title: 'Unread Contracts', body: 'Reading all the privacy policies you click "I Agree" to in a year would take 76 full workdays.', color: 'rose', rotate: -2 },
-      { tag: '📍 Re-identification', title: '4 Data Points', body: 'A company only needs 4 timestamps of where you bought things to identify your exact name from "anonymous" files.', color: 'amber', rotate: 2 },
+      { tag: 'The Terms Myth', title: 'Unread Contracts', body: 'Reading all the privacy policies you click "I Agree" to in a year would take 76 full workdays.', color: 'rose', rotate: -2 },
+      { tag: 'Re-identification', title: '4 Data Points', body: 'A company only needs 4 timestamps of where you bought things to identify your exact name from "anonymous" files.', color: 'amber', rotate: 2 },
     ],
     cinematicVoiceStory: 'Right now, in a refrigerated server warehouse a thousand miles away, there is a digital twin of your life. It knows what time you woke up, who you texted, where you drove, what symptoms you searched for at 2 a.m., and how fast your heart was beating when you opened that email. You never signed a treaty; you just clicked "I Agree" on a 50-page legal document no human has ever read. Privacy is not about having something to hide; it is about having the freedom to exist without being predicted, packaged, and sold.',
     speechBlueprint: [
@@ -1280,8 +1280,8 @@ export const topics: Topic[] = [
       { heading: 'The Fragmentation Tax', body: 'A 2:00 PM meeting ruins both the 1:00 PM and 3:00 PM focus blocks. Knowledge workers operate in maker time, where creative output requires unbroken 3-hour stretches of deep work.' },
     ],
     stickyNotes: [
-      { tag: '📄 The Amazon Rule', title: 'Silent 6-Page Memo', body: 'No PowerPoints. Write a 6-page memo. Everyone reads in silence for 20 minutes before speaking.', color: 'amber', rotate: -2 },
-      { tag: '💰 The True Cost', title: 'The 10-Person Math', body: 'A 1-hour meeting with 10 senior managers costs $1,500 in salary alone. Was that slide worth $1,500?', color: 'rose', rotate: 2 },
+      { tag: 'The Amazon Rule', title: 'Silent 6-Page Memo', body: 'No PowerPoints. Write a 6-page memo. Everyone reads in silence for 20 minutes before speaking.', color: 'amber', rotate: -2 },
+      { tag: 'The True Cost', title: 'The 10-Person Math', body: 'A 1-hour meeting with 10 senior managers costs $1,500 in salary alone. Was that slide worth $1,500?', color: 'rose', rotate: 2 },
     ],
     cinematicVoiceStory: 'Look at a calendar in any corporate office. It is a wall-to-wall grid of blue blocks: status syncs, alignment calls, and check-ins. Ten people in a room for an hour is not a one-hour meeting — it is a ten-hour drain on collective human intelligence. We hold meetings because talking is easier than thinking, and scheduling a call is easier than writing a clear sentence. If you want to change your work culture, cancel the presentation and write a memo.',
     speechBlueprint: [
@@ -1320,8 +1320,8 @@ export const topics: Topic[] = [
       { heading: 'The Tragedy of the Neighborhood Gem', body: 'A beloved local bakery is celebrated for unique sourdough baked in small batches. When private equity expands it to 50 locations, commercial frozen dough and preservatives replace the baker\u2019s intuition, turning magic into bland commodity.' },
     ],
     stickyNotes: [
-      { tag: '🏯 Japanese Wisdom', title: 'The Shinise Secrets', body: 'Japan has 33,000 companies over 100 years old. Their secret? They refused to grow too big.', color: 'sage', rotate: 2 },
-      { tag: '🥖 The Bakery Trap', title: 'Standardization Costs', body: 'Scaling means removing quirks. But often, the quirks were the entire reason people loved you.', color: 'amber', rotate: -2 },
+      { tag: 'Japanese Wisdom', title: 'The Shinise Secrets', body: 'Japan has 33,000 companies over 100 years old. Their secret? They refused to grow too big.', color: 'sage', rotate: 2 },
+      { tag: 'The Bakery Trap', title: 'Standardization Costs', body: 'Scaling means removing quirks. But often, the quirks were the entire reason people loved you.', color: 'amber', rotate: -2 },
     ],
     cinematicVoiceStory: 'Think of that tiny neighborhood restaurant you love — the handwritten menu, the chef greeting you, the imperfect, unforgettable flavors. What happens when a venture capitalist buys it and opens forty locations in five years? The magic vanishes. Why? Because to scale, you must standardize. You must replace the chef\u2019s intuition with a frozen corporate manual. Growth is not the only metric of success. Sometimes the most ambitious thing you can do is stay small, master your craft, and build something that lasts for centuries.',
     speechBlueprint: [
@@ -1360,8 +1360,8 @@ export const topics: Topic[] = [
       { heading: 'Mariana Mazzucato’s Entrepreneurial State', body: 'Economist Mariana Mazzucato proved that virtually every breakthrough component of modern technology — the microprocessor, HTTP protocol, algorithm search, and mRNA vaccines — emerged from decades of unglamorous government research funding before private firms commercialized them.' },
     ],
     stickyNotes: [
-      { tag: '🧠 Newton & Leibniz', title: 'Simultaneous Discovery', body: 'Calculus, evolution, and telephones were all invented by two people at the exact same time.', color: 'blue', rotate: -2 },
-      { tag: '📱 The iPhone Myth', title: 'Public Foundations', body: 'GPS, internet, touchscreens, and voice recognition were all funded by public grants before Apple assembled them.', color: 'yellow', rotate: 2 },
+      { tag: 'Newton & Leibniz', title: 'Simultaneous Discovery', body: 'Calculus, evolution, and telephones were all invented by two people at the exact same time.', color: 'blue', rotate: -2 },
+      { tag: 'The iPhone Myth', title: 'Public Foundations', body: 'GPS, internet, touchscreens, and voice recognition were all funded by public grants before Apple assembled them.', color: 'yellow', rotate: 2 },
     ],
     cinematicVoiceStory: 'We love the Hollywood story of the lone genius — the solitary scientist yelling Eureka in a bathtub, or the visionary inventor in a Silicon Valley garage. But history tells a very different tale. Isaac Newton and Gottfried Leibniz invented calculus at the exact same time without ever speaking. Charles Darwin and Alfred Russel Wallace discovered natural selection simultaneously. Breakthroughs do not emerge from isolated brains; they emerge from the collective soil of human culture when the time is right. We do not stand alone on mountaintops; we stand on the shoulders of an unbroken chain of human collaboration.',
     speechBlueprint: [

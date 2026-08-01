@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   ArrowLeft, X, ArrowRight, Gauge, RefreshCw, Dices, Undo2, Sparkles,
+  PartyPopper, Star, Mic, Lightbulb, Flame, AudioLines, Sparkle, type LucideIcon,
 } from 'lucide-react';
 import { topics, type Topic, type CategoryId, type Difficulty, difficultyMeta, categories } from '../data/topics';
 import { playTickSound, playRevealChime } from '../utils/audio';
@@ -16,7 +17,16 @@ interface Props {
 }
 
 const SPIN_STEPS = 24;
-const CONFETTI = ['🎉', '✨', '🎤', '⭐', '💡', '🎙️', '🔥', '🌟'];
+const CONFETTI: { Icon: LucideIcon; color: string }[] = [
+  { Icon: PartyPopper, color: '#C4A265' },
+  { Icon: Sparkles, color: '#A8854A' },
+  { Icon: Star, color: '#D9BE83' },
+  { Icon: Mic, color: '#8C6C38' },
+  { Icon: Lightbulb, color: '#C4A265' },
+  { Icon: Flame, color: '#A8854A' },
+  { Icon: AudioLines, color: '#8C6C38' },
+  { Icon: Sparkle, color: '#D9BE83' },
+];
 
 export default function RouletteModal({
   isOpen,
@@ -162,17 +172,17 @@ export default function RouletteModal({
             )}
 
             {/* Floating confetti on reveal */}
-            {revealed && CONFETTI.map((c, i) => (
+            {revealed && CONFETTI.map(({ Icon, color }, i) => (
               <span
                 key={`${display.id}-${i}`}
-                className="float-up absolute z-20 text-xl sm:text-2xl pointer-events-none"
+                className="float-up absolute z-20 pointer-events-none"
                 style={{
                   left: `${8 + i * 11}%`,
                   bottom: '-4px',
                   animationDelay: `${i * 0.12}s`,
                 }}
               >
-                {c}
+                <Icon className="w-5 h-5 sm:w-6 sm:h-6" style={{ color }} />
               </span>
             ))}
 

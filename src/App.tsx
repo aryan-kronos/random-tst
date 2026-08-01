@@ -4,7 +4,7 @@ import {
   Mic, Shuffle, ChevronLeft, Flame, CheckCircle2, BookOpen,
   Clock3, Layers, ArrowRight, Lightbulb, PenLine, Sparkles,
   History, Trophy, X, Zap, Award, Gauge, Star,
-  CheckSquare,
+  CheckSquare, NotebookPen, StickyNote,
 } from 'lucide-react';
 import {
   categories, getTopicsByCategory, countByDifficulty,
@@ -595,8 +595,9 @@ export default function App() {
                     {hasNoteArt(topic.id) && (
                       <div className="mb-12">
                         <div className="flex items-center justify-between mb-6 flex-wrap gap-2">
-                          <span className="font-handwritten text-2xl font-bold text-espresso">
-                            📒 Real Handwritten Study Notes
+                          <span className="font-handwritten text-2xl font-bold text-espresso inline-flex items-center gap-2.5">
+                            <NotebookPen className="w-6 h-6 text-amber-deep" />
+                            Real Handwritten Study Notes
                           </span>
                           <span className="text-xs uppercase tracking-wider text-ink-faint font-semibold">
                             Inked, highlighted &amp; doodled
@@ -625,8 +626,12 @@ export default function App() {
 
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center gap-2">
-                        <span className="font-handwritten text-2xl font-bold text-espresso">
-                          {hasNoteArt(topic.id) ? '⚡ Interactive Cheat Codes' : '📌 Handwritten Master Notes & Cheat Codes'}
+                        <span className="font-handwritten text-2xl font-bold text-espresso inline-flex items-center gap-2.5">
+                          {hasNoteArt(topic.id) ? (
+                            <><Zap className="w-6 h-6 text-amber-deep" /> Interactive Cheat Codes</>
+                          ) : (
+                            <><StickyNote className="w-6 h-6 text-amber-deep" /> Handwritten Master Notes &amp; Cheat Codes</>
+                          )}
                         </span>
                       </div>
                       <span className="text-xs uppercase tracking-wider text-ink-faint font-semibold">
@@ -728,7 +733,8 @@ export default function App() {
                                 &ldquo;{step.scriptPrompt}&rdquo;
                               </p>
                               <div className="text-[11px] text-ink-faint italic flex items-center gap-1.5">
-                                <span>🎙️ {step.cue}</span>
+                                <Mic className="w-3 h-3 text-amber-deep shrink-0" />
+                                <span>{step.cue}</span>
                               </div>
                             </div>
                           ))}

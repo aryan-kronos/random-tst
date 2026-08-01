@@ -1,9 +1,29 @@
 import { motion } from 'framer-motion';
+import {
+  Zap, KeyRound, Mic, Brain, AlertTriangle, Quote, Sparkles, type LucideIcon,
+} from 'lucide-react';
 import type { StickyNote } from '../data/topics';
 
 interface Props {
   note: StickyNote;
   index: number;
+}
+
+/** Pick a fitting Lucide icon for a note tag (no emojis — real icons). */
+const TAG_ICON_RULES: [RegExp, LucideIcon][] = [
+  [/hook|formula|shock|slot machine/i, Zap],
+  [/analog|key|rule|superpower|golden/i, KeyRound],
+  [/cue|tip|delivery|goosebumps|theatre|voice/i, Mic],
+  [/brain|mind|secret|hack|kruger|quantum|psychological|memory|scent/i, Brain],
+  [/myth|danger|risk|threat|battle|warning|buster/i, AlertTriangle],
+  [/quote|fact|truth|proof|record|trial|lesson|ceiling/i, Quote],
+];
+
+function iconForTag(tag: string): LucideIcon {
+  for (const [pattern, icon] of TAG_ICON_RULES) {
+    if (pattern.test(tag)) return icon;
+  }
+  return Sparkles;
 }
 
 const colorStyles = {
@@ -29,7 +49,8 @@ export default function StickyNoteCard({ note }: Props) {
 
       {/* Tag Badge */}
       <div className="flex items-center justify-between gap-2 mb-3">
-        <span className="font-handwritten text-lg font-bold tracking-wide uppercase px-2 py-0.5 rounded bg-black/5">
+        <span className="font-handwritten text-lg font-bold tracking-wide uppercase px-2 py-0.5 rounded bg-black/5 inline-flex items-center gap-1.5">
+          {(() => { const TagIcon = iconForTag(note.tag); return <TagIcon className="w-4 h-4" />; })()}
           {note.tag}
         </span>
         <span className="w-2 h-2 rounded-full bg-current opacity-30" />
