@@ -34,7 +34,7 @@ export default function CategoryHoverCard({
         setHoveredTopicImg(null);
       }}
       className={`group relative rounded-3xl border bg-ivory/90 backdrop-blur-md overflow-hidden transition-all duration-500 hover:-translate-y-1.5 hover:shadow-[0_20px_60px_-20px_rgba(56,38,16,0.35)] ${
-        isFilterActive ? 'border-amber shadow-[0_10px_40px_-15px_rgba(190,145,82,0.5)] ring-2 ring-amber/20' : 'border-ink-wash/12'
+        isFilterActive ? 'border-amber shadow-[0_10px_40px_-15px_rgba(190,139,63,0.5)] ring-2 ring-amber/20' : 'border-ink-wash/12'
       }`}
     >
       {/* DESKTOP CURSOR HOVER IMAGE REVEAL (Smooth Fade In) */}

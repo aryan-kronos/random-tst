@@ -18,6 +18,7 @@ import RouletteModal from './components/RouletteModal';
 import MasterChecklist from './components/MasterChecklist';
 import CategoryHoverCard from './components/CategoryHoverCard';
 import LogoMark from './components/Logo';
+import CursorGlow from './components/CursorGlow';
 import { hasNoteArt, noteArtUrls } from './data/assets';
 import { useStats, xpFor, LEVELS } from './hooks/useStats';
 import { playCompleteFanfare } from './utils/audio';
@@ -102,6 +103,9 @@ export default function App() {
         <div className="absolute -top-40 -right-40 w-[700px] h-[700px] rounded-full bg-gradient-to-br from-amber-pale/40 via-champagne/30 to-transparent blur-3xl" />
         <div className="absolute top-1/3 -left-52 w-[600px] h-[600px] rounded-full bg-gradient-to-tr from-rose-fog/40 to-transparent blur-3xl" />
       </div>
+
+      {/* Cursor-chasing golden aura (desktop only, GPU-only) */}
+      <CursorGlow />
 
       {/* ================= TOP BAR ================= */}
       <header className="sticky top-0 z-50 backdrop-blur-xl bg-cream/80 border-b border-ink-wash/10">
@@ -196,8 +200,8 @@ export default function App() {
                       />
                       <defs>
                         <linearGradient id="lvlGrad" x1="0" y1="0" x2="1" y2="1">
-                          <stop offset="0%" stopColor="#E0BE7E" />
-                          <stop offset="100%" stopColor="#996F33" />
+                          <stop offset="0%" stopColor="#E8C276" />
+                          <stop offset="100%" stopColor="#96692C" />
                         </linearGradient>
                       </defs>
                     </svg>
@@ -262,7 +266,7 @@ export default function App() {
               </div>
 
               {/* ================= EPIC RANDOM DRAW EXPERIENCE BANNER ================= */}
-              <div className="relative overflow-hidden rounded-[2.5rem] border border-amber/35 bg-gradient-to-br from-ivory via-parchment/70 to-champagne/60 shadow-[0_24px_90px_-40px_rgba(190,145,82,0.45)] p-7 sm:p-12 lg:p-14 mb-12">
+              <div className="relative overflow-hidden rounded-[2.5rem] border border-amber/35 bg-gradient-to-br from-ivory via-parchment/70 to-champagne/60 shadow-[0_24px_90px_-40px_rgba(190,139,63,0.45)] p-7 sm:p-12 lg:p-14 mb-12">
                 <div className="absolute -top-24 -right-24 w-80 h-80 rounded-full bg-gradient-to-br from-amber/20 via-champagne/30 to-transparent blur-3xl pointer-events-none" />
 
                 <div className="relative z-10 max-w-3xl">
@@ -971,7 +975,7 @@ export default function App() {
             >
               <StepRail active={3} />
 
-              <div className="mt-8 relative overflow-hidden rounded-[2.5rem] border border-amber/30 bg-gradient-to-br from-champagne/80 via-ivory to-amber-pale/50 shadow-[0_24px_90px_-44px_rgba(190,145,82,0.7)] p-9 sm:p-16 text-center">
+              <div className="mt-8 relative overflow-hidden rounded-[2.5rem] border border-amber/30 bg-gradient-to-br from-champagne/80 via-ivory to-amber-pale/50 shadow-[0_24px_90px_-44px_rgba(190,139,63,0.7)] p-9 sm:p-16 text-center">
                 <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-96 h-96 rounded-full bg-amber/15 blur-3xl pointer-events-none" />
 
                 <div className="relative z-10">

@@ -61,7 +61,7 @@ export interface Category {
 
 export const difficultyMeta: Record<Difficulty, { label: string; level: string; hint: string; color: string }> = {
   Gentle: { label: 'Low', level: 'Easy', hint: 'Everyday intuitive ideas', color: '#5A6B4A' },
-  Moderate: { label: 'Medium', level: 'Balanced', hint: 'Nuanced & layered', color: '#996F33' },
+  Moderate: { label: 'Medium', level: 'Balanced', hint: 'Nuanced & layered', color: '#96692C' },
   Bold: { label: 'High', level: 'Challenging', hint: 'Abstract philosophical debate', color: '#9A5537' },
 };
 

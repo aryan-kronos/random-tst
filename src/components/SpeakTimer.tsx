@@ -61,16 +61,16 @@ export default function SpeakTimer({ duration, onComplete }: Props) {
             opacity: running ? 0.55 : 0.2,
             background: urgent
               ? 'radial-gradient(circle, rgba(194,106,74,0.35), transparent 70%)'
-              : 'radial-gradient(circle, rgba(190,145,82,0.35), transparent 70%)',
+              : 'radial-gradient(circle, rgba(190,139,63,0.35), transparent 70%)',
           }}
         />
 
         <svg viewBox="0 0 300 300" className="absolute inset-0 w-full h-full -rotate-90">
           <defs>
             <linearGradient id="arcGrad" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stopColor="#E0BE7E" />
-              <stop offset="50%" stopColor="#BE9152" />
-              <stop offset="100%" stopColor="#996F33" />
+              <stop offset="0%" stopColor="#E8C276" />
+              <stop offset="50%" stopColor="#BE8B3F" />
+              <stop offset="100%" stopColor="#96692C" />
             </linearGradient>
             <linearGradient id="arcUrgent" x1="0" y1="0" x2="1" y2="1">
               <stop offset="0%" stopColor="#D98E6A" />
