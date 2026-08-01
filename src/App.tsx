@@ -17,7 +17,7 @@ import StickyNoteCard from './components/StickyNoteCard';
 import RouletteModal from './components/RouletteModal';
 import MasterChecklist from './components/MasterChecklist';
 import CategoryHoverCard from './components/CategoryHoverCard';
-import { hasNoteArt, noteArtUrl } from './data/assets';
+import { hasNoteArt, noteArtUrls } from './data/assets';
 import { useStats, xpFor, LEVELS } from './hooks/useStats';
 import { playCompleteFanfare } from './utils/audio';
 
@@ -592,37 +592,76 @@ export default function App() {
 
                   {/* 4. HANDWRITTEN STUDY NOTES (GENERATED ART) + STICKY NOTES SECTION */}
                   <div className="mt-8">
-                    {hasNoteArt(topic.id) && (
-                      <div className="mb-12">
-                        <div className="flex items-center justify-between mb-6 flex-wrap gap-2">
-                          <span className="font-handwritten text-2xl font-bold text-espresso inline-flex items-center gap-2.5">
-                            <NotebookPen className="w-6 h-6 text-amber-deep" />
-                            Real Handwritten Study Notes
-                          </span>
-                          <span className="text-xs uppercase tracking-wider text-ink-faint font-semibold">
-                            Inked, highlighted &amp; doodled
-                          </span>
-                        </div>
+                    {hasNoteArt(topic.id) && (() => {
+                      const arts = noteArtUrls(topic.id);
+                      const miniMeta = [
+                        { icon: StickyNote, label: 'Pocket Short Notes', sub: 'the 10-second version, on a corkboard' },
+                        { icon: Lightbulb, label: 'The Visual Explainer', sub: 'the whole idea in one drawing' },
+                      ];
+                      return (
+                        <div className="mb-12">
+                          <div className="flex items-center justify-between mb-6 flex-wrap gap-2">
+                            <span className="font-handwritten text-2xl font-bold text-espresso inline-flex items-center gap-2.5">
+                              <NotebookPen className="w-6 h-6 text-amber-deep" />
+                              Real Handwritten Study Notes
+                            </span>
+                            <span className="text-xs uppercase tracking-wider text-ink-faint font-semibold">
+                              Inked, highlighted &amp; doodled
+                            </span>
+                          </div>
 
-                        <div className="relative mx-auto max-w-3xl">
-                          {/* washi tape strips */}
-                          <span className="absolute -top-3 left-8 sm:left-14 w-24 sm:w-28 h-7 bg-amber-pale/80 border border-amber/25 -rotate-6 rounded-[3px] shadow-sm z-10" />
-                          <span className="absolute -bottom-3 right-8 sm:right-14 w-24 sm:w-28 h-7 bg-amber-pale/80 border border-amber/25 rotate-3 rounded-[3px] shadow-sm z-10" />
+                          {/* HERO: full desk page */}
+                          <div className="relative mx-auto max-w-3xl">
+                            {/* washi tape strips */}
+                            <span className="absolute -top-3 left-8 sm:left-14 w-24 sm:w-28 h-7 bg-amber-pale/80 border border-amber/25 -rotate-6 rounded-[3px] shadow-sm z-10" />
+                            <span className="absolute -bottom-3 right-8 sm:right-14 w-24 sm:w-28 h-7 bg-amber-pale/80 border border-amber/25 rotate-3 rounded-[3px] shadow-sm z-10" />
 
-                          <figure className="relative rounded-[1.75rem] border border-ink-wash/15 bg-ivory p-3 sm:p-4 shadow-[0_26px_70px_-32px_rgba(45,36,24,0.5)] -rotate-1 hover:rotate-0 transition-transform duration-500">
-                            <img
-                              src={noteArtUrl(topic.id)}
-                              alt={`Handwritten study notes for ${topic.title}`}
-                              className="w-full rounded-2xl object-cover select-none"
-                              loading="lazy"
-                            />
-                            <figcaption className="pt-3 pb-1 text-center text-xs sm:text-sm text-ink-faint font-editorial italic">
-                              Your desk page for &ldquo;{topic.title}&rdquo; — pinned to the study wall.
-                            </figcaption>
-                          </figure>
+                            <figure className="relative rounded-[1.75rem] border border-ink-wash/15 bg-ivory p-3 sm:p-4 shadow-[0_26px_70px_-32px_rgba(45,36,24,0.5)] -rotate-1 hover:rotate-0 transition-transform duration-500">
+                              <img
+                                src={arts[0]}
+                                alt={`Handwritten study notes for ${topic.title}`}
+                                className="w-full rounded-2xl object-cover select-none"
+                                loading="lazy"
+                              />
+                              <figcaption className="pt-3 pb-1 text-center text-xs sm:text-sm text-ink-faint font-editorial italic">
+                                Your desk page for &ldquo;{topic.title}&rdquo; — the full spread.
+                              </figcaption>
+                            </figure>
+                          </div>
+
+                          {/* MINI GALLERY: pocket shorts + visual explainer */}
+                          {arts.length > 1 && (
+                            <div className="grid sm:grid-cols-2 gap-6 sm:gap-8 mt-10 max-w-4xl mx-auto">
+                              {arts.slice(1).map((src, i) => {
+                                const meta = miniMeta[i] ?? { icon: PenLine, label: 'Extra Notes', sub: '' };
+                                const MetaIcon = meta.icon;
+                                return (
+                                  <figure
+                                    key={i}
+                                    className={`relative rounded-[1.5rem] border border-ink-wash/15 bg-ivory p-2.5 sm:p-3 shadow-[0_18px_50px_-28px_rgba(45,36,24,0.45)] ${i % 2 ? 'rotate-1' : '-rotate-1'} hover:rotate-0 transition-transform duration-500`}
+                                  >
+                                    <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 w-20 h-5 bg-amber-pale/80 border border-amber/25 -rotate-2 rounded-[3px] shadow-sm z-10" />
+                                    <img
+                                      src={src}
+                                      alt={`${meta.label} for ${topic.title}`}
+                                      className="w-full rounded-xl object-cover select-none"
+                                      loading="lazy"
+                                    />
+                                    <figcaption className="pt-2.5 pb-1 text-center">
+                                      <span className="inline-flex items-center gap-1.5 text-xs font-bold text-espresso">
+                                        <MetaIcon className="w-3.5 h-3.5 text-amber-deep" />
+                                        {meta.label}
+                                      </span>
+                                      <span className="block text-[11px] text-ink-faint italic mt-0.5">{meta.sub}</span>
+                                    </figcaption>
+                                  </figure>
+                                );
+                              })}
+                            </div>
+                          )}
                         </div>
-                      </div>
-                    )}
+                      );
+                    })()}
 
                     <div className="flex items-center justify-between mb-4">
                       <div className="flex items-center gap-2">

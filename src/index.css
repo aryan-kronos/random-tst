@@ -7,23 +7,26 @@
   --font-handwriting: 'Caveat', cursive, sans-serif;
   --font-body: 'Inter', 'system-ui', sans-serif;
 
-  --color-cream: #FAF6F0;
-  --color-ivory: #FDF8F0;
-  --color-parchment: #F5EFE6;
-  --color-paper: #EFE8D8;
-  --color-linen: #EDE4D3;
-  --color-rose-fog: #F0E8DF;
-  --color-espresso: #2D2418;
-  --color-espresso-ink: #1F1810;
-  --color-espresso-soft: #3D3226;
-  --color-warm-stone: #5C4A3A;
-  --color-amber: #C4A265;
-  --color-amber-deep: #A8854A;
-  --color-amber-glow: #D4BA82;
-  --color-amber-pale: #F0E4C8;
-  --color-champagne: #F5EDD8;
-  --color-ink-faint: #8A7A6A;
-  --color-ink-wash: #B5A898;
+  /* ===== Premium calm palette =====
+     Layered bone & oat neutrals (cool-leaning warmth = calm),
+     softened ink, and an antique muted gold accent. */
+  --color-cream: #F4F0E9;
+  --color-ivory: #FBF9F4;
+  --color-parchment: #EEEAE2;
+  --color-paper: #E7E2D7;
+  --color-linen: #E1DBCD;
+  --color-rose-fog: #EDE6E1;
+  --color-espresso: #292420;
+  --color-espresso-ink: #1C1813;
+  --color-espresso-soft: #3E382E;
+  --color-warm-stone: #635849;
+  --color-amber: #B6925E;
+  --color-amber-deep: #94753E;
+  --color-amber-glow: #D6B983;
+  --color-amber-pale: #EFE4CE;
+  --color-champagne: #F0E9D8;
+  --color-ink-faint: #84776B;
+  --color-ink-wash: #ABA092;
 }
 
 html {
@@ -32,22 +35,26 @@ html {
 
 body {
   font-family: 'Inter', system-ui, sans-serif;
-  background-color: #FAF6F0;
-  color: #2D2418;
+  background-color: #F4F0E9;
+  background-image:
+    radial-gradient(1100px 700px at 85% -10%, rgba(214, 185, 131, 0.10), transparent 60%),
+    radial-gradient(900px 650px at -10% 105%, rgba(171, 160, 146, 0.10), transparent 55%);
+  background-attachment: fixed;
+  color: #292420;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 ::selection {
-  background: rgba(196, 162, 101, 0.22);
+  background: rgba(182, 146, 94, 0.25);
   color: inherit;
 }
 
 /* Elegant scrollbar */
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #D6C9B4; border-radius: 10px; }
-::-webkit-scrollbar-thumb:hover { background: #C4A265; }
+::-webkit-scrollbar-thumb { background: #CFC4B1; border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: #B6925E; }
 
 /* Gold shimmer */
 @keyframes shimmer {
@@ -55,7 +62,7 @@ body {
   100% { background-position: 200% center; }
 }
 .shimmer-text {
-  background: linear-gradient(90deg, #B8975F 0%, #D4BA82 25%, #F5EDD8 50%, #D4BA82 75%, #B8975F 100%);
+  background: linear-gradient(90deg, #A08148 0%, #D6B983 25%, #F0E7D1 50%, #D6B983 75%, #A08148 100%);
   background-size: 200% auto;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -85,9 +92,9 @@ body {
 
 /* Ring pulse */
 @keyframes ring-pulse {
-  0% { box-shadow: 0 0 0 0 rgba(196,162,101,0.35); }
-  70% { box-shadow: 0 0 0 20px rgba(196,162,101,0); }
-  100% { box-shadow: 0 0 0 0 rgba(196,162,101,0); }
+  0% { box-shadow: 0 0 0 0 rgba(182,146,94,0.35); }
+  70% { box-shadow: 0 0 0 20px rgba(182,146,94,0); }
+  100% { box-shadow: 0 0 0 0 rgba(182,146,94,0); }
 }
 
 /* Sticky note tape & pin styling */
@@ -102,9 +109,9 @@ body {
   transform: translateX(-50%) rotate(-1deg);
   width: 90px;
   height: 22px;
-  background: rgba(235, 222, 195, 0.75);
+  background: rgba(235, 224, 199, 0.75);
   backdrop-filter: blur(2px);
-  border: 1px dashed rgba(196, 162, 101, 0.4);
+  border: 1px dashed rgba(182, 146, 94, 0.4);
   box-shadow: 0 1px 4px rgba(0,0,0,0.05);
   z-index: 20;
 }
@@ -117,8 +124,8 @@ body {
   transform: rotate(42deg);
   width: 65px;
   height: 18px;
-  background: rgba(235, 222, 195, 0.75);
-  border: 1px dashed rgba(196, 162, 101, 0.35);
+  background: rgba(235, 224, 199, 0.75);
+  border: 1px dashed rgba(182, 146, 94, 0.35);
   z-index: 20;
 }
 
@@ -187,8 +194,8 @@ body {
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  background: #2D2418;
-  border: 2.5px solid #C4A265;
+  background: #292420;
+  border: 2.5px solid #B6925E;
   cursor: pointer;
   box-shadow: 0 2px 8px rgba(45,36,24,.35);
   transition: transform .15s ease;
@@ -198,8 +205,20 @@ body {
   width: 18px;
   height: 18px;
   border-radius: 50%;
-  background: #2D2418;
-  border: 2.5px solid #C4A265;
+  background: #292420;
+  border: 2.5px solid #B6925E;
   cursor: pointer;
   box-shadow: 0 2px 8px rgba(45,36,24,.35);
+}
+
+/* ===== Premium page grain (fixed, ultra-subtle) ===== */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0.028;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-size: 220px 220px;
 }
