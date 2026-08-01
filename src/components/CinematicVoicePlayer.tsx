@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import {
   Volume2, Pause, Play, RotateCcw, Sparkles, FileText,
-  ChevronDown, ChevronUp, Radio, Headphones,
+  ChevronDown, ChevronUp, Radio, Headphones, Rewind, FastForward,
 } from 'lucide-react';
 import { useNarration } from '../hooks/useNarration';
 import type { Topic } from '../data/topics';
@@ -13,14 +13,21 @@ interface Props {
 
 const AUDIO_RATES = [1, 1.25, 1.5, 0.85];
 
+const fmt = (s: number) => {
+  if (!isFinite(s) || s < 0) s = 0;
+  s = Math.floor(s);
+  return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
+};
+
 /** Drives the pre-rendered studio MP3 for topics that have one. */
 function useStudioAudio(topicId: string, enabled: boolean) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [playing, setPlaying] = useState(false);
   const [started, setStarted] = useState(false);
-  const [progress, setProgress] = useState(0);
+  const [cur, setCur] = useState(0);
   const [duration, setDuration] = useState(0);
   const [rateIdx, setRateIdx] = useState(0);
+  const [failed, setFailed] = useState(false);
 
   useEffect(() => {
     if (!enabled) return;
@@ -28,23 +35,26 @@ function useStudioAudio(topicId: string, enabled: boolean) {
     el.preload = 'auto';
     el.playbackRate = AUDIO_RATES[rateIdx];
 
-    const onTime = () => setProgress(el.duration ? el.currentTime / el.duration : 0);
+    const onTime = () => setCur(el.currentTime);
     const onMeta = () => setDuration(el.duration || 0);
-    const onEnd = () => { setPlaying(false); setProgress(0); };
-    const onPlay = () => setPlaying(true);
+    const onEnd = () => { setPlaying(false); };
+    const onPlay = () => { setPlaying(true); setStarted(true); };
     const onPause = () => setPlaying(false);
+    const onError = () => setFailed(true);
 
     el.addEventListener('timeupdate', onTime);
     el.addEventListener('loadedmetadata', onMeta);
     el.addEventListener('ended', onEnd);
     el.addEventListener('play', onPlay);
     el.addEventListener('pause', onPause);
+    el.addEventListener('error', onError);
 
     audioRef.current = el;
     setPlaying(false);
     setStarted(false);
-    setProgress(0);
+    setCur(0);
     setDuration(0);
+    setFailed(false);
 
     return () => {
       el.pause();
@@ -53,6 +63,7 @@ function useStudioAudio(topicId: string, enabled: boolean) {
       el.removeEventListener('ended', onEnd);
       el.removeEventListener('play', onPlay);
       el.removeEventListener('pause', onPause);
+      el.removeEventListener('error', onError);
       el.src = '';
       audioRef.current = null;
     };
@@ -66,32 +77,47 @@ function useStudioAudio(topicId: string, enabled: boolean) {
   const toggle = () => {
     const el = audioRef.current;
     if (!el) return;
-    if (el.paused) {
-      el.play().catch(() => {});
-      setStarted(true);
-    } else {
-      el.pause();
-    }
+    if (el.paused) el.play().catch(() => setFailed(true));
+    else el.pause();
   };
 
   const restart = () => {
     const el = audioRef.current;
     if (!el) return;
     el.currentTime = 0;
-    setProgress(0);
+    setCur(0);
     el.play().catch(() => {});
-    setStarted(true);
+  };
+
+  const seek = (sec: number) => {
+    const el = audioRef.current;
+    if (!el) return;
+    const d = el.duration || duration || 0;
+    el.currentTime = Math.min(Math.max(sec, 0), d || sec);
+    setCur(el.currentTime);
+  };
+
+  const skip = (delta: number) => {
+    const el = audioRef.current;
+    if (!el) return;
+    seek(el.currentTime + delta);
   };
 
   const cycleRate = () => setRateIdx(i => (i + 1) % AUDIO_RATES.length);
 
-  return { playing, started, progress, duration, rate: AUDIO_RATES[rateIdx], toggle, restart, cycleRate };
+  const progress = duration ? cur / duration : 0;
+
+  return {
+    playing, started, cur, duration, progress, failed,
+    rate: AUDIO_RATES[rateIdx], toggle, restart, seek, skip, cycleRate,
+  };
 }
 
 export default function CinematicVoicePlayer({ topic }: Props) {
-  const studio = hasNarration(topic.id);
+  const studioAvailable = hasNarration(topic.id);
   const narration = useNarration();
-  const audio = useStudioAudio(topic.id, studio);
+  const audio = useStudioAudio(topic.id, studioAvailable);
+  const studio = studioAvailable && !audio.failed;
   const [showFullTranscript, setShowFullTranscript] = useState(false);
 
   // Script fallbacks: studio narrations cover the cinematic story; TTS covers everything.
@@ -175,87 +201,132 @@ export default function CinematicVoicePlayer({ topic }: Props) {
           </p>
         </div>
 
-        {/* Audio Player Controls & Waveform */}
-        <div className="flex flex-col sm:flex-row items-center gap-5">
-          {/* Main Play/Pause Button */}
-          <button
-            onClick={handlePlayToggle}
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-3 rounded-full bg-espresso px-7 py-4 text-sm font-medium tracking-wide text-ivory shadow-xl shadow-espresso/20 hover:bg-espresso-ink hover:scale-105 active:scale-95 transition duration-300 group"
-          >
-            {isPlaying ? (
-              <>
-                <Pause className="w-4 h-4" />
-                <span>Pause Narration</span>
-              </>
-            ) : (
-              <>
-                <Play className="w-4 h-4 fill-current ml-0.5 group-hover:scale-110 transition" />
-                <span>
-                  {studio
-                    ? isStarted ? 'Resume Story' : '🎧 Listen to Studio Narration'
-                    : narration.speaking ? 'Resume Story' : 'Listen to Cinematic Story'}
-                </span>
-              </>
+        {/* ======== Player Controls ======== */}
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-wrap items-center gap-3">
+            {/* Skip back */}
+            {studio && (
+              <button
+                onClick={() => audio.skip(-10)}
+                className="w-11 h-11 rounded-full border border-ink-wash/25 bg-ivory grid place-items-center text-warm-stone hover:border-amber hover:text-amber-deep transition"
+                title="Back 10 seconds"
+              >
+                <Rewind className="w-4 h-4" />
+              </button>
             )}
-          </button>
 
-          {/* Reset button if active */}
-          {isStarted && (
+            {/* Main Play/Pause Button */}
             <button
-              onClick={handleRestart}
-              className="w-11 h-11 rounded-full border border-ink-wash/25 bg-ivory grid place-items-center text-warm-stone hover:border-amber hover:text-amber-deep transition"
-              title={studio ? 'Restart story' : 'Stop story'}
+              onClick={handlePlayToggle}
+              className="flex-1 sm:flex-none inline-flex items-center justify-center gap-3 rounded-full bg-espresso px-7 py-4 text-sm font-medium tracking-wide text-ivory shadow-xl shadow-espresso/20 hover:bg-espresso-ink hover:scale-105 active:scale-95 transition duration-300 group"
             >
-              <RotateCcw className="w-4 h-4" />
+              {isPlaying ? (
+                <>
+                  <Pause className="w-4 h-4" />
+                  <span>Pause Narration</span>
+                </>
+              ) : (
+                <>
+                  <Play className="w-4 h-4 fill-current ml-0.5 group-hover:scale-110 transition" />
+                  <span>
+                    {studio
+                      ? isStarted ? 'Resume Studio Voice' : 'Listen to Studio Narration'
+                      : narration.speaking ? 'Resume Story' : 'Listen to Cinematic Story'}
+                  </span>
+                </>
+              )}
             </button>
-          )}
 
-          {/* Equalizer & Progress Bar */}
-          <div className="flex-1 w-full flex flex-col gap-2">
-            <div className="flex items-center justify-between text-xs text-ink-faint">
-              <span>
-                {isPlaying
-                  ? studio ? 'Studio voice narrating…' : 'Narrating story…'
-                  : isStarted
-                    ? 'Paused'
-                    : studio
-                      ? `Ready · ${audio.duration ? Math.round(audio.duration) + 's clip · no robotic TTS' : 'no robotic TTS'}`
-                      : 'Ready to listen'}
-              </span>
-              {isPlaying && (
-                <div className="flex items-end gap-[3px] h-4">
-                  {[0, 1, 2, 3, 4, 5, 6].map(i => (
-                    <span
-                      key={i}
-                      className="w-[3px] rounded-full bg-gradient-to-t from-amber to-amber-deep"
-                      style={{
-                        animation: `eq 800ms ${i * 90}ms ease-in-out infinite`,
-                        height: '60%',
-                      }}
-                    />
-                  ))}
+            {/* Skip forward */}
+            {studio && (
+              <button
+                onClick={() => audio.skip(10)}
+                className="w-11 h-11 rounded-full border border-ink-wash/25 bg-ivory grid place-items-center text-warm-stone hover:border-amber hover:text-amber-deep transition"
+                title="Forward 10 seconds"
+              >
+                <FastForward className="w-4 h-4" />
+              </button>
+            )}
+
+            {/* Restart button if active */}
+            {isStarted && (
+              <button
+                onClick={handleRestart}
+                className="w-11 h-11 rounded-full border border-ink-wash/25 bg-ivory grid place-items-center text-warm-stone hover:border-amber hover:text-amber-deep transition"
+                title="Restart from beginning"
+              >
+                <RotateCcw className="w-4 h-4" />
+              </button>
+            )}
+
+            {/* Transcript toggle */}
+            <button
+              onClick={() => setShowFullTranscript(!showFullTranscript)}
+              className="ml-auto text-xs text-warm-stone hover:text-amber-deep flex items-center gap-1 font-medium transition whitespace-nowrap"
+            >
+              <FileText className="w-3.5 h-3.5 text-amber-deep" />
+              {showFullTranscript ? 'Hide script' : 'View full script'}
+              {showFullTranscript ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+            </button>
+          </div>
+
+          {/* Seek bar + time readout */}
+          <div className="flex items-center gap-3">
+            <span className="text-[11px] font-semibold tabular-nums text-ink-faint w-9 text-right">
+              {studio ? fmt(audio.cur) : isPlaying ? '▶' : ''}
+            </span>
+
+            <div className="flex-1 relative">
+              {studio ? (
+                <input
+                  type="range"
+                  min={0}
+                  max={Math.max(audio.duration, 1)}
+                  step={0.1}
+                  value={audio.cur}
+                  onChange={e => audio.seek(parseFloat(e.target.value))}
+                  aria-label="Seek narration"
+                  className="voice-seek w-full appearance-none h-2 rounded-full outline-none cursor-pointer"
+                  style={{
+                    background: `linear-gradient(to right, #C4A265 0%, #A8854A ${Math.round(progress * 100)}%, rgba(45,36,24,0.14) ${Math.round(progress * 100)}%, rgba(45,36,24,0.14) 100%)`,
+                  }}
+                />
+              ) : (
+                <div className="h-2 rounded-full bg-ink-wash/15 overflow-hidden">
+                  <div
+                    className="h-full rounded-full bg-gradient-to-r from-amber via-amber-glow to-amber-deep transition-[width] duration-300"
+                    style={{ width: `${Math.round(progress * 100)}%` }}
+                  />
                 </div>
               )}
             </div>
 
-            {/* Progress line */}
-            <div className="h-2 rounded-full bg-ink-wash/15 overflow-hidden">
-              <div
-                className="h-full rounded-full bg-gradient-to-r from-amber via-amber-glow to-amber-deep transition-[width] duration-300"
-                style={{ width: `${Math.round(progress * 100)}%` }}
-              />
-            </div>
+            <span className="text-[11px] font-semibold tabular-nums text-ink-faint w-9">
+              {studio ? fmt(audio.duration) : ''}
+            </span>
+
+            {isPlaying && (
+              <div className="flex items-end gap-[3px] h-4 w-8 justify-end">
+                {[0, 1, 2, 3, 4].map(i => (
+                  <span
+                    key={i}
+                    className="w-[3px] rounded-full bg-gradient-to-t from-amber to-amber-deep"
+                    style={{ animation: `eq 800ms ${i * 90}ms ease-in-out infinite`, height: '60%' }}
+                  />
+                ))}
+              </div>
+            )}
           </div>
 
-          {/* Transcript toggle */}
-          <button
-            onClick={() => setShowFullTranscript(!showFullTranscript)}
-            className="text-xs text-warm-stone hover:text-amber-deep flex items-center gap-1 font-medium transition whitespace-nowrap"
-          >
-            <FileText className="w-3.5 h-3.5 text-amber-deep" />
-            {showFullTranscript ? 'Hide script' : 'View full script'}
-            {showFullTranscript ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
-          </button>
+          <div className="text-[11px] text-ink-faint">
+            {isPlaying
+              ? studio ? 'Studio voice narrating…' : 'Narrating story…'
+              : isStarted
+                ? 'Paused — drag the slider to jump anywhere'
+                : studio
+                  ? 'Ready · human voice · no robotic TTS'
+                  : 'Ready to listen'}
+          </div>
         </div>
 
         {/* Collapsible Full Transcript */}

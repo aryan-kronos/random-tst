@@ -1,6 +1,8 @@
-import { useEffect, useState, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, ArrowRight, Gauge, Layers } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { motion } from 'framer-motion';
+import {
+  ArrowLeft, X, ArrowRight, Gauge, RefreshCw, Dices, Undo2, Sparkles,
+} from 'lucide-react';
 import { topics, type Topic, type CategoryId, type Difficulty, difficultyMeta, categories } from '../data/topics';
 import { playTickSound, playRevealChime } from '../utils/audio';
 import { CatIcon } from './Icon';
@@ -13,6 +15,9 @@ interface Props {
   onClose: () => void;
 }
 
+const SPIN_STEPS = 24;
+const CONFETTI = ['🎉', '✨', '🎤', '⭐', '💡', '🎙️', '🔥', '🌟'];
+
 export default function RouletteModal({
   isOpen,
   filterCategory,
@@ -20,98 +25,174 @@ export default function RouletteModal({
   onSelect,
   onClose,
 }: Props) {
-  const [currentIdx, setCurrentIdx] = useState(0);
-  const [isSpinning, setIsSpinning] = useState(false);
-  const [revealedTopic, setRevealedTopic] = useState<Topic | null>(null);
+  const [phase, setPhase] = useState<'idle' | 'spinning' | 'revealed'>('idle');
+  const [display, setDisplay] = useState<Topic>(topics[0]);
+  const [tick, setTick] = useState(0);
+  const poolRef = useRef<Topic[]>(topics);
+  const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
 
-  // Available candidate pool
-  const pool = useRef<Topic[]>([]);
+  const clearTimers = () => {
+    timers.current.forEach(clearTimeout);
+    timers.current = [];
+  };
 
+  // Build candidate pool from active filters
   useEffect(() => {
     let list = topics;
     if (filterCategory) list = list.filter(t => t.category === filterCategory);
     if (filterDifficulty) list = list.filter(t => t.difficulty === filterDifficulty);
-    if (list.length === 0) list = topics;
-    pool.current = list;
+    poolRef.current = list.length ? list : topics;
   }, [filterCategory, filterDifficulty]);
 
-  useEffect(() => {
-    if (!isOpen) {
-      setIsSpinning(false);
-      setRevealedTopic(null);
-      return;
+  const startSpin = () => {
+    clearTimers();
+    const p = poolRef.current.length ? poolRef.current : topics;
+    const winner = p[Math.floor(Math.random() * p.length)];
+    setPhase('spinning');
+    setTick(0);
+
+    let delay = 40;
+    for (let i = 0; i < SPIN_STEPS; i++) {
+      const at = delay;
+      timers.current.push(setTimeout(() => {
+        setDisplay(p[Math.floor(Math.random() * p.length)]);
+        setTick(i);
+        playTickSound(520 + i * 22);
+      }, at));
+      // deceleration curve: fast middle, heavy braking at the end
+      const remaining = SPIN_STEPS - 1 - i;
+      delay += remaining > 9 ? 26 : remaining > 4 ? 62 : 118;
     }
+    timers.current.push(setTimeout(() => {
+      setDisplay(winner);
+      setPhase('revealed');
+      playRevealChime();
+    }, delay + 80));
+  };
 
-    // Start spin sequence
-    setIsSpinning(true);
-    setRevealedTopic(null);
-    let step = 0;
-    const totalSteps = 24;
-    let delay = 45; // starts fast
-
-    const p = pool.current.length > 0 ? pool.current : topics;
-    const targetIdx = Math.floor(Math.random() * p.length);
-    const chosen = p[targetIdx];
-
-    const runStep = () => {
-      step++;
-      const randomDisplay = p[Math.floor(Math.random() * p.length)];
-      const idx = topics.findIndex(t => t.id === randomDisplay.id);
-      setCurrentIdx(idx >= 0 ? idx : 0);
-      playTickSound(500 + step * 18);
-
-      if (step < totalSteps) {
-        // Slow down dynamically
-        if (step > totalSteps - 10) {
-          delay += 35;
-        } else if (step > totalSteps - 6) {
-          delay += 70;
-        }
-        setTimeout(runStep, delay);
-      } else {
-        // Final landing
-        setRevealedTopic(chosen);
-        setIsSpinning(false);
-        playRevealChime();
-      }
-    };
-
-    const timer = setTimeout(runStep, 100);
-    return () => clearTimeout(timer);
+  // Auto-spin on open, clean reset on close
+  useEffect(() => {
+    if (isOpen) {
+      startSpin();
+    } else {
+      clearTimers();
+      setPhase('idle');
+    }
+    return clearTimers;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
+
+  // Escape to close + lock body scroll
+  useEffect(() => {
+    if (!isOpen) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', onKey);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [isOpen, onClose]);
 
   if (!isOpen) return null;
 
-  const displayItem = revealedTopic || topics[currentIdx] || topics[0];
-  const cat = categories.find(c => c.id === displayItem.category);
+  const spinning = phase === 'spinning';
+  const revealed = phase === 'revealed';
+  const cat = categories.find(c => c.id === display.category);
+  const poolSize = poolRef.current.length;
 
   return (
-    <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-espresso-ink/80 backdrop-blur-md">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.88, y: 20 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.9, y: 20 }}
-          transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-          className="relative w-full max-w-xl overflow-hidden rounded-[2.5rem] border border-amber/40 bg-gradient-to-b from-ivory via-parchment to-champagne/80 shadow-[0_25px_100px_-20px_rgba(196,162,101,0.6)] p-7 sm:p-10 text-center"
-        >
-          {/* Shimmering Aura Background */}
-          <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-80 h-80 rounded-full bg-gradient-to-br from-amber/30 via-champagne/40 to-transparent blur-3xl pointer-events-none" />
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-espresso-ink/80 backdrop-blur-md"
+      onClick={onClose}
+    >
+      <motion.div
+        onClick={e => e.stopPropagation()}
+        initial={{ opacity: 0, scale: 0.9, y: 24 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        transition={{ type: 'spring', stiffness: 280, damping: 24 }}
+        className="relative w-full max-w-xl overflow-hidden rounded-[2.5rem] border border-amber/40 bg-gradient-to-b from-ivory via-parchment to-champagne/80 shadow-[0_25px_100px_-20px_rgba(196,162,101,0.6)] p-6 sm:p-9"
+      >
+        {/* Aura */}
+        <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-80 h-80 rounded-full bg-gradient-to-br from-amber/30 via-champagne/40 to-transparent blur-3xl pointer-events-none" />
 
-          <div className="relative z-10">
-            {/* Header Badge */}
-            <div className="inline-flex items-center gap-2 rounded-full border border-amber/30 bg-ivory/80 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-amber-deep shadow-sm mb-6">
-              <Sparkles className="w-3.5 h-3.5 text-amber-deep animate-spin" style={{ animationDuration: '3s' }} />
-              {isSpinning ? 'Consulting the Oracle…' : 'Destiny Revealed'}
+        <div className="relative z-10">
+          {/* ====== TOP BAR: Back · Oracle badge · Close ====== */}
+          <div className="flex items-center justify-between gap-3 mb-6">
+            <button
+              onClick={onClose}
+              className="inline-flex items-center gap-2 rounded-full border border-ink-wash/25 bg-ivory/90 pl-3.5 pr-4.5 pr-4 py-2 text-xs sm:text-sm font-semibold text-warm-stone hover:text-espresso hover:border-amber transition shadow-sm"
+            >
+              <ArrowLeft className="w-4 h-4" /> Back
+            </button>
+
+            <div className="inline-flex items-center gap-2 rounded-full border border-amber/30 bg-ivory/80 px-3.5 py-1.5 text-[10px] sm:text-xs font-semibold uppercase tracking-[0.18em] text-amber-deep shadow-sm">
+              <Dices className={`w-3.5 h-3.5 ${spinning ? 'animate-spin' : ''}`} style={{ animationDuration: '1.2s' }} />
+              {spinning ? 'Consulting the Oracle…' : 'Destiny Revealed'}
             </div>
 
-            {/* Visual Card Stage */}
-            <div className="relative mx-auto w-full max-w-md overflow-hidden rounded-3xl border border-ink-wash/15 bg-ivory shadow-xl mb-6 group">
-              <div className="relative h-48 sm:h-56 overflow-hidden">
+            <button
+              onClick={onClose}
+              className="w-9 h-9 rounded-full grid place-items-center border border-ink-wash/25 bg-ivory/90 text-warm-stone hover:text-espresso hover:border-amber transition shadow-sm"
+              title="Close (Esc)"
+              aria-label="Close"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+
+          {/* Pool context */}
+          <div className="text-center mb-4 text-[11px] sm:text-xs text-ink-faint font-medium">
+            Spinning across <span className="font-bold text-warm-stone">{poolSize}</span> topic{poolSize === 1 ? '' : 's'}
+            {filterCategory && <> · Field: <span className="font-semibold text-amber-deep">{cat?.label ?? filterCategory}</span></>}
+            {filterDifficulty && <> · Level: <span className="font-semibold text-amber-deep">{difficultyMeta[filterDifficulty].label}</span></>}
+          </div>
+
+          {/* ====== THE CARD STAGE ====== */}
+          <div className="relative">
+            {/* Reveal glow ring */}
+            {revealed && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.6 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.6, ease: 'easeOut' }}
+                className="absolute -inset-3 rounded-[2.2rem] bg-gradient-to-r from-amber/40 via-amber-deep/30 to-amber/40 blur-lg pointer-events-none"
+              />
+            )}
+
+            {/* Floating confetti on reveal */}
+            {revealed && CONFETTI.map((c, i) => (
+              <span
+                key={`${display.id}-${i}`}
+                className="float-up absolute z-20 text-xl sm:text-2xl pointer-events-none"
+                style={{
+                  left: `${8 + i * 11}%`,
+                  bottom: '-4px',
+                  animationDelay: `${i * 0.12}s`,
+                }}
+              >
+                {c}
+              </span>
+            ))}
+
+            <motion.div
+              key={revealed ? `win-${display.id}` : 'stage'}
+              initial={revealed ? { opacity: 0, scale: 0.72, rotateX: 24, y: 26 } : false}
+              animate={{ opacity: 1, scale: 1, rotateX: 0, y: 0 }}
+              transition={{ type: 'spring', stiffness: 260, damping: 16 }}
+              className={`relative mx-auto w-full overflow-hidden rounded-3xl border bg-ivory shadow-xl mb-5 ${
+                revealed ? 'border-amber/45' : 'border-ink-wash/15'
+              } ${spinning ? 'shake-soft' : ''}`}
+            >
+              <div className="relative h-44 sm:h-52 overflow-hidden">
                 <img
-                  src={displayItem.image}
-                  alt={displayItem.imageAlt}
-                  className={`w-full h-full object-cover transition-transform duration-700 ${isSpinning ? 'scale-110 blur-[1px]' : 'scale-100 blur-0'}`}
+                  key={`img-${display.id}-${tick}`}
+                  src={display.image}
+                  alt={display.imageAlt}
+                  className={`w-full h-full object-cover transition-none ${
+                    spinning ? 'scale-110 blur-[2.5px] saturate-125' : 'scale-100 blur-0'
+                  }`}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-espresso-ink/90 via-espresso-ink/30 to-transparent" />
 
@@ -123,19 +204,22 @@ export default function RouletteModal({
                   </span>
                   <span
                     className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-ivory shadow-sm"
-                    style={{ background: difficultyMeta[displayItem.difficulty].color }}
+                    style={{ background: difficultyMeta[display.difficulty].color }}
                   >
                     <Gauge className="w-3 h-3" />
-                    {difficultyMeta[displayItem.difficulty].label}
+                    {difficultyMeta[display.difficulty].label}
                   </span>
                 </div>
 
                 <div className="absolute bottom-4 left-4 right-4 text-left">
-                  <h3 className="font-display text-2xl sm:text-3xl text-ivory leading-tight drop-shadow-md">
-                    {displayItem.title}
+                  <h3
+                    key={`t-${display.id}-${tick}`}
+                    className={`font-display text-2xl sm:text-3xl text-ivory leading-tight drop-shadow-md ${spinning ? 'roulette-roll' : ''}`}
+                  >
+                    {display.title}
                   </h3>
                   <p className="font-editorial italic text-amber-glow text-sm sm:text-base drop-shadow">
-                    {displayItem.subtitle}
+                    {display.subtitle}
                   </p>
                 </div>
               </div>
@@ -143,70 +227,65 @@ export default function RouletteModal({
               {/* Teaser text */}
               <div className="p-4 sm:p-5 text-left bg-gradient-to-b from-ivory to-cream">
                 <p className="text-xs sm:text-sm text-warm-stone line-clamp-2 leading-relaxed">
-                  {displayItem.description}
+                  {display.description}
                 </p>
               </div>
-            </div>
-
-            {/* Bottom Actions */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-              {revealedTopic ? (
-                <>
-                  <button
-                    onClick={() => {
-                      onSelect(revealedTopic);
-                      onClose();
-                    }}
-                    className="w-full sm:w-auto flex-1 inline-flex items-center justify-center gap-3 rounded-full bg-espresso px-8 py-4 text-sm font-medium tracking-wide text-ivory shadow-xl shadow-espresso/25 hover:bg-espresso-ink hover:scale-105 active:scale-95 transition duration-300"
-                  >
-                    <span>Enter Deep Masterclass</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </button>
-                  <button
-                    onClick={() => {
-                      setIsSpinning(true);
-                      setRevealedTopic(null);
-                      // Trigger another spin
-                      let step = 0;
-                      const totalSteps = 20;
-                      let delay = 50;
-                      const p = pool.current.length > 0 ? pool.current : topics;
-                      const targetIdx = Math.floor(Math.random() * p.length);
-                      const chosen = p[targetIdx];
-
-                      const runStep = () => {
-                        step++;
-                        const randomDisplay = p[Math.floor(Math.random() * p.length)];
-                        const idx = topics.findIndex(t => t.id === randomDisplay.id);
-                        setCurrentIdx(idx >= 0 ? idx : 0);
-                        playTickSound(500 + step * 20);
-
-                        if (step < totalSteps) {
-                          if (step > totalSteps - 8) delay += 40;
-                          setTimeout(runStep, delay);
-                        } else {
-                          setRevealedTopic(chosen);
-                          setIsSpinning(false);
-                          playRevealChime();
-                        }
-                      };
-                      setTimeout(runStep, 50);
-                    }}
-                    className="w-full sm:w-auto inline-flex items-center justify-center rounded-full border border-ink-wash/25 bg-ivory px-6 py-4 text-sm font-medium text-warm-stone hover:border-amber hover:text-amber-deep transition"
-                  >
-                    Spin Again
-                  </button>
-                </>
-              ) : (
-                <div className="flex items-center justify-center gap-2 py-3 text-xs uppercase tracking-[0.25em] text-ink-faint font-semibold animate-pulse">
-                  <Layers className="w-4 h-4 text-amber-deep" />
-                  Selecting optimal speaking topic…
-                </div>
-              )}
-            </div>
+            </motion.div>
           </div>
-        </motion.div>
-      </div>
-    </AnimatePresence>
+
+          {/* Spin progress bar */}
+          <div className="h-1.5 rounded-full bg-ink-wash/12 overflow-hidden mb-6">
+            <div
+              className={`h-full rounded-full transition-[width] ease-linear ${
+                revealed ? 'bg-gradient-to-r from-amber to-amber-deep' : 'bg-gradient-to-r from-amber/70 to-amber-deep/70'
+              }`}
+              style={{ width: revealed ? '100%' : `${Math.round((tick / SPIN_STEPS) * 100)}%` }}
+            />
+          </div>
+
+          {/* ====== ACTIONS ====== */}
+          {spinning && (
+            <div className="flex flex-col items-center gap-3">
+              <div className="flex items-center justify-center gap-2 py-2.5 text-xs uppercase tracking-[0.25em] text-ink-faint font-semibold animate-pulse">
+                <Sparkles className="w-4 h-4 text-amber-deep" />
+                Fate is choosing your topic…
+              </div>
+              <button
+                onClick={onClose}
+                className="text-xs text-warm-stone hover:text-espresso inline-flex items-center gap-1.5 font-semibold transition"
+              >
+                <Undo2 className="w-3.5 h-3.5" /> Cancel and go back
+              </button>
+            </div>
+          )}
+
+          {revealed && (
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+              <button
+                onClick={() => { onSelect(display); onClose(); }}
+                className="w-full sm:w-auto flex-1 inline-flex items-center justify-center gap-3 rounded-full bg-espresso px-8 py-4 text-sm font-medium tracking-wide text-ivory shadow-xl shadow-espresso/25 hover:bg-espresso-ink hover:scale-105 active:scale-95 transition duration-300"
+              >
+                <span>Enter Deep Masterclass</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+
+              <button
+                onClick={startSpin}
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full border border-ink-wash/25 bg-ivory px-6 py-4 text-sm font-semibold text-warm-stone hover:border-amber hover:text-amber-deep transition"
+              >
+                <RefreshCw className="w-4 h-4" /> Spin Again
+              </button>
+
+              <button
+                onClick={onClose}
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full px-6 py-4 text-sm font-semibold text-warm-stone hover:text-espresso transition"
+              >
+                <ArrowLeft className="w-4 h-4" /> Go Back
+              </button>
+            </div>
+          )}
+        </div>
+      </motion.div>
+    </div>
   );
 }

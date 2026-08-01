@@ -158,3 +158,48 @@ body {
   background-size: 256px 256px;
   z-index: 10;
 }
+
+/* ===== Roulette modal animations ===== */
+@keyframes roulette-roll {
+  0%   { transform: translateY(10px) scale(.96); opacity: .2; filter: blur(4px); }
+  100% { transform: none; opacity: 1; filter: blur(0); }
+}
+@keyframes shake-soft {
+  0%, 100% { transform: translate(0,0) rotate(0deg); }
+  20%  { transform: translate(-3px, 1px) rotate(-.3deg); }
+  40%  { transform: translate(3px, -1.5px) rotate(.3deg); }
+  60%  { transform: translate(-2.5px, -1px) rotate(-.2deg); }
+  80%  { transform: translate(2.5px, 1.5px) rotate(.2deg); }
+}
+@keyframes float-up {
+  0%   { transform: translateY(6px) scale(.5) rotate(0deg); opacity: 0; }
+  15%  { opacity: 1; }
+  100% { transform: translateY(-110px) scale(1.25) rotate(20deg); opacity: 0; }
+}
+.roulette-roll { animation: roulette-roll .14s ease-out; }
+.shake-soft    { animation: shake-soft .22s ease-in-out infinite; }
+.float-up      { animation: float-up 1.4s ease-out forwards; }
+
+/* ===== Voice narration seek slider ===== */
+.voice-seek::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #2D2418;
+  border: 2.5px solid #C4A265;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(45,36,24,.35);
+  transition: transform .15s ease;
+}
+.voice-seek::-webkit-slider-thumb:hover { transform: scale(1.15); }
+.voice-seek::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #2D2418;
+  border: 2.5px solid #C4A265;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(45,36,24,.35);
+}
