@@ -17,6 +17,7 @@ import StickyNoteCard from './components/StickyNoteCard';
 import RouletteModal from './components/RouletteModal';
 import MasterChecklist from './components/MasterChecklist';
 import CategoryHoverCard from './components/CategoryHoverCard';
+import LogoMark from './components/Logo';
 import { hasNoteArt, noteArtUrls } from './data/assets';
 import { useStats, xpFor, LEVELS } from './hooks/useStats';
 import { playCompleteFanfare } from './utils/audio';
@@ -106,9 +107,7 @@ export default function App() {
       <header className="sticky top-0 z-50 backdrop-blur-xl bg-cream/80 border-b border-ink-wash/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 h-16 sm:h-18 flex items-center justify-between">
           <button onClick={() => setStage('dashboard')} className="flex items-center gap-3 group text-left">
-            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-amber via-amber-deep to-[#8C6C38] grid place-items-center shadow-lg shadow-amber/25 group-hover:shadow-amber/40 transition">
-              <Mic className="w-4 h-4 sm:w-[18px] sm:h-[18px] text-ivory" />
-            </div>
+            <LogoMark className="w-9 h-9 sm:w-10 sm:h-10 drop-shadow-md group-hover:drop-shadow-lg transition" />
             <div className="leading-none">
               <div className="font-editorial text-xl sm:text-2xl tracking-tight">Verbalis</div>
               <div className="text-[9px] sm:text-[10px] uppercase tracking-[0.22em] text-ink-faint mt-0.5">Master of Speech</div>
@@ -1071,9 +1070,7 @@ export default function App() {
       <footer className="relative z-10 border-t border-ink-wash/10 bg-cream/80 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 py-10 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber to-amber-deep grid place-items-center">
-              <Mic className="w-3.5 h-3.5 text-ivory" />
-            </div>
+            <LogoMark className="w-8 h-8 drop-shadow-sm" />
             <span className="font-editorial text-xl font-bold">Verbalis</span>
           </div>
           <p className="text-xs text-ink-faint text-center sm:text-right">
