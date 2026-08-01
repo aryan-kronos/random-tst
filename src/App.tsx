@@ -19,6 +19,7 @@ import MasterChecklist from './components/MasterChecklist';
 import CategoryHoverCard from './components/CategoryHoverCard';
 import LogoMark from './components/Logo';
 import CursorGlow from './components/CursorGlow';
+import DynamicGreeting from './components/DynamicGreeting';
 import { hasNoteArt, noteArtUrls } from './data/assets';
 import { useStats, xpFor, LEVELS } from './hooks/useStats';
 import { playCompleteFanfare } from './utils/audio';
@@ -26,13 +27,6 @@ import { playCompleteFanfare } from './utils/audio';
 type Stage = 'dashboard' | 'learn' | 'speak' | 'done';
 const ease = [0.22, 1, 0.36, 1] as const;
 const DIFFS: Difficulty[] = ['Gentle', 'Moderate', 'Bold'];
-
-function greeting() {
-  const h = new Date().getHours();
-  if (h < 12) return 'Good morning';
-  if (h < 18) return 'Good afternoon';
-  return 'Good evening';
-}
 
 export default function App() {
   const [stage, setStage] = useState<Stage>('dashboard');
@@ -173,9 +167,7 @@ export default function App() {
               <div className="pt-10 sm:pt-16 pb-8">
                 <div className="flex items-center gap-3 mb-4">
                   <span className="h-px w-10 bg-gradient-to-r from-transparent to-amber" />
-                  <span className="text-[11px] uppercase tracking-[0.24em] text-ink-faint font-medium">
-                    {greeting()} · Concision & Rhetoric Gym
-                  </span>
+                  <DynamicGreeting streak={stats.streak} totalTakes={stats.sessions.length} />
                 </div>
                 <h1 className="font-display text-4xl sm:text-6xl lg:text-7xl leading-[0.96] tracking-tight max-w-4xl">
                   Learn deeply.<br />
