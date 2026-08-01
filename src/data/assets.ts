@@ -23,10 +23,20 @@ import audioA1 from '../assets/audio/a1.mp3';
 import audioA2 from '../assets/audio/a2.mp3';
 import audioA3 from '../assets/audio/a3.mp3';
 import audioH1 from '../assets/audio/h1.mp3';
+import audioH2 from '../assets/audio/h2.mp3';
 import audioH3 from '../assets/audio/h3.mp3';
 import audioN1 from '../assets/audio/n1.mp3';
+import audioN2 from '../assets/audio/n2.mp3';
+import audioN3 from '../assets/audio/n3.mp3';
 import audioT1 from '../assets/audio/t1.mp3';
+import audioT2 from '../assets/audio/t2.mp3';
+import audioT3 from '../assets/audio/t3.mp3';
 import audioL1 from '../assets/audio/l1.mp3';
+import audioL2 from '../assets/audio/l2.mp3';
+import audioL3 from '../assets/audio/l3.mp3';
+import audioL4 from '../assets/audio/l4.mp3';
+import audioSo1 from '../assets/audio/so1.mp3';
+import audioSo2 from '../assets/audio/so2.mp3';
 import audioSo3 from '../assets/audio/so3.mp3';
 import audioB3 from '../assets/audio/b3.mp3';
 
@@ -45,10 +55,20 @@ import noteA1 from '../assets/notes/a1.jpg';
 import noteA2 from '../assets/notes/a2.jpg';
 import noteA3 from '../assets/notes/a3.jpg';
 import noteH1 from '../assets/notes/h1.jpg';
+import noteH2 from '../assets/notes/h2.jpg';
 import noteH3 from '../assets/notes/h3.jpg';
 import noteN1 from '../assets/notes/n1.jpg';
+import noteN2 from '../assets/notes/n2.jpg';
+import noteN3 from '../assets/notes/n3.jpg';
 import noteT1 from '../assets/notes/t1.jpg';
+import noteT2 from '../assets/notes/t2.jpg';
+import noteT3 from '../assets/notes/t3.jpg';
 import noteL1 from '../assets/notes/l1.jpg';
+import noteL2 from '../assets/notes/l2.jpg';
+import noteL3 from '../assets/notes/l3.jpg';
+import noteL4 from '../assets/notes/l4.jpg';
+import noteSo1 from '../assets/notes/so1.jpg';
+import noteSo2 from '../assets/notes/so2.jpg';
 import noteSo3 from '../assets/notes/so3.jpg';
 import noteB3 from '../assets/notes/b3.jpg';
 
@@ -81,10 +101,20 @@ const NARRATIONS: Record<string, string> = {
   a2: audioA2,
   a3: audioA3,
   h1: audioH1,
+  h2: audioH2,
   h3: audioH3,
   n1: audioN1,
+  n2: audioN2,
+  n3: audioN3,
   t1: audioT1,
+  t2: audioT2,
+  t3: audioT3,
   l1: audioL1,
+  l2: audioL2,
+  l3: audioL3,
+  l4: audioL4,
+  so1: audioSo1,
+  so2: audioSo2,
   so3: audioSo3,
   b3: audioB3,
 };
@@ -105,10 +135,20 @@ const NOTE_ART: Record<string, string[]> = {
   a2: [noteA2],
   a3: [noteA3],
   h1: [noteH1],
+  h2: [noteH2],
   h3: [noteH3],
   n1: [noteN1],
+  n2: [noteN2],
+  n3: [noteN3],
   t1: [noteT1],
+  t2: [noteT2],
+  t3: [noteT3],
   l1: [noteL1],
+  l2: [noteL2],
+  l3: [noteL3],
+  l4: [noteL4],
+  so1: [noteSo1],
+  so2: [noteSo2],
   so3: [noteSo3],
   b3: [noteB3],
 };
