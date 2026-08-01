@@ -1,0 +1,1082 @@
+import { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+  Mic, Shuffle, ChevronLeft, Flame, CheckCircle2, BookOpen,
+  Clock3, Layers, ArrowRight, Lightbulb, PenLine, Sparkles,
+  History, Trophy, X, Zap, Award, Gauge, Star,
+  CheckSquare,
+} from 'lucide-react';
+import {
+  categories, getTopicsByCategory, countByDifficulty,
+  difficultyMeta, totalTopics, type Topic, type CategoryId, type Difficulty,
+} from './data/topics';
+import { CatIcon } from './components/Icon';
+import SpeakTimer from './components/SpeakTimer';
+import CinematicVoicePlayer from './components/CinematicVoicePlayer';
+import StickyNoteCard from './components/StickyNoteCard';
+import RouletteModal from './components/RouletteModal';
+import MasterChecklist from './components/MasterChecklist';
+import CategoryHoverCard from './components/CategoryHoverCard';
+import { hasNoteArt, noteArtUrl } from './data/assets';
+import { useStats, xpFor, LEVELS } from './hooks/useStats';
+import { playCompleteFanfare } from './utils/audio';
+
+type Stage = 'dashboard' | 'learn' | 'speak' | 'done';
+const ease = [0.22, 1, 0.36, 1] as const;
+const DIFFS: Difficulty[] = ['Gentle', 'Moderate', 'Bold'];
+
+function greeting() {
+  const h = new Date().getHours();
+  if (h < 12) return 'Good morning';
+  if (h < 18) return 'Good afternoon';
+  return 'Good evening';
+}
+
+export default function App() {
+  const [stage, setStage] = useState<Stage>('dashboard');
+  const [topic, setTopic] = useState<Topic | null>(null);
+  const [filter, setFilter] = useState<CategoryId | null>(null);
+  const [diff, setDiff] = useState<Difficulty | null>(null);
+  const [isRouletteOpen, setIsRouletteOpen] = useState(false);
+  const [notes, setNotes] = useState('');
+  const [activeTab, setActiveTab] = useState<'learn' | 'checklist'>('learn');
+
+  const {
+    stats,
+    recordSession,
+    toggleMastered,
+    totalMinutes,
+    level,
+    lastGain,
+    masteredCount,
+  } = useStats();
+
+  const topRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    topRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, [stage]);
+
+  const handleStartRoulette = (cat: CategoryId | null = filter, d: Difficulty | null = diff) => {
+    setFilter(cat);
+    setDiff(d);
+    setIsRouletteOpen(true);
+  };
+
+  const handleSelectTopicFromDraw = (chosen: Topic) => {
+    setTopic(chosen);
+    setNotes('');
+    setStage('learn');
+  };
+
+  const chooseTopicDirectly = (t: Topic) => {
+    setTopic(t);
+    setNotes('');
+    setStage('learn');
+  };
+
+  const handleComplete = (secs: number) => {
+    if (topic) {
+      recordSession({
+        topicId: topic.id,
+        title: topic.title,
+        category: topic.category,
+        difficulty: topic.difficulty,
+        seconds: secs,
+        xp: xpFor[topic.difficulty],
+      });
+      playCompleteFanfare();
+    }
+    setTimeout(() => setStage('done'), 800);
+  };
+
+  const catOf = (id: string) => categories.find(c => c.id === id);
+
+  return (
+    <div className="min-h-screen bg-cream text-espresso font-body relative overflow-x-hidden">
+      <div ref={topRef} />
+
+      {/* Ambient background gradients */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute -top-40 -right-40 w-[700px] h-[700px] rounded-full bg-gradient-to-br from-amber-pale/40 via-champagne/30 to-transparent blur-3xl" />
+        <div className="absolute top-1/3 -left-52 w-[600px] h-[600px] rounded-full bg-gradient-to-tr from-rose-fog/40 to-transparent blur-3xl" />
+      </div>
+
+      {/* ================= TOP BAR ================= */}
+      <header className="sticky top-0 z-50 backdrop-blur-xl bg-cream/80 border-b border-ink-wash/10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 h-16 sm:h-18 flex items-center justify-between">
+          <button onClick={() => setStage('dashboard')} className="flex items-center gap-3 group text-left">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-amber via-amber-deep to-[#8C6C38] grid place-items-center shadow-lg shadow-amber/25 group-hover:shadow-amber/40 transition">
+              <Mic className="w-4 h-4 sm:w-[18px] sm:h-[18px] text-ivory" />
+            </div>
+            <div className="leading-none">
+              <div className="font-editorial text-xl sm:text-2xl tracking-tight">Verbalis</div>
+              <div className="text-[9px] sm:text-[10px] uppercase tracking-[0.22em] text-ink-faint mt-0.5">Master of Speech</div>
+            </div>
+          </button>
+
+          <div className="flex items-center gap-2 sm:gap-3">
+            {/* Level Chip */}
+            <div className="hidden md:flex items-center gap-2 bg-ivory border border-ink-wash/15 rounded-full pl-1.5 pr-4 py-1.5 shadow-xs">
+              <span className="w-7 h-7 rounded-full bg-gradient-to-br from-amber to-amber-deep grid place-items-center text-ivory text-xs font-bold shadow-inner">
+                {level.current.level}
+              </span>
+              <div className="leading-none">
+                <div className="text-xs font-semibold">{level.current.title}</div>
+                <div className="text-[9px] text-ink-faint">{stats.xp} XP</div>
+              </div>
+            </div>
+
+            {/* Mastered Topics Counter */}
+            <div className="hidden sm:flex items-center gap-2 bg-ivory border border-ink-wash/15 rounded-full px-3.5 py-1.5 shadow-xs">
+              <CheckSquare className="w-3.5 h-3.5 text-[#5A6B4A]" />
+              <span className="text-xs font-semibold tabular-nums text-espresso">{masteredCount}/32</span>
+              <span className="text-[10px] uppercase tracking-wider text-ink-faint">Mastered</span>
+            </div>
+
+            {/* Streak */}
+            <div className="hidden xs:flex items-center gap-2 bg-ivory border border-ink-wash/15 rounded-full px-3 py-1.5 shadow-xs">
+              <Flame className={`w-4 h-4 ${stats.streak > 0 ? 'text-[#C4703A]' : 'text-ink-wash'}`} />
+              <span className="text-xs font-semibold tabular-nums">{stats.streak}d</span>
+            </div>
+
+            {stage !== 'dashboard' && (
+              <button
+                onClick={() => setStage('dashboard')}
+                className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-medium text-warm-stone hover:text-espresso border border-ink-wash/20 hover:border-amber/50 bg-ivory rounded-full px-4 py-2 transition"
+              >
+                <ChevronLeft className="w-4 h-4" /> <span>Dashboard</span>
+              </button>
+            )}
+          </div>
+        </div>
+      </header>
+
+      <main className="relative z-10 max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 pb-24">
+        <AnimatePresence mode="wait">
+
+          {/* ============================================================ */}
+          {/* DASHBOARD                                                    */}
+          {/* ============================================================ */}
+          {stage === 'dashboard' && (
+            <motion.div
+              key="dash"
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -12 }}
+              transition={{ duration: 0.5, ease }}
+            >
+              {/* Hero Greeting & Headline */}
+              <div className="pt-10 sm:pt-16 pb-8">
+                <div className="flex items-center gap-3 mb-4">
+                  <span className="h-px w-10 bg-gradient-to-r from-transparent to-amber" />
+                  <span className="text-[11px] uppercase tracking-[0.24em] text-ink-faint font-medium">
+                    {greeting()} · Concision & Rhetoric Gym
+                  </span>
+                </div>
+                <h1 className="font-display text-4xl sm:text-6xl lg:text-7xl leading-[0.96] tracking-tight max-w-4xl">
+                  Learn deeply.<br />
+                  <span className="font-editorial italic font-light text-amber-deep shimmer-text">Speak with authority.</span> In sixty seconds.
+                </h1>
+                <p className="mt-5 text-base sm:text-lg text-warm-stone font-light max-w-2xl leading-relaxed">
+                  Draw an intriguing topic at random, absorb the rich imagery, handwritten notes, and cinematic storytelling, then master the 60-second speech blueprint.
+                </p>
+              </div>
+
+              {/* LEVEL PROGRESS BANNER */}
+              <div className="rounded-[2rem] border border-ink-wash/15 bg-gradient-to-r from-ivory via-parchment/60 to-champagne/50 p-6 sm:p-8 mb-8 shadow-[0_2px_24px_-10px_rgba(45,36,24,0.1)]">
+                <div className="flex flex-col sm:flex-row items-center gap-6">
+                  <div className="relative shrink-0">
+                    <svg viewBox="0 0 80 80" className="w-20 h-20 -rotate-90">
+                      <circle cx="40" cy="40" r="34" fill="none" stroke="#E7DCC9" strokeWidth="6" />
+                      <circle
+                        cx="40" cy="40" r="34" fill="none" stroke="url(#lvlGrad)" strokeWidth="6" strokeLinecap="round"
+                        strokeDasharray={2 * Math.PI * 34}
+                        strokeDashoffset={2 * Math.PI * 34 * (1 - level.progress)}
+                        style={{ transition: 'stroke-dashoffset .8s ease' }}
+                      />
+                      <defs>
+                        <linearGradient id="lvlGrad" x1="0" y1="0" x2="1" y2="1">
+                          <stop offset="0%" stopColor="#D9BE83" />
+                          <stop offset="100%" stopColor="#A8854A" />
+                        </linearGradient>
+                      </defs>
+                    </svg>
+                    <div className="absolute inset-0 grid place-items-center">
+                      <span className="font-display text-3xl leading-none text-espresso font-bold">
+                        {level.current.level}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex-1 w-full text-center sm:text-left">
+                    <div className="flex items-center justify-center sm:justify-start gap-2.5 flex-wrap">
+                      <span className="font-editorial text-2xl sm:text-3xl text-espresso">{level.current.title}</span>
+                      <span className="text-xs bg-champagne text-amber-deep border border-amber/30 rounded-full px-3 py-0.5 font-semibold">
+                        Rank {level.current.level} of 10
+                      </span>
+                    </div>
+                    <div className="mt-2.5 h-2 rounded-full bg-ink-wash/15 overflow-hidden">
+                      <div
+                        className="h-full rounded-full bg-gradient-to-r from-amber via-amber-glow to-amber-deep transition-[width] duration-700"
+                        style={{ width: `${level.progress * 100}%` }}
+                      />
+                    </div>
+                    <p className="text-xs text-ink-faint mt-2">
+                      {level.next ? (
+                        <>
+                          <span className="font-semibold text-warm-stone">{level.toNext} XP remaining</span> to reach <span className="font-semibold text-warm-stone">{level.next.title}</span>
+                        </>
+                      ) : (
+                        'Grand Orator Status Achieved — Master Level'
+                      )}
+                    </p>
+                  </div>
+
+                  <div className="flex sm:flex-col gap-2 shrink-0">
+                    <button
+                      onClick={() => handleStartRoulette()}
+                      className="inline-flex items-center gap-2 bg-espresso text-ivory px-6 py-3 rounded-full text-xs font-semibold uppercase tracking-wider hover:bg-espresso-ink shadow-md"
+                    >
+                      <Shuffle className="w-3.5 h-3.5 text-amber-glow" /> Quick Draw
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* STAT STRIP */}
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-10">
+                {[
+                  { label: 'Current streak', value: stats.streak, suffix: stats.streak === 1 ? 'day' : 'days', icon: Flame },
+                  { label: 'Topics Mastered', value: masteredCount, suffix: `/${totalTopics}`, icon: CheckSquare },
+                  { label: 'Minutes Spoken', value: totalMinutes, suffix: 'min', icon: Clock3 },
+                  { label: 'Total Experience', value: stats.xp, suffix: 'xp', icon: Zap },
+                ].map(s => (
+                  <div key={s.label} className="bg-ivory/80 backdrop-blur-xs rounded-2xl border border-ink-wash/12 p-4 sm:p-5 shadow-[0_2px_20px_-8px_rgba(45,36,24,0.08)]">
+                    <s.icon className="w-4 h-4 text-amber-deep mb-3" />
+                    <div className="font-display text-3xl sm:text-4xl leading-none tabular-nums text-espresso">
+                      {s.value}<span className="text-base sm:text-lg text-ink-faint font-body font-light ml-1">{s.suffix}</span>
+                    </div>
+                    <div className="text-[11px] uppercase tracking-[0.12em] text-ink-faint mt-2">{s.label}</div>
+                  </div>
+                ))}
+              </div>
+
+              {/* ================= EPIC RANDOM DRAW EXPERIENCE BANNER ================= */}
+              <div className="relative overflow-hidden rounded-[2.5rem] border border-amber/35 bg-gradient-to-br from-ivory via-parchment/70 to-champagne/60 shadow-[0_24px_90px_-40px_rgba(196,162,101,0.45)] p-7 sm:p-12 lg:p-14 mb-12">
+                <div className="absolute -top-24 -right-24 w-80 h-80 rounded-full bg-gradient-to-br from-amber/20 via-champagne/30 to-transparent blur-3xl pointer-events-none" />
+
+                <div className="relative z-10 max-w-3xl">
+                  <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-amber-deep mb-4 bg-ivory/80 px-3 py-1 rounded-full border border-amber/25">
+                    <Sparkles className="w-3.5 h-3.5 text-amber-deep" />
+                    Interactive Topic Oracle
+                  </div>
+
+                  <h2 className="font-display text-3xl sm:text-5xl lg:text-6xl leading-[1.02] tracking-tight mb-5">
+                    Choose a Random Topic
+                  </h2>
+
+                  <p className="text-base sm:text-lg text-warm-stone leading-relaxed mb-8 font-light">
+                    Click below to trigger the randomized selector. Dive into full visual descriptions, sticky notes, cinematic voiceover, and a custom 60-second speaking blueprint.
+                  </p>
+
+                  {/* DIFFICULTY FILTER BUTTONS */}
+                  <div className="mb-8">
+                    <div className="flex items-center gap-2 mb-3">
+                      <Gauge className="w-4 h-4 text-amber-deep" />
+                      <span className="text-xs uppercase tracking-[0.16em] text-ink-faint font-bold">
+                        Filter By Speaking Difficulty
+                      </span>
+                    </div>
+                    <div className="flex flex-wrap gap-2.5">
+                      <button
+                        onClick={() => setDiff(null)}
+                        className={`px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold uppercase tracking-wider border transition ${
+                          !diff
+                            ? 'bg-espresso text-ivory border-espresso shadow-md'
+                            : 'bg-ivory text-warm-stone border-ink-wash/20 hover:border-amber/50'
+                        }`}
+                      >
+                        Any Level
+                      </button>
+                      {DIFFS.map(d => {
+                        const m = difficultyMeta[d];
+                        const on = diff === d;
+                        return (
+                          <button
+                            key={d}
+                            onClick={() => setDiff(d)}
+                            className={`group px-4 py-2.5 rounded-xl text-left border transition ${
+                              on ? 'text-ivory border-transparent shadow-md' : 'bg-ivory border-ink-wash/20 hover:border-amber/50'
+                            }`}
+                            style={on ? { background: m.color } : {}}
+                          >
+                            <div className="flex items-center gap-2">
+                              <span className={`text-xs sm:text-sm font-bold ${on ? 'text-ivory' : 'text-espresso'}`}>
+                                {m.label} ({m.level})
+                              </span>
+                            </div>
+                            <div className={`text-[10px] mt-0.5 ${on ? 'text-ivory/80' : 'text-ink-faint'}`}>
+                              {countByDifficulty(d)} topics · {m.hint}
+                            </div>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* ACTION LAUNCH BUTTON */}
+                  <div className="flex flex-wrap items-center gap-4">
+                    <button
+                      onClick={() => handleStartRoulette()}
+                      className="group relative inline-flex items-center gap-3.5 bg-espresso text-ivory pl-8 pr-9 py-4 sm:py-5 rounded-full text-base sm:text-lg font-medium tracking-wide shadow-2xl shadow-espresso/30 hover:shadow-espresso/45 hover:scale-105 active:scale-95 transition duration-300 overflow-hidden"
+                    >
+                      <span className="absolute inset-0 bg-gradient-to-r from-transparent via-amber/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+                      <Shuffle className="w-5 h-5 text-amber-glow group-hover:rotate-180 transition duration-500" />
+                      <span>Choose a Random Topic</span>
+                    </button>
+
+                    {filter && (
+                      <button
+                        onClick={() => setFilter(null)}
+                        className="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-warm-stone hover:text-espresso border border-ink-wash/25 rounded-full px-4 py-3 bg-ivory/80 transition"
+                      >
+                        <span>Field: {catOf(filter)?.label}</span>
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* ================= CATEGORY CARDS (WITH DESKTOP CURSOR HOVER REVEAL) ================= */}
+              <div className="mb-8 flex items-end justify-between gap-4 flex-wrap">
+                <div>
+                  <span className="text-xs uppercase tracking-[0.2em] text-amber-deep font-bold block mb-1">
+                    Explore Fields & Domains
+                  </span>
+                  <h3 className="font-display text-3xl sm:text-4xl text-espresso tracking-tight">
+                    Browse All 9 Knowledge Spheres
+                  </h3>
+                  <p className="text-sm text-ink-faint mt-1">
+                    Hover your cursor over any card on desktop to unveil its cinematic imagery.
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-16">
+                {categories.map(c => (
+                  <CategoryHoverCard
+                    key={c.id}
+                    category={c}
+                    topics={getTopicsByCategory(c.id)}
+                    isFilterActive={filter === c.id}
+                    onDrawCategory={() => handleStartRoulette(c.id)}
+                    onSelectTopic={chooseTopicDirectly}
+                  />
+                ))}
+              </div>
+
+              {/* ================= 32-TOPIC MASTER CHECKLIST SECTION ================= */}
+              <div className="mb-16">
+                <MasterChecklist
+                  masteredTopicIds={stats.masteredTopicIds}
+                  onToggleMastered={toggleMastered}
+                  onSelectTopic={chooseTopicDirectly}
+                />
+              </div>
+
+              {/* ================= LEVEL JOURNEY LADDER ================= */}
+              <div className="rounded-[2.5rem] border border-ink-wash/15 bg-ivory/80 backdrop-blur-md p-7 sm:p-10 mb-12 shadow-[0_4px_30px_-10px_rgba(45,36,24,0.06)]">
+                <div className="flex items-center justify-between mb-6 flex-wrap gap-2">
+                  <div>
+                    <span className="text-xs uppercase tracking-[0.2em] text-amber-deep font-bold block mb-1">
+                      Concision Progression
+                    </span>
+                    <h3 className="font-display text-2xl sm:text-3xl tracking-tight text-espresso flex items-center gap-2.5">
+                      <Award className="w-6 h-6 text-amber-deep" />
+                      The 10 Orator Mastery Levels
+                    </h3>
+                  </div>
+                  <span className="text-xs text-ink-faint">
+                    Earn XP each speech session · Harder topics grant up to +25 XP
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-5 gap-3.5">
+                  {LEVELS.map(l => {
+                    const reached = stats.xp >= l.min;
+                    const current = level.current.level === l.level;
+                    return (
+                      <div
+                        key={l.level}
+                        className={`relative rounded-2xl border p-4 text-center transition-all duration-300 ${
+                          current
+                            ? 'border-amber bg-champagne/60 shadow-md ring-2 ring-amber/30'
+                            : reached
+                            ? 'border-amber/25 bg-cream/70'
+                            : 'border-ink-wash/10 bg-cream/30 opacity-55'
+                        }`}
+                      >
+                        <div
+                          className={`mx-auto w-10 h-10 rounded-full grid place-items-center mb-2.5 shadow-xs ${
+                            reached
+                              ? 'bg-gradient-to-br from-amber to-amber-deep text-ivory shadow-md shadow-amber/25'
+                              : 'bg-ink-wash/15 text-ink-faint'
+                          }`}
+                        >
+                          {reached ? <Star className="w-4 h-4 fill-current" /> : <span className="text-xs font-bold">{l.level}</span>}
+                        </div>
+                        <div className="text-xs font-bold leading-tight text-espresso">{l.title}</div>
+                        <div className="text-[10px] text-ink-faint mt-1 font-semibold">{l.min} XP</div>
+                        {current && (
+                          <div className="absolute -top-2 left-1/2 -translate-x-1/2 text-[9px] uppercase tracking-wider bg-espresso text-ivory font-bold rounded-full px-2.5 py-0.5 shadow-sm">
+                            Current
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* ================= RECENT SESSIONS ================= */}
+              {stats.sessions.length > 0 && (
+                <div className="rounded-[2.5rem] border border-ink-wash/15 bg-ivory/80 backdrop-blur-md p-7 sm:p-9">
+                  <div className="flex items-center justify-between mb-6">
+                    <h3 className="font-display text-2xl tracking-tight flex items-center gap-2.5 text-espresso">
+                      <History className="w-5 h-5 text-amber-deep" /> Recent Speaking Sessions
+                    </h3>
+                    {stats.bestStreak > 0 && (
+                      <span className="hidden sm:inline-flex items-center gap-2 text-xs text-warm-stone bg-champagne/60 border border-amber/20 rounded-full px-3.5 py-1.5">
+                        <Trophy className="w-3.5 h-3.5 text-amber-deep" /> Best streak {stats.bestStreak} days
+                      </span>
+                    )}
+                  </div>
+                  <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                    {stats.sessions.slice(0, 6).map((s, i) => (
+                      <div key={i} className="flex items-center gap-3.5 px-4 py-3 rounded-2xl bg-cream/70 border border-ink-wash/8">
+                        <div className="w-9 h-9 rounded-xl bg-champagne grid place-items-center shrink-0">
+                          <CatIcon name={catOf(s.category)?.icon ?? 'Sparkles'} className="w-4 h-4 text-amber-deep" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="text-xs font-semibold text-espresso truncate">{s.title}</div>
+                          <div className="text-[10px] text-ink-faint mt-0.5">{s.seconds}s spoken</div>
+                        </div>
+                        <span className="text-[10px] font-bold text-amber-deep bg-champagne/70 rounded-full px-2 py-0.5 shrink-0">
+                          +{s.xp} XP
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </motion.div>
+          )}
+
+          {/* ============================================================ */}
+          {/* LEARN STAGE (ULTRA-DETAILED MASTERCLASS)                      */}
+          {/* ============================================================ */}
+          {stage === 'learn' && topic && (
+            <motion.div
+              key="learn"
+              initial={{ opacity: 0, y: 18 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -12 }}
+              transition={{ duration: 0.5, ease }}
+              className="pt-6 sm:pt-10"
+            >
+              <StepRail active={1} />
+
+              {/* Masterclass Tabs */}
+              <div className="flex items-center justify-between gap-4 mt-6 mb-6 flex-wrap">
+                <div className="flex bg-ivory rounded-full border border-ink-wash/15 p-1 shadow-xs">
+                  <button
+                    onClick={() => setActiveTab('learn')}
+                    className={`px-5 py-2 rounded-full text-xs sm:text-sm font-semibold uppercase tracking-wider transition ${
+                      activeTab === 'learn' ? 'bg-espresso text-ivory shadow-sm' : 'text-warm-stone hover:text-espresso'
+                    }`}
+                  >
+                    Deep Masterclass View
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('checklist')}
+                    className={`px-5 py-2 rounded-full text-xs sm:text-sm font-semibold uppercase tracking-wider transition ${
+                      activeTab === 'checklist' ? 'bg-espresso text-ivory shadow-sm' : 'text-warm-stone hover:text-espresso'
+                    }`}
+                  >
+                    Curriculum Checklist
+                  </button>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => toggleMastered(topic.id)}
+                    className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold uppercase tracking-wider border transition ${
+                      stats.masteredTopicIds.includes(topic.id)
+                        ? 'bg-[#EAF0E4] text-[#5A6B4A] border-[#CFDCC2]'
+                        : 'bg-ivory text-warm-stone border-ink-wash/25 hover:border-amber'
+                    }`}
+                  >
+                    <CheckCircle2 className="w-4 h-4" />
+                    {stats.masteredTopicIds.includes(topic.id) ? 'Mastered (Ticked)' : 'Mark as Mastered'}
+                  </button>
+                </div>
+              </div>
+
+              {activeTab === 'checklist' ? (
+                <div className="mt-4">
+                  <MasterChecklist
+                    masteredTopicIds={stats.masteredTopicIds}
+                    onToggleMastered={toggleMastered}
+                    onSelectTopic={chooseTopicDirectly}
+                  />
+                </div>
+              ) : (
+                <>
+                  {/* 1. CINEMATIC HERO IMAGE BANNER */}
+                  <div className="relative rounded-[2.5rem] overflow-hidden border border-ink-wash/15 shadow-[0_24px_80px_-40px_rgba(45,36,24,0.5)] bg-espresso-ink">
+                    <img
+                      src={topic.image}
+                      alt={topic.imageAlt}
+                      className="w-full h-64 sm:h-96 lg:h-[460px] object-cover filter saturate-105"
+                      loading="eager"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-espresso-ink/95 via-espresso-ink/40 to-transparent" />
+
+                    <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-10 lg:p-14">
+                      <div className="flex flex-wrap items-center gap-2.5 mb-4">
+                        <span className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.14em] bg-ivory/95 text-espresso rounded-full px-3.5 py-1 shadow-sm">
+                          <CatIcon name={catOf(topic.category)?.icon ?? 'Sparkles'} className="w-3.5 h-3.5 text-amber-deep" />
+                          {catOf(topic.category)?.label}
+                        </span>
+                        <span
+                          className="inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.14em] rounded-full px-3.5 py-1 text-ivory shadow-sm"
+                          style={{ background: difficultyMeta[topic.difficulty].color }}
+                        >
+                          <Gauge className="w-3 h-3" />
+                          {difficultyMeta[topic.difficulty].label} ({difficultyMeta[topic.difficulty].level})
+                        </span>
+                        <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] bg-espresso/70 backdrop-blur text-ivory rounded-full px-3.5 py-1">
+                          <BookOpen className="w-3 h-3" /> {topic.minutes} min Masterclass
+                        </span>
+                        <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] bg-amber-deep/90 text-ivory rounded-full px-3.5 py-1 shadow-sm">
+                          <Zap className="w-3 h-3 text-amber-glow" /> +{xpFor[topic.difficulty]} XP on Speech
+                        </span>
+                      </div>
+
+                      <h1 className="font-display text-3xl sm:text-5xl lg:text-7xl leading-[1.01] tracking-tight text-ivory drop-shadow-md">
+                        {topic.title}
+                      </h1>
+                      <p className="font-editorial italic text-2xl sm:text-3xl text-amber-glow mt-2 drop-shadow">
+                        {topic.subtitle}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* 2. IMAGE DESCRIPTION & VISUAL SYMBOLISM BOX */}
+                  <div className="mt-6 rounded-3xl border border-ink-wash/15 bg-ivory/90 p-6 sm:p-8">
+                    <div className="flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-amber-deep font-bold mb-2">
+                      <Layers className="w-4 h-4" />
+                      Visual Symbolism & Photographic Context
+                    </div>
+                    <p className="text-sm sm:text-base leading-relaxed text-warm-stone italic">
+                      &ldquo;{topic.imageDescription}&rdquo;
+                    </p>
+                  </div>
+
+                  {/* 3. CINEMATIC VOICE STORYTELLING PLAYER */}
+                  <div className="mt-6">
+                    <CinematicVoicePlayer topic={topic} />
+                  </div>
+
+                  {/* 4. HANDWRITTEN STUDY NOTES (GENERATED ART) + STICKY NOTES SECTION */}
+                  <div className="mt-8">
+                    {hasNoteArt(topic.id) && (
+                      <div className="mb-12">
+                        <div className="flex items-center justify-between mb-6 flex-wrap gap-2">
+                          <span className="font-handwritten text-2xl font-bold text-espresso">
+                            📒 Real Handwritten Study Notes
+                          </span>
+                          <span className="text-xs uppercase tracking-wider text-ink-faint font-semibold">
+                            Inked, highlighted &amp; doodled
+                          </span>
+                        </div>
+
+                        <div className="relative mx-auto max-w-3xl">
+                          {/* washi tape strips */}
+                          <span className="absolute -top-3 left-8 sm:left-14 w-24 sm:w-28 h-7 bg-amber-pale/80 border border-amber/25 -rotate-6 rounded-[3px] shadow-sm z-10" />
+                          <span className="absolute -bottom-3 right-8 sm:right-14 w-24 sm:w-28 h-7 bg-amber-pale/80 border border-amber/25 rotate-3 rounded-[3px] shadow-sm z-10" />
+
+                          <figure className="relative rounded-[1.75rem] border border-ink-wash/15 bg-ivory p-3 sm:p-4 shadow-[0_26px_70px_-32px_rgba(45,36,24,0.5)] -rotate-1 hover:rotate-0 transition-transform duration-500">
+                            <img
+                              src={noteArtUrl(topic.id)}
+                              alt={`Handwritten study notes for ${topic.title}`}
+                              className="w-full rounded-2xl object-cover select-none"
+                              loading="lazy"
+                            />
+                            <figcaption className="pt-3 pb-1 text-center text-xs sm:text-sm text-ink-faint font-editorial italic">
+                              Your desk page for &ldquo;{topic.title}&rdquo; — pinned to the study wall.
+                            </figcaption>
+                          </figure>
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-2">
+                        <span className="font-handwritten text-2xl font-bold text-espresso">
+                          {hasNoteArt(topic.id) ? '⚡ Interactive Cheat Codes' : '📌 Handwritten Master Notes & Cheat Codes'}
+                        </span>
+                      </div>
+                      <span className="text-xs uppercase tracking-wider text-ink-faint font-semibold">
+                        Tap or hover to tilt
+                      </span>
+                    </div>
+
+                    <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                      {topic.stickyNotes.map((note, idx) => (
+                        <StickyNoteCard key={idx} note={note} index={idx} />
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* 5. MAIN CONTENT & CUSTOM 60-SECOND BLUEPRINT GRID */}
+                  <div className="grid lg:grid-cols-[1.4fr_1fr] gap-8 mt-10">
+                    {/* LEFT COLUMN: Deep Master Breakdown & Facts */}
+                    <div className="space-y-8">
+                      {/* Deep Description & Essentials */}
+                      <div className="rounded-[2.5rem] border border-ink-wash/15 bg-ivory/90 backdrop-blur-md p-7 sm:p-10 shadow-sm">
+                        <h3 className="font-editorial text-3xl text-espresso mb-4">The Core Philosophical Thesis</h3>
+                        <p className="text-base sm:text-lg leading-[1.85] text-warm-stone font-light mb-8">
+                          {topic.description}
+                        </p>
+
+                        <h4 className="flex items-center gap-2.5 font-editorial text-2xl mb-4 text-espresso">
+                          <BookOpen className="w-5 h-5 text-amber-deep" /> Foundational Pillars
+                        </h4>
+                        <ol className="space-y-3.5">
+                          {topic.keyPoints.map((k, i) => (
+                            <li key={i} className="flex gap-4 bg-cream/70 rounded-2xl border border-ink-wash/10 p-4 sm:p-5">
+                              <span className="shrink-0 w-8 h-8 rounded-xl bg-gradient-to-br from-amber/25 to-champagne grid place-items-center font-display text-sm font-bold text-amber-deep shadow-xs">
+                                {i + 1}
+                              </span>
+                              <span className="text-sm sm:text-[15px] leading-[1.75] text-espresso-soft">
+                                {k}
+                              </span>
+                            </li>
+                          ))}
+                        </ol>
+                      </div>
+
+                      {/* Go Deeper Analytical Sections */}
+                      <div className="rounded-[2.5rem] border border-ink-wash/15 bg-ivory/90 backdrop-blur-md p-7 sm:p-10 shadow-sm">
+                        <h3 className="flex items-center gap-2.5 font-editorial text-3xl mb-6 text-espresso">
+                          <Layers className="w-5 h-5 text-amber-deep" /> Analytical Deep Dives
+                        </h3>
+                        <div className="space-y-7">
+                          {topic.deepDive.map((d, i) => (
+                            <div key={i} className="relative pl-6 border-l-2 border-amber/35">
+                              <span className="absolute -left-[7px] top-1.5 w-3 h-3 rounded-full bg-gradient-to-br from-amber to-amber-deep shadow-xs" />
+                              <h4 className="font-editorial text-2xl text-espresso mb-2">{d.heading}</h4>
+                              <p className="text-sm sm:text-base leading-[1.8] text-warm-stone">{d.body}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Did You Know? Surprising Facts */}
+                      <div className="rounded-[2.5rem] border border-amber/30 bg-gradient-to-br from-champagne/60 via-ivory to-amber-pale/30 p-7 sm:p-9 shadow-xs">
+                        <h3 className="flex items-center gap-2.5 font-editorial text-2xl mb-5 text-espresso">
+                          <Lightbulb className="w-5 h-5 text-amber-deep" /> Did You Know? Fascinating Facts
+                        </h3>
+                        <div className="space-y-3">
+                          {topic.facts.map((f, i) => (
+                            <div key={i} className="flex gap-3.5 bg-ivory/80 rounded-2xl border border-amber/20 p-4 shadow-xs">
+                              <Sparkles className="w-4 h-4 text-amber-deep shrink-0 mt-1" />
+                              <span className="text-sm leading-relaxed text-espresso-soft">{f}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* RIGHT COLUMN: Speech Blueprint & Vocal Masterclass */}
+                    <div className="space-y-6 lg:sticky lg:top-24 lg:self-start">
+                      {/* 60-SECOND SPEECH BLUEPRINT (TAILORED PER TOPIC) */}
+                      <div className="rounded-[2.5rem] border border-amber/35 bg-gradient-to-br from-champagne/70 via-ivory to-amber-pale/40 p-7 sm:p-8 shadow-md">
+                        <div className="flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-amber-deep font-bold mb-1">
+                          <Clock3 className="w-4 h-4" />
+                          Custom Speech Blueprint
+                        </div>
+                        <h3 className="font-editorial text-2xl text-espresso mb-4">
+                          Your 60-Second Roadmap
+                        </h3>
+
+                        <div className="space-y-3.5">
+                          {topic.speechBlueprint.map((step, idx) => (
+                            <div key={idx} className="bg-ivory/90 rounded-2xl border border-amber/25 p-4 shadow-xs">
+                              <div className="flex items-center justify-between gap-2 mb-1.5">
+                                <span className="font-display font-bold text-sm text-espresso tabular-nums bg-amber/15 px-2.5 py-0.5 rounded-full">
+                                  {step.time}
+                                </span>
+                                <span className="text-[11px] font-bold uppercase tracking-wider text-amber-deep">
+                                  {step.phase}
+                                </span>
+                              </div>
+                              <p className="text-xs sm:text-sm font-medium text-espresso-soft leading-snug mb-2">
+                                &ldquo;{step.scriptPrompt}&rdquo;
+                              </p>
+                              <div className="text-[11px] text-ink-faint italic flex items-center gap-1.5">
+                                <span>🎙️ {step.cue}</span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Vocal Masterclass & Delivery Advice */}
+                      <div className="rounded-[2.5rem] border border-ink-wash/15 bg-ivory/90 backdrop-blur-md p-7 sm:p-8 shadow-xs">
+                        <h3 className="font-editorial text-2xl text-espresso mb-4">
+                          Vocal Technique Masterclass
+                        </h3>
+                        <div className="space-y-3 text-xs sm:text-sm text-warm-stone">
+                          <div className="p-3 bg-cream/70 rounded-xl border border-ink-wash/10">
+                            <b className="text-espresso block mb-0.5 font-semibold">Suggested Vocal Tone:</b>
+                            {topic.vocalTechnique.tone}
+                          </div>
+                          <div className="p-3 bg-cream/70 rounded-xl border border-ink-wash/10">
+                            <b className="text-espresso block mb-0.5 font-semibold">Pacing & Tempo:</b>
+                            {topic.vocalTechnique.tempo}
+                          </div>
+                          <div className="p-3 bg-cream/70 rounded-xl border border-ink-wash/10">
+                            <b className="text-espresso block mb-0.5 font-semibold">Strategic Power Pause:</b>
+                            {topic.vocalTechnique.powerPause}
+                          </div>
+                          <div className="p-3 bg-champagne/50 rounded-xl border border-amber/20">
+                            <b className="text-amber-deep block mb-0.5 font-semibold">Expert Delivery Advice:</b>
+                            {topic.vocalTechnique.advice}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Vocabulary Bank */}
+                      <div className="rounded-[2.5rem] border border-ink-wash/15 bg-ivory/90 backdrop-blur-md p-7 sm:p-8 shadow-xs">
+                        <h4 className="font-editorial text-xl text-espresso mb-3">Elevated Vocabulary</h4>
+                        <div className="flex flex-wrap gap-2">
+                          {topic.vocabulary.map(v => (
+                            <span
+                              key={v}
+                              className="text-xs sm:text-sm font-editorial italic bg-cream border border-amber/25 text-warm-stone rounded-full px-3.5 py-1.5 shadow-xs"
+                            >
+                              {v}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Your Notes Pad */}
+                      <div className="rounded-[2.5rem] border border-ink-wash/15 bg-ivory/90 backdrop-blur-md p-7 sm:p-8 shadow-xs">
+                        <h4 className="flex items-center gap-2 font-editorial text-xl text-espresso mb-2">
+                          <PenLine className="w-4 h-4 text-amber-deep" /> Jot Your Key Angles
+                        </h4>
+                        <textarea
+                          value={notes}
+                          onChange={e => setNotes(e.target.value)}
+                          placeholder={'Hook: ...\nCore idea: ...\nFinal punchline: ...'}
+                          className="w-full h-36 bg-cream/70 rounded-2xl border border-ink-wash/15 p-4 text-xs sm:text-sm leading-relaxed placeholder:text-ink-wash/70 focus:outline-none focus:border-amber/50 focus:ring-4 focus:ring-amber/10 resize-none transition"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* BOTTOM ACTION BAR */}
+                  <div className="flex flex-col sm:flex-row gap-3.5 mt-10">
+                    <button
+                      onClick={() => setStage('speak')}
+                      className="group flex-1 inline-flex items-center justify-center gap-3.5 bg-espresso text-ivory py-5 rounded-2xl font-medium tracking-wide shadow-2xl shadow-espresso/30 hover:bg-espresso-ink hover:scale-105 active:scale-95 transition duration-300"
+                    >
+                      <Mic className="w-5 h-5 text-amber-glow" />
+                      <span>Ready to Speak — Begin 60 Seconds</span>
+                      <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition" />
+                    </button>
+
+                    <button
+                      onClick={() => handleStartRoulette()}
+                      className="inline-flex items-center justify-center gap-2.5 px-8 py-5 rounded-2xl border border-ink-wash/25 bg-ivory text-warm-stone font-medium hover:border-amber hover:text-amber-deep transition"
+                    >
+                      <Shuffle className="w-4 h-4" /> Draw Another Topic
+                    </button>
+                  </div>
+                </>
+              )}
+            </motion.div>
+          )}
+
+          {/* ============================================================ */}
+          {/* SPEAK STAGE (PRECISION TIMER + CUSTOM ROADMAP)                */}
+          {/* ============================================================ */}
+          {stage === 'speak' && topic && (
+            <motion.div
+              key="speak"
+              initial={{ opacity: 0, y: 18 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -12 }}
+              transition={{ duration: 0.5, ease }}
+              className="pt-6 sm:pt-10"
+            >
+              <StepRail active={2} />
+
+              <div className="mt-8 rounded-[2.5rem] border border-ink-wash/15 bg-gradient-to-b from-ivory via-parchment/60 to-rose-fog/30 shadow-[0_24px_90px_-44px_rgba(45,36,24,0.4)] p-7 sm:p-12 lg:p-14 overflow-hidden">
+                <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+                  {/* LEFT: Topic Blueprint & Custom Roadmap */}
+                  <div className="order-2 lg:order-1">
+                    <div className="flex items-center gap-3.5 mb-4">
+                      <img src={topic.image} alt="" className="w-16 h-16 rounded-2xl object-cover shadow-md" />
+                      <div>
+                        <span className="text-[11px] uppercase tracking-[0.2em] text-ink-faint font-bold block">
+                          Speaking On
+                        </span>
+                        <span
+                          className="inline-block mt-0.5 text-[10px] font-bold uppercase text-ivory rounded-full px-2.5 py-0.5 shadow-xs"
+                          style={{ background: difficultyMeta[topic.difficulty].color }}
+                        >
+                          {difficultyMeta[topic.difficulty].label} Difficulty
+                        </span>
+                      </div>
+                    </div>
+
+                    <h2 className="font-display text-3xl sm:text-5xl leading-[1.04] tracking-tight mb-2 text-espresso">
+                      {topic.title}
+                    </h2>
+                    <p className="font-editorial italic text-xl text-amber-deep mb-6">
+                      {topic.subtitle}
+                    </p>
+
+                    {/* LIVE 60-SECOND ROADMAP CUES */}
+                    <div className="space-y-2.5 mb-6">
+                      <div className="text-xs uppercase tracking-wider text-amber-deep font-bold">
+                        Custom Speaking Timestamps:
+                      </div>
+                      {topic.speechBlueprint.map((step, idx) => (
+                        <div key={idx} className="flex gap-3 bg-cream/80 rounded-xl border border-ink-wash/10 p-3">
+                          <span className="font-display font-bold text-xs text-espresso bg-amber/20 px-2 py-0.5 rounded shrink-0">
+                            {step.time}
+                          </span>
+                          <div className="text-xs leading-snug">
+                            <span className="font-bold text-espresso">{step.phase}: </span>
+                            <span className="text-warm-stone">&ldquo;{step.scriptPrompt}&rdquo;</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    {notes.trim() && (
+                      <div className="rounded-2xl border border-amber/25 bg-champagne/50 p-4 mb-6">
+                        <h4 className="text-[10px] uppercase tracking-[0.2em] text-amber-deep font-bold mb-1">
+                          Your Personal Notes:
+                        </h4>
+                        <p className="text-xs leading-relaxed text-warm-stone whitespace-pre-wrap">{notes}</p>
+                      </div>
+                    )}
+
+                    <div className="flex flex-wrap gap-2">
+                      {['No filler words', 'Embrace the pause', 'Eye contact', 'Conclude with certainty'].map(t => (
+                        <span key={t} className="text-xs text-warm-stone bg-ivory border border-ink-wash/15 rounded-full px-3.5 py-1.5 shadow-xs">
+                          {t}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* RIGHT: CIRCULAR TIMER */}
+                  <div className="order-1 lg:order-2 flex justify-center">
+                    <SpeakTimer duration={60} onComplete={handleComplete} />
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-3 mt-6">
+                <button
+                  onClick={() => setStage('learn')}
+                  className="inline-flex items-center justify-center gap-2 px-7 py-4 rounded-2xl border border-ink-wash/25 bg-ivory text-warm-stone font-medium hover:border-amber hover:text-amber-deep transition"
+                >
+                  <ChevronLeft className="w-4 h-4" /> Back to Masterclass View
+                </button>
+                <button
+                  onClick={() => handleComplete(60)}
+                  className="flex-1 inline-flex items-center justify-center gap-2.5 px-7 py-4 rounded-2xl bg-espresso/90 text-ivory font-medium hover:bg-espresso transition shadow-md"
+                >
+                  <CheckCircle2 className="w-4 h-4" /> Finished Speaking — Claim Victory
+                </button>
+              </div>
+            </motion.div>
+          )}
+
+          {/* ============================================================ */}
+          {/* DONE STAGE (VICTORY CELEBRATION & XP GAIN)                    */}
+          {/* ============================================================ */}
+          {stage === 'done' && topic && (
+            <motion.div
+              key="done"
+              initial={{ opacity: 0, scale: 0.96 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.5, ease }}
+              className="pt-6 sm:pt-10"
+            >
+              <StepRail active={3} />
+
+              <div className="mt-8 relative overflow-hidden rounded-[2.5rem] border border-amber/30 bg-gradient-to-br from-champagne/80 via-ivory to-amber-pale/50 shadow-[0_24px_90px_-44px_rgba(196,162,101,0.7)] p-9 sm:p-16 text-center">
+                <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-96 h-96 rounded-full bg-amber/15 blur-3xl pointer-events-none" />
+
+                <div className="relative z-10">
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ delay: 0.1, type: 'spring', stiffness: 200, damping: 14 }}
+                    className="inline-grid place-items-center w-20 h-20 rounded-full bg-gradient-to-br from-amber to-amber-deep text-ivory shadow-2xl shadow-amber/40 mb-6"
+                  >
+                    <CheckCircle2 className="w-9 h-9" />
+                  </motion.div>
+
+                  {lastGain?.leveledTo && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.3 }}
+                      className="inline-flex items-center gap-2 bg-espresso text-ivory rounded-full px-5 py-2 text-sm font-semibold mb-4 shadow-lg"
+                    >
+                      <Trophy className="w-4 h-4 text-amber-glow" /> Level Up! You attained Level {lastGain.leveledTo}: {level.current.title}
+                    </motion.div>
+                  )}
+
+                  <h2 className="font-display text-4xl sm:text-6xl tracking-tight leading-none mb-3 text-espresso">
+                    60-Second Masterclass Complete
+                  </h2>
+
+                  <p className="text-warm-stone text-lg max-w-lg mx-auto leading-relaxed mb-4">
+                    You articulated <span className="font-editorial italic font-bold text-espresso">{topic.title}</span>. That is one more victory for your concision and voice.
+                  </p>
+
+                  {lastGain && (
+                    <div className="inline-flex items-center gap-2 text-amber-deep font-bold text-lg mb-8 bg-ivory/80 px-4 py-1.5 rounded-full border border-amber/30 shadow-xs">
+                      <Zap className="w-5 h-5 text-amber-deep" /> +{lastGain.xp} XP Earned
+                    </div>
+                  )}
+
+                  <div className="grid grid-cols-3 gap-3.5 max-w-lg mx-auto mb-10">
+                    {[
+                      { v: `${stats.streak} Days`, l: 'Streak' },
+                      { v: `Lv ${level.current.level}`, l: level.current.title },
+                      { v: `${masteredCount}/32`, l: 'Topics Mastered' },
+                    ].map(s => (
+                      <div key={s.l} className="bg-ivory/90 rounded-2xl border border-ink-wash/12 py-4 shadow-xs">
+                        <div className="font-display text-2xl sm:text-3xl leading-none tabular-nums text-espresso font-bold">
+                          {s.v}
+                        </div>
+                        <div className="text-[10px] uppercase tracking-[0.14em] text-ink-faint mt-1.5 font-semibold">
+                          {s.l}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row gap-3.5 justify-center">
+                    <button
+                      onClick={() => handleStartRoulette()}
+                      className="group inline-flex items-center justify-center gap-3 bg-espresso text-ivory px-8 py-4 rounded-full font-medium shadow-xl shadow-espresso/25 hover:bg-espresso-ink hover:scale-105 active:scale-95 transition duration-300"
+                    >
+                      <Shuffle className="w-4 h-4 group-hover:rotate-180 transition duration-500" />
+                      <span>Draw Next Topic</span>
+                    </button>
+
+                    <button
+                      onClick={() => setStage('learn')}
+                      className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full border border-ink-wash/25 bg-ivory text-warm-stone font-medium hover:border-amber hover:text-amber-deep transition"
+                    >
+                      Review Masterclass Content
+                    </button>
+
+                    <button
+                      onClick={() => setStage('dashboard')}
+                      className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full text-warm-stone font-medium hover:text-espresso transition"
+                    >
+                      Return to Dashboard
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+        </AnimatePresence>
+      </main>
+
+      {/* ================= RANDOM ROULETTE ORACLE MODAL ================= */}
+      <RouletteModal
+        isOpen={isRouletteOpen}
+        filterCategory={filter}
+        filterDifficulty={diff}
+        onSelect={handleSelectTopicFromDraw}
+        onClose={() => setIsRouletteOpen(false)}
+      />
+
+      {/* ================= FOOTER ================= */}
+      <footer className="relative z-10 border-t border-ink-wash/10 bg-cream/80 backdrop-blur-md">
+        <div className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 py-10 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber to-amber-deep grid place-items-center">
+              <Mic className="w-3.5 h-3.5 text-ivory" />
+            </div>
+            <span className="font-editorial text-xl font-bold">Verbalis</span>
+          </div>
+          <p className="text-xs text-ink-faint text-center sm:text-right">
+            32 Master Topics · Cinematic Narration & Visual Descriptions · 10 Orator Ranks · Responsive on all devices
+          </p>
+        </div>
+      </footer>
+    </div>
+  );
+}
+
+function StepRail({ active }: { active: 1 | 2 | 3 }) {
+  const steps = [
+    { n: 1, label: 'Masterclass', icon: BookOpen },
+    { n: 2, label: 'Speak 60s', icon: Mic },
+    { n: 3, label: 'Victory', icon: CheckCircle2 },
+  ];
+  return (
+    <div className="flex items-center gap-2 sm:gap-4 max-w-2xl mx-auto mb-6">
+      {steps.map((s, i) => {
+        const done = active > s.n;
+        const on = active === s.n;
+        return (
+          <div key={s.n} className="flex items-center gap-2 sm:gap-4 flex-1 last:flex-none">
+            <div
+              className={`flex items-center gap-2.5 rounded-full pl-2 pr-4 py-2 border transition ${
+                on
+                  ? 'bg-espresso text-ivory border-espresso shadow-lg shadow-espresso/20'
+                  : done
+                  ? 'bg-champagne text-amber-deep border-amber/30'
+                  : 'bg-ivory/70 text-ink-faint border-ink-wash/15'
+              }`}
+            >
+              <span
+                className={`w-7 h-7 rounded-full grid place-items-center shrink-0 ${
+                  on ? 'bg-ivory/15' : done ? 'bg-amber/20' : 'bg-cream'
+                }`}
+              >
+                <s.icon className="w-3.5 h-3.5" />
+              </span>
+              <span className="text-xs sm:text-sm font-medium whitespace-nowrap">{s.label}</span>
+            </div>
+            {i < steps.length - 1 && (
+              <div className="flex-1 h-px bg-gradient-to-r from-ink-wash/25 to-ink-wash/10 min-w-2" />
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
