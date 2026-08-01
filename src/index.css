@@ -35,13 +35,10 @@ html {
 
 body {
   font-family: 'Inter', system-ui, sans-serif;
-  background-color: #F2E9D9;
-  background-image:
-    radial-gradient(1100px 700px at 80% -10%, rgba(232, 194, 118, 0.22), transparent 62%),
-    radial-gradient(900px 650px at 2% 104%, rgba(210, 158, 98, 0.18), transparent 58%),
-    radial-gradient(140% 110% at 50% 50%, transparent 70%, rgba(35, 24, 9, 0.07) 100%);
+  background-color: var(--color-cream);
+  background-image: var(--page-lighting);
   background-attachment: fixed;
-  color: #231809;
+  color: var(--color-espresso);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -222,4 +219,89 @@ body::before {
   opacity: 0.028;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
   background-size: 220px 220px;
+}
+
+
+/* ===== Page lighting (per theme) ===== */
+:root {
+  --page-lighting:
+    radial-gradient(1100px 700px at 80% -10%, rgba(232, 194, 118, 0.22), transparent 62%),
+    radial-gradient(900px 650px at 2% 104%, rgba(210, 158, 98, 0.18), transparent 58%),
+    radial-gradient(140% 110% at 50% 50%, transparent 70%, rgba(35, 24, 9, 0.07) 100%);
+}
+
+/* ===== MIDNIGHT NOIR THEME =====
+   Warm ink-dark surfaces, cream-bright text, candlelit gold accent. */
+html[data-theme='noir'] {
+  --color-cream: #161009;
+  --color-ivory: #211A11;
+  --color-parchment: #2A2115;
+  --color-paper: #322718;
+  --color-linen: #3C3020;
+  --color-rose-fog: #2A1F17;
+  --color-espresso: #F1E5CE;
+  --color-espresso-ink: #FFF6E3;
+  --color-espresso-soft: #E5D6B8;
+  --color-warm-stone: #B9A788;
+  --color-amber: #E2B568;
+  --color-amber-deep: #C79A4C;
+  --color-amber-glow: #F2D49B;
+  --color-amber-pale: #3E3020;
+  --color-champagne: #2E2415;
+  --color-ink-faint: #8E7F6C;
+  --color-ink-wash: #56493A;
+
+  --page-lighting:
+    radial-gradient(1100px 700px at 80% -10%, rgba(226, 181, 104, 0.10), transparent 60%),
+    radial-gradient(900px 650px at 2% 104%, rgba(199, 154, 76, 0.08), transparent 55%),
+    radial-gradient(140% 110% at 50% 50%, transparent 68%, rgba(0, 0, 0, 0.42) 100%);
+}
+
+html[data-theme='noir'] .shimmer-text {
+  background: linear-gradient(90deg, #C79A4C 0%, #F2D49B 25%, #FFF3D8 50%, #F2D49B 75%, #C79A4C 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* image scrims always stay dark-chocolate in both themes */
+.img-scrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(21, 14, 5, 0.95), rgba(21, 14, 5, 0.40), transparent);
+  pointer-events: none;
+}
+
+/* custom cursor: hide the native pointer everywhere */
+html[data-custom-cursor='on'],
+html[data-custom-cursor='on'] * {
+  cursor: none !important;
+}
+
+/* reduced motion: calm everything down */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+html[data-motion='reduced'] *,
+html[data-motion='reduced'] *::before,
+html[data-motion='reduced'] *::after {
+  animation-duration: 0.01ms !important;
+  transition-duration: 0.01ms !important;
+}
+
+/* modal backdrop scrim — always dark chocolate, both themes */
+.backdrop-scrim {
+  background-color: rgba(21, 14, 5, 0.72);
+}
+
+/* stronger image scrim (category hover cards) */
+.img-scrim-strong {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(21, 14, 5, 0.95), rgba(37, 24, 9, 0.75), rgba(21, 14, 5, 0.40));
+  pointer-events: none;
 }

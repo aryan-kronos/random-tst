@@ -4,10 +4,11 @@ import {
   Mic, Shuffle, ChevronLeft, Flame, CheckCircle2, BookOpen,
   Clock3, Layers, ArrowRight, Lightbulb, PenLine, Sparkles,
   History, Trophy, X, Zap, Award, Gauge, Star,
-  CheckSquare, NotebookPen, StickyNote,
+  CheckSquare, NotebookPen, StickyNote, Heart, BookmarkPlus, Bookmark,
+  Settings2,
 } from 'lucide-react';
 import {
-  categories, getTopicsByCategory, countByDifficulty,
+  categories, getTopicsByCategory, countByDifficulty, topics,
   difficultyMeta, totalTopics, type Topic, type CategoryId, type Difficulty,
 } from './data/topics';
 import { CatIcon } from './components/Icon';
@@ -19,9 +20,12 @@ import MasterChecklist from './components/MasterChecklist';
 import CategoryHoverCard from './components/CategoryHoverCard';
 import LogoMark from './components/Logo';
 import CursorGlow from './components/CursorGlow';
+import CustomCursor from './components/CustomCursor';
+import SettingsDrawer from './components/SettingsDrawer';
 import DynamicGreeting from './components/DynamicGreeting';
 import { hasNoteArt, noteArtUrls } from './data/assets';
 import { useStats, xpFor, LEVELS } from './hooks/useStats';
+import { useLibrary, toggleFavorite, toggleQueue, removeFromQueue } from './hooks/useLibrary';
 import { playCompleteFanfare } from './utils/audio';
 
 type Stage = 'dashboard' | 'learn' | 'speak' | 'done';
@@ -34,8 +38,10 @@ export default function App() {
   const [filter, setFilter] = useState<CategoryId | null>(null);
   const [diff, setDiff] = useState<Difficulty | null>(null);
   const [isRouletteOpen, setIsRouletteOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const [notes, setNotes] = useState('');
   const [activeTab, setActiveTab] = useState<'learn' | 'checklist'>('learn');
+  const library = useLibrary();
 
   const {
     stats,
@@ -53,6 +59,30 @@ export default function App() {
     topRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }, [stage]);
 
+  // deep links: #/topic/<id> — shareable, refresh-safe, back-button aware
+  useEffect(() => {
+    const applyHash = () => {
+      const m = window.location.hash.match(/^#\/topic\/([a-z0-9-]+)$/i);
+      if (m) {
+        const t = topics.find(x => x.id === m[1]);
+        if (t) {
+          setTopic(t);
+          setNotes('');
+          setStage('learn');
+        }
+      }
+    };
+    applyHash();
+    window.addEventListener('hashchange', applyHash);
+    return () => window.removeEventListener('hashchange', applyHash);
+  }, []);
+
+  const goDashboard = () => {
+    window.history.pushState('', document.title, window.location.pathname + window.location.search);
+    setStage('dashboard');
+    setTopic(null);
+  };
+
   const handleStartRoulette = (cat: CategoryId | null = filter, d: Difficulty | null = diff) => {
     setFilter(cat);
     setDiff(d);
@@ -63,12 +93,14 @@ export default function App() {
     setTopic(chosen);
     setNotes('');
     setStage('learn');
+    window.location.hash = `/topic/${chosen.id}`;
   };
 
   const chooseTopicDirectly = (t: Topic) => {
     setTopic(t);
     setNotes('');
     setStage('learn');
+    window.location.hash = `/topic/${t.id}`;
   };
 
   const handleComplete = (secs: number) => {
@@ -104,7 +136,7 @@ export default function App() {
       {/* ================= TOP BAR ================= */}
       <header className="sticky top-0 z-50 backdrop-blur-xl bg-cream/80 border-b border-ink-wash/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 h-16 sm:h-18 flex items-center justify-between">
-          <button onClick={() => setStage('dashboard')} className="flex items-center gap-3 group text-left">
+          <button onClick={goDashboard} className="flex items-center gap-3 group text-left">
             <LogoMark className="w-9 h-9 sm:w-10 sm:h-10 drop-shadow-md group-hover:drop-shadow-lg transition" />
             <div className="leading-none">
               <div className="font-editorial text-xl sm:text-2xl tracking-tight">Verbalis</div>
@@ -139,12 +171,22 @@ export default function App() {
 
             {stage !== 'dashboard' && (
               <button
-                onClick={() => setStage('dashboard')}
+                onClick={goDashboard}
                 className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-medium text-warm-stone hover:text-espresso border border-ink-wash/20 hover:border-amber/50 bg-ivory rounded-full px-4 py-2 transition"
               >
                 <ChevronLeft className="w-4 h-4" /> <span>Dashboard</span>
               </button>
             )}
+
+            {/* Settings */}
+            <button
+              onClick={() => setSettingsOpen(true)}
+              className="inline-flex items-center justify-center text-warm-stone hover:text-espresso border border-ink-wash/20 hover:border-amber/50 bg-ivory rounded-full w-9 h-9 sm:w-10 sm:h-10 transition"
+              aria-label="Open settings"
+              title="Settings"
+            >
+              <Settings2 className="w-4 h-4" />
+            </button>
           </div>
         </div>
       </header>
@@ -170,9 +212,15 @@ export default function App() {
                   <DynamicGreeting streak={stats.streak} totalTakes={stats.sessions.length} />
                 </div>
                 <h1 className="font-display text-4xl sm:text-6xl lg:text-7xl leading-[0.96] tracking-tight max-w-4xl">
-                  Learn deeply.<br />
-                  <span className="font-editorial italic font-light text-amber-deep shimmer-text">Speak with authority.</span> In sixty seconds.
+                  Learn <span className="font-editorial italic font-light text-amber-deep">deeply.</span><br />
+                  Speak with <span className="font-editorial italic font-light shimmer-text">authority.</span>
+                  <span className="block mt-4 font-body font-light text-2xl sm:text-3xl lg:text-4xl text-warm-stone tracking-normal">
+                    In <span className="font-instrument italic text-amber-deep">sixty honest seconds.</span>
+                  </span>
                 </h1>
+                <div className="font-handwritten text-xl sm:text-2xl text-ink-faint -rotate-1 mt-2 max-w-md">
+                  no scripts, no audience — just you, one idea, one minute.
+                </div>
                 <p className="mt-5 text-base sm:text-lg text-warm-stone font-light max-w-2xl leading-relaxed">
                   Draw an intriguing topic at random, absorb the rich imagery, handwritten notes, and cinematic storytelling, then master the 60-second speech blueprint.
                 </p>
@@ -183,7 +231,7 @@ export default function App() {
                 <div className="flex flex-col sm:flex-row items-center gap-6">
                   <div className="relative shrink-0">
                     <svg viewBox="0 0 80 80" className="w-20 h-20 -rotate-90">
-                      <circle cx="40" cy="40" r="34" fill="none" stroke="#E7DCC9" strokeWidth="6" />
+                      <circle cx="40" cy="40" r="34" fill="none" stroke="var(--color-ink-wash)" strokeOpacity="0.45" strokeWidth="6" />
                       <circle
                         cx="40" cy="40" r="34" fill="none" stroke="url(#lvlGrad)" strokeWidth="6" strokeLinecap="round"
                         strokeDasharray={2 * Math.PI * 34}
@@ -192,8 +240,8 @@ export default function App() {
                       />
                       <defs>
                         <linearGradient id="lvlGrad" x1="0" y1="0" x2="1" y2="1">
-                          <stop offset="0%" stopColor="#E8C276" />
-                          <stop offset="100%" stopColor="#96692C" />
+                          <stop offset="0%" stopColor="var(--color-amber-glow)" />
+                          <stop offset="100%" stopColor="var(--color-amber-deep)" />
                         </linearGradient>
                       </defs>
                     </svg>
@@ -240,7 +288,13 @@ export default function App() {
               </div>
 
               {/* STAT STRIP */}
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-10">
+              <motion.div
+                initial={{ opacity: 0, y: 22 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-60px' }}
+                transition={{ duration: 0.55, ease }}
+                className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-10"
+              >
                 {[
                   { label: 'Current streak', value: stats.streak, suffix: stats.streak === 1 ? 'day' : 'days', icon: Flame },
                   { label: 'Topics Mastered', value: masteredCount, suffix: `/${totalTopics}`, icon: CheckSquare },
@@ -255,7 +309,93 @@ export default function App() {
                     <div className="text-[11px] uppercase tracking-[0.12em] text-ink-faint mt-2">{s.label}</div>
                   </div>
                 ))}
-              </div>
+              </motion.div>
+
+              {/* ================= YOUR COLLECTION (FAVORITES + PRACTICE LATER) ================= */}
+              {(library.favorites.length > 0 || library.queue.length > 0) && (
+                <motion.div
+                  initial={{ opacity: 0, y: 18 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: '-60px' }}
+                  transition={{ duration: 0.5, ease }}
+                  className="grid sm:grid-cols-2 gap-4 mb-10"
+                >
+                  {library.favorites.length > 0 && (
+                    <div className="rounded-[2rem] border border-ink-wash/15 bg-ivory/80 backdrop-blur-xs p-5 sm:p-6 shadow-[0_10px_40px_-18px_rgba(56,38,16,0.18)]">
+                      <div className="flex items-center gap-2 mb-4">
+                        <Heart className="w-4 h-4 text-amber-deep fill-current" />
+                        <h3 className="font-display text-lg text-espresso">Your Favorites</h3>
+                        <span className="ml-auto text-[10px] uppercase tracking-widest text-ink-faint font-bold">
+                          {library.favorites.length} saved
+                        </span>
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        {library.favorites.map(id => {
+                          const t = topics.find(x => x.id === id);
+                          if (!t) return null;
+                          return (
+                            <button
+                              key={id}
+                              onClick={() => chooseTopicDirectly(t)}
+                              className="group inline-flex items-center gap-2 rounded-full border border-ink-wash/20 bg-cream/70 pl-3 pr-2 py-1.5 text-xs font-semibold text-espresso hover:border-amber transition"
+                            >
+                              <span className="max-w-[200px] truncate">{t.title}</span>
+                              <span
+                                onClick={e => { e.stopPropagation(); toggleFavorite(id); }}
+                                className="w-4 h-4 grid place-items-center rounded-full text-ink-faint hover:text-amber-deep cursor-pointer"
+                                title="Remove from favorites"
+                              >
+                                <X className="w-3 h-3" />
+                              </span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                  {library.queue.length > 0 && (
+                    <div className="rounded-[2rem] border border-ink-wash/15 bg-ivory/80 backdrop-blur-xs p-5 sm:p-6 shadow-[0_10px_40px_-18px_rgba(56,38,16,0.18)]">
+                      <div className="flex items-center gap-2 mb-4">
+                        <Bookmark className="w-4 h-4 text-amber-deep fill-current" />
+                        <h3 className="font-display text-lg text-espresso">Practice Later</h3>
+                        <button
+                          onClick={() => {
+                            const id = library.queue[Math.floor(Math.random() * library.queue.length)];
+                            const t = topics.find(x => x.id === id);
+                            if (t) chooseTopicDirectly(t);
+                          }}
+                          className="ml-auto inline-flex items-center gap-1 text-[10px] uppercase tracking-widest font-bold text-amber-deep hover:text-espresso transition"
+                        >
+                          <Shuffle className="w-3 h-3" /> Draw one
+                        </button>
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        {library.queue.map(id => {
+                          const t = topics.find(x => x.id === id);
+                          if (!t) return null;
+                          return (
+                            <button
+                              key={id}
+                              onClick={() => chooseTopicDirectly(t)}
+                              className="group inline-flex items-center gap-2 rounded-full border border-ink-wash/20 bg-cream/70 pl-3 pr-2 py-1.5 text-xs font-semibold text-espresso hover:border-amber transition"
+                            >
+                              <span className="max-w-[200px] truncate">{t.title}</span>
+                              <span
+                                onClick={e => { e.stopPropagation(); removeFromQueue(id); }}
+                                className="w-4 h-4 grid place-items-center rounded-full text-ink-faint hover:text-amber-deep cursor-pointer"
+                                title="Remove from queue"
+                              >
+                                <X className="w-3 h-3" />
+                              </span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </motion.div>
+              )}
 
               {/* ================= EPIC RANDOM DRAW EXPERIENCE BANNER ================= */}
               <div className="relative overflow-hidden rounded-[2.5rem] border border-amber/35 bg-gradient-to-br from-ivory via-parchment/70 to-champagne/60 shadow-[0_24px_90px_-40px_rgba(190,139,63,0.45)] p-7 sm:p-12 lg:p-14 mb-12">
@@ -268,7 +408,7 @@ export default function App() {
                   </div>
 
                   <h2 className="font-display text-3xl sm:text-5xl lg:text-6xl leading-[1.02] tracking-tight mb-5">
-                    Choose a Random Topic
+                    Choose a <span className="font-editorial italic font-light text-amber-deep">random</span> topic.
                   </h2>
 
                   <p className="text-base sm:text-lg text-warm-stone leading-relaxed mb-8 font-light">
@@ -351,7 +491,7 @@ export default function App() {
                     Explore Fields & Domains
                   </span>
                   <h3 className="font-display text-3xl sm:text-4xl text-espresso tracking-tight">
-                    Browse All 9 Knowledge Spheres
+                    Browse all <span className="font-editorial italic font-light text-amber-deep">nine</span> knowledge spheres
                   </h3>
                   <p className="text-sm text-ink-faint mt-1">
                     Hover your cursor over any card on desktop to unveil its cinematic imagery.
@@ -359,7 +499,13 @@ export default function App() {
                 </div>
               </div>
 
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-16">
+              <motion.div
+                initial={{ opacity: 0, y: 26 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-60px' }}
+                transition={{ duration: 0.6, ease }}
+                className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-16"
+              >
                 {categories.map(c => (
                   <CategoryHoverCard
                     key={c.id}
@@ -370,16 +516,22 @@ export default function App() {
                     onSelectTopic={chooseTopicDirectly}
                   />
                 ))}
-              </div>
+              </motion.div>
 
               {/* ================= 32-TOPIC MASTER CHECKLIST SECTION ================= */}
-              <div className="mb-16">
+              <motion.div
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-60px' }}
+                transition={{ duration: 0.6, ease }}
+                className="mb-16"
+              >
                 <MasterChecklist
                   masteredTopicIds={stats.masteredTopicIds}
                   onToggleMastered={toggleMastered}
                   onSelectTopic={chooseTopicDirectly}
                 />
-              </div>
+              </motion.div>
 
               {/* ================= LEVEL JOURNEY LADDER ================= */}
               <div className="rounded-[2.5rem] border border-ink-wash/15 bg-ivory/80 backdrop-blur-md p-7 sm:p-10 mb-12 shadow-[0_4px_30px_-10px_rgba(56,38,16,0.06)]">
@@ -505,6 +657,36 @@ export default function App() {
                 </div>
 
                 <div className="flex items-center gap-2">
+                  {/* Favorite */}
+                  <button
+                    onClick={() => toggleFavorite(topic.id)}
+                    title={library.favorites.includes(topic.id) ? 'Remove from favorites' : 'Save to favorites'}
+                    aria-label="Favorite topic"
+                    className={`w-10 h-10 rounded-full border grid place-items-center transition ${
+                      library.favorites.includes(topic.id)
+                        ? 'border-amber-deep bg-champagne/70 text-amber-deep'
+                        : 'border-ink-wash/25 bg-ivory text-warm-stone hover:border-amber hover:text-amber-deep'
+                    }`}
+                  >
+                    <Heart className={`w-4 h-4 ${library.favorites.includes(topic.id) ? 'fill-current' : ''}`} />
+                  </button>
+
+                  {/* Practice later */}
+                  <button
+                    onClick={() => toggleQueue(topic.id)}
+                    title={library.queue.includes(topic.id) ? 'Remove from practice-later' : 'Practice later'}
+                    aria-label="Add to practice-later queue"
+                    className={`w-10 h-10 rounded-full border grid place-items-center transition ${
+                      library.queue.includes(topic.id)
+                        ? 'border-amber-deep bg-champagne/70 text-amber-deep'
+                        : 'border-ink-wash/25 bg-ivory text-warm-stone hover:border-amber hover:text-amber-deep'
+                    }`}
+                  >
+                    {library.queue.includes(topic.id)
+                      ? <Bookmark className="w-4 h-4 fill-current" />
+                      : <BookmarkPlus className="w-4 h-4" />}
+                  </button>
+
                   <button
                     onClick={() => toggleMastered(topic.id)}
                     className={`inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold uppercase tracking-wider border transition ${
@@ -537,7 +719,7 @@ export default function App() {
                       className="w-full h-64 sm:h-96 lg:h-[460px] object-cover filter saturate-105"
                       loading="eager"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-espresso-ink/95 via-espresso-ink/40 to-transparent" />
+                    <div className="img-scrim" />
 
                     <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-10 lg:p-14">
                       <div className="flex flex-wrap items-center gap-2.5 mb-4">
@@ -1039,7 +1221,7 @@ export default function App() {
                     </button>
 
                     <button
-                      onClick={() => setStage('dashboard')}
+                      onClick={goDashboard}
                       className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full text-warm-stone font-medium hover:text-espresso transition"
                     >
                       Return to Dashboard
@@ -1061,6 +1243,10 @@ export default function App() {
         onSelect={handleSelectTopicFromDraw}
         onClose={() => setIsRouletteOpen(false)}
       />
+
+      {/* ================= SETTINGS + CURSOR ================= */}
+      <SettingsDrawer open={settingsOpen} onClose={() => setSettingsOpen(false)} />
+      <CustomCursor />
 
       {/* ================= FOOTER ================= */}
       <footer className="relative z-10 border-t border-ink-wash/10 bg-cream/80 backdrop-blur-md">

@@ -50,7 +50,7 @@ export default function CategoryHoverCard({
           loading="lazy"
         />
         {/* Rich dark luxury gradient overlay so text remains 100% legible */}
-        <div className="absolute inset-0 bg-gradient-to-t from-espresso-ink/95 via-espresso/80 to-espresso-ink/40" />
+        <div className="img-scrim-strong" />
       </div>
 
       {/* CARD CONTENT */}

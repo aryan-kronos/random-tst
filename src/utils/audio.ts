@@ -1,8 +1,19 @@
 // Web Audio API synthesized sounds (no external audio files needed)
 let ctx: AudioContext | null = null;
+let muted = false;
+
+/** Settings drawer flips this — silence every synth sound. */
+export function setAudioMuted(m: boolean) {
+  muted = m;
+  if (m && ctx) {
+    ctx.close().catch(() => {});
+    ctx = null;
+  }
+}
 
 function getAudioContext(): AudioContext | null {
   if (typeof window === 'undefined') return null;
+  if (muted) return null;
   if (!ctx) {
     const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
     if (AudioCtx) ctx = new AudioCtx();

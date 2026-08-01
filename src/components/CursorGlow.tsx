@@ -1,16 +1,6 @@
 import { useEffect, useRef } from 'react';
+import { useSettings } from '../hooks/useSettings';
 
-/**
- * CursorGlow — a golden aura that drifts after the cursor, with soft
- * dust motes that part around it.
- *
- * Engineered for zero jank:
- *  · transform-only animation (translate3d) — GPU composited, no layout
- *  · gradients instead of blur filters (filter repaint is expensive)
- *  · single rAF loop, lerp smoothing, DPR capped at 1.5
- *  · disabled on touch devices and for prefers-reduced-motion
- *  · pauses when the tab is hidden
- */
 interface Mote {
   x: number; y: number; r: number; a: number;
   vx: number; vy: number;
@@ -20,10 +10,12 @@ export default function CursorGlow() {
   const haloRef = useRef<HTMLDivElement>(null);
   const coreRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const settings = useSettings();
 
   useEffect(() => {
+    if (!settings.cursorGlow) return;
     const finePointer = window.matchMedia('(pointer: fine)').matches;
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const reducedMotion = settings.reducedMotion || window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (!finePointer || reducedMotion) return;
 
     const halo = haloRef.current;
@@ -115,7 +107,9 @@ export default function CursorGlow() {
       window.removeEventListener('pointermove', onMove);
       document.removeEventListener('visibilitychange', onVisibility);
     };
-  }, []);
+  }, [settings.cursorGlow, settings.reducedMotion]);
+
+  if (!settings.cursorGlow) return null;
 
   return (
     <>

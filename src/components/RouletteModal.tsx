@@ -114,7 +114,7 @@ export default function RouletteModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-espresso-ink/80 backdrop-blur-md"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 backdrop-scrim backdrop-blur-md"
       onClick={onClose}
     >
       <motion.div
@@ -204,7 +204,7 @@ export default function RouletteModal({
                     spinning ? 'scale-110 blur-[2.5px] saturate-125' : 'scale-100 blur-0'
                   }`}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-espresso-ink/90 via-espresso-ink/30 to-transparent" />
+                <div className="img-scrim" />
 
                 {/* Category & Difficulty Tag */}
                 <div className="absolute top-4 left-4 flex items-center gap-2">
