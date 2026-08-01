@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Sun, Moon, Volume2, VolumeX, MousePointer2, Sparkles, Wind, Check } from 'lucide-react';
+import { X, Sun, Moon, Volume2, VolumeX, MousePointer2, Sparkles, Wind, Check, Images } from 'lucide-react';
 import { useSettings, setSettings, type ThemeId } from '../hooks/useSettings';
 
 interface Props {
@@ -126,14 +126,21 @@ export default function SettingsDrawer({ open, onClose }: Props) {
                   onClick={() => setSettings({ cursorGlow: !s.cursorGlow })}
                   icon={Sparkles}
                   label="Golden aura"
-                  sub="the cursor-following ambient light and dust"
+                  sub="volumetric light & dust that trail your cursor"
                 />
                 <Toggle
                   on={s.customCursor}
                   onClick={() => setSettings({ customCursor: !s.customCursor })}
                   icon={MousePointer2}
                   label="Custom cursor"
-                  sub="replaces the pointer with the gold ring"
+                  sub="an ink ring that adapts to light & dark"
+                />
+                <Toggle
+                  on={s.hoverPreviews}
+                  onClick={() => setSettings({ hoverPreviews: !s.hoverPreviews })}
+                  icon={Images}
+                  label="Magnetic previews"
+                  sub="thumbnails that glide along with your cursor"
                 />
                 <Toggle
                   on={s.reducedMotion}

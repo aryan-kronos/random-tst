@@ -4,6 +4,7 @@ import { Shuffle, ChevronRight } from 'lucide-react';
 import type { Category, Topic } from '../data/topics';
 import { CatIcon } from './Icon';
 import { difficultyMeta } from '../data/topics';
+import { previewTopic, clearPreview } from './CursorPreview';
 
 interface Props {
   category: Category;
@@ -28,10 +29,14 @@ export default function CategoryHoverCard({
 
   return (
     <div
-      onMouseEnter={() => setIsHovered(true)}
+      onMouseEnter={() => {
+        setIsHovered(true);
+        previewTopic(category.coverImage, category.label);
+      }}
       onMouseLeave={() => {
         setIsHovered(false);
         setHoveredTopicImg(null);
+        clearPreview();
       }}
       className={`group relative rounded-3xl border bg-ivory/90 backdrop-blur-md overflow-hidden transition-all duration-500 hover:-translate-y-1.5 hover:shadow-[0_20px_60px_-20px_rgba(56,38,16,0.35)] ${
         isFilterActive ? 'border-amber shadow-[0_10px_40px_-15px_rgba(190,139,63,0.5)] ring-2 ring-amber/20' : 'border-ink-wash/12'
@@ -135,7 +140,14 @@ export default function CategoryHoverCard({
                   {topics.map(t => (
                     <button
                       key={t.id}
-                      onMouseEnter={() => setHoveredTopicImg(t.image)}
+                      onMouseEnter={() => {
+                        setHoveredTopicImg(t.image);
+                        previewTopic(t.image, t.title);
+                      }}
+                      onMouseLeave={() => {
+                        setHoveredTopicImg(null);
+                        previewTopic(category.coverImage, category.label);
+                      }}
                       onClick={() => onSelectTopic(t)}
                       className={`w-full text-left flex items-center gap-2.5 px-3 py-2 rounded-xl border text-xs transition group/item ${
                         isHovered

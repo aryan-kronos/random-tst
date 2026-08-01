@@ -9,6 +9,7 @@ export interface Settings {
   sound: boolean;
   cursorGlow: boolean;
   customCursor: boolean;
+  hoverPreviews: boolean;
   reducedMotion: boolean;
 }
 
@@ -19,6 +20,7 @@ const DEFAULTS: Settings = {
   sound: true,
   cursorGlow: true,
   customCursor: true,
+  hoverPreviews: true,
   reducedMotion: false,
 };
 

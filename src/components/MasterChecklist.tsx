@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { topics, categories, difficultyMeta, type Topic, type CategoryId, type Difficulty } from '../data/topics';
 import { CatIcon } from './Icon';
+import { previewTopic, clearPreview } from './CursorPreview';
 
 interface Props {
   masteredTopicIds: string[];
@@ -148,6 +149,8 @@ export default function MasterChecklist({
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95 }}
                 transition={{ duration: 0.25, delay: idx * 0.02 }}
+                onMouseEnter={() => previewTopic(t.image, t.title)}
+                onMouseLeave={() => clearPreview()}
                 className={`group relative flex flex-col justify-between rounded-2xl border p-5 transition-all duration-300 ${
                   isDone
                     ? 'bg-champagne/40 border-amber/30 shadow-xs'

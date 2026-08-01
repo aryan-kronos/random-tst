@@ -21,6 +21,7 @@ import CategoryHoverCard from './components/CategoryHoverCard';
 import LogoMark from './components/Logo';
 import CursorGlow from './components/CursorGlow';
 import CustomCursor from './components/CustomCursor';
+import CursorPreview from './components/CursorPreview';
 import SettingsDrawer from './components/SettingsDrawer';
 import DynamicGreeting from './components/DynamicGreeting';
 import { hasNoteArt, noteArtUrls } from './data/assets';
@@ -494,7 +495,7 @@ export default function App() {
                     Browse all <span className="font-editorial italic font-light text-amber-deep">nine</span> knowledge spheres
                   </h3>
                   <p className="text-sm text-ink-faint mt-1">
-                    Hover your cursor over any card on desktop to unveil its cinematic imagery.
+                    Glide your cursor across the spheres — the imagery travels with you.
                   </p>
                 </div>
               </div>
@@ -1246,6 +1247,7 @@ export default function App() {
 
       {/* ================= SETTINGS + CURSOR ================= */}
       <SettingsDrawer open={settingsOpen} onClose={() => setSettingsOpen(false)} />
+      <CursorPreview />
       <CustomCursor />
 
       {/* ================= FOOTER ================= */}
