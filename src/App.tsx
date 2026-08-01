@@ -183,7 +183,7 @@ export default function App() {
               </div>
 
               {/* LEVEL PROGRESS BANNER */}
-              <div className="rounded-[2rem] border border-ink-wash/15 bg-gradient-to-r from-ivory via-parchment/60 to-champagne/50 p-6 sm:p-8 mb-8 shadow-[0_2px_24px_-10px_rgba(45,36,24,0.1)]">
+              <div className="rounded-[2rem] border border-ink-wash/15 bg-gradient-to-r from-ivory via-parchment/60 to-champagne/50 p-6 sm:p-8 mb-8 shadow-[0_2px_24px_-10px_rgba(56,38,16,0.1)]">
                 <div className="flex flex-col sm:flex-row items-center gap-6">
                   <div className="relative shrink-0">
                     <svg viewBox="0 0 80 80" className="w-20 h-20 -rotate-90">
@@ -196,8 +196,8 @@ export default function App() {
                       />
                       <defs>
                         <linearGradient id="lvlGrad" x1="0" y1="0" x2="1" y2="1">
-                          <stop offset="0%" stopColor="#D9BE83" />
-                          <stop offset="100%" stopColor="#A8854A" />
+                          <stop offset="0%" stopColor="#E0BE7E" />
+                          <stop offset="100%" stopColor="#996F33" />
                         </linearGradient>
                       </defs>
                     </svg>
@@ -251,7 +251,7 @@ export default function App() {
                   { label: 'Minutes Spoken', value: totalMinutes, suffix: 'min', icon: Clock3 },
                   { label: 'Total Experience', value: stats.xp, suffix: 'xp', icon: Zap },
                 ].map(s => (
-                  <div key={s.label} className="bg-ivory/80 backdrop-blur-xs rounded-2xl border border-ink-wash/12 p-4 sm:p-5 shadow-[0_2px_20px_-8px_rgba(45,36,24,0.08)]">
+                  <div key={s.label} className="bg-ivory/80 backdrop-blur-xs rounded-2xl border border-ink-wash/12 p-4 sm:p-5 shadow-[0_2px_20px_-8px_rgba(56,38,16,0.08)]">
                     <s.icon className="w-4 h-4 text-amber-deep mb-3" />
                     <div className="font-display text-3xl sm:text-4xl leading-none tabular-nums text-espresso">
                       {s.value}<span className="text-base sm:text-lg text-ink-faint font-body font-light ml-1">{s.suffix}</span>
@@ -262,7 +262,7 @@ export default function App() {
               </div>
 
               {/* ================= EPIC RANDOM DRAW EXPERIENCE BANNER ================= */}
-              <div className="relative overflow-hidden rounded-[2.5rem] border border-amber/35 bg-gradient-to-br from-ivory via-parchment/70 to-champagne/60 shadow-[0_24px_90px_-40px_rgba(196,162,101,0.45)] p-7 sm:p-12 lg:p-14 mb-12">
+              <div className="relative overflow-hidden rounded-[2.5rem] border border-amber/35 bg-gradient-to-br from-ivory via-parchment/70 to-champagne/60 shadow-[0_24px_90px_-40px_rgba(190,145,82,0.45)] p-7 sm:p-12 lg:p-14 mb-12">
                 <div className="absolute -top-24 -right-24 w-80 h-80 rounded-full bg-gradient-to-br from-amber/20 via-champagne/30 to-transparent blur-3xl pointer-events-none" />
 
                 <div className="relative z-10 max-w-3xl">
@@ -386,7 +386,7 @@ export default function App() {
               </div>
 
               {/* ================= LEVEL JOURNEY LADDER ================= */}
-              <div className="rounded-[2.5rem] border border-ink-wash/15 bg-ivory/80 backdrop-blur-md p-7 sm:p-10 mb-12 shadow-[0_4px_30px_-10px_rgba(45,36,24,0.06)]">
+              <div className="rounded-[2.5rem] border border-ink-wash/15 bg-ivory/80 backdrop-blur-md p-7 sm:p-10 mb-12 shadow-[0_4px_30px_-10px_rgba(56,38,16,0.06)]">
                 <div className="flex items-center justify-between mb-6 flex-wrap gap-2">
                   <div>
                     <span className="text-xs uppercase tracking-[0.2em] text-amber-deep font-bold block mb-1">
@@ -534,7 +534,7 @@ export default function App() {
               ) : (
                 <>
                   {/* 1. CINEMATIC HERO IMAGE BANNER */}
-                  <div className="relative rounded-[2.5rem] overflow-hidden border border-ink-wash/15 shadow-[0_24px_80px_-40px_rgba(45,36,24,0.5)] bg-espresso-ink">
+                  <div className="relative rounded-[2.5rem] overflow-hidden border border-ink-wash/15 shadow-[0_24px_80px_-40px_rgba(56,38,16,0.5)] bg-espresso-ink">
                     <img
                       src={topic.image}
                       alt={topic.imageAlt}
@@ -615,7 +615,7 @@ export default function App() {
                             <span className="absolute -top-3 left-8 sm:left-14 w-24 sm:w-28 h-7 bg-amber-pale/80 border border-amber/25 -rotate-6 rounded-[3px] shadow-sm z-10" />
                             <span className="absolute -bottom-3 right-8 sm:right-14 w-24 sm:w-28 h-7 bg-amber-pale/80 border border-amber/25 rotate-3 rounded-[3px] shadow-sm z-10" />
 
-                            <figure className="relative rounded-[1.75rem] border border-ink-wash/15 bg-ivory p-3 sm:p-4 shadow-[0_26px_70px_-32px_rgba(45,36,24,0.5)] -rotate-1 hover:rotate-0 transition-transform duration-500">
+                            <figure className="relative rounded-[1.75rem] border border-ink-wash/15 bg-ivory p-3 sm:p-4 shadow-[0_26px_70px_-32px_rgba(56,38,16,0.5)] -rotate-1 hover:rotate-0 transition-transform duration-500">
                               <img
                                 src={arts[0]}
                                 alt={`Handwritten study notes for ${topic.title}`}
@@ -637,7 +637,7 @@ export default function App() {
                                 return (
                                   <figure
                                     key={i}
-                                    className={`relative rounded-[1.5rem] border border-ink-wash/15 bg-ivory p-2.5 sm:p-3 shadow-[0_18px_50px_-28px_rgba(45,36,24,0.45)] ${i % 2 ? 'rotate-1' : '-rotate-1'} hover:rotate-0 transition-transform duration-500`}
+                                    className={`relative rounded-[1.5rem] border border-ink-wash/15 bg-ivory p-2.5 sm:p-3 shadow-[0_18px_50px_-28px_rgba(56,38,16,0.45)] ${i % 2 ? 'rotate-1' : '-rotate-1'} hover:rotate-0 transition-transform duration-500`}
                                   >
                                     <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 w-20 h-5 bg-amber-pale/80 border border-amber/25 -rotate-2 rounded-[3px] shadow-sm z-10" />
                                     <img
@@ -871,7 +871,7 @@ export default function App() {
             >
               <StepRail active={2} />
 
-              <div className="mt-8 rounded-[2.5rem] border border-ink-wash/15 bg-gradient-to-b from-ivory via-parchment/60 to-rose-fog/30 shadow-[0_24px_90px_-44px_rgba(45,36,24,0.4)] p-7 sm:p-12 lg:p-14 overflow-hidden">
+              <div className="mt-8 rounded-[2.5rem] border border-ink-wash/15 bg-gradient-to-b from-ivory via-parchment/60 to-rose-fog/30 shadow-[0_24px_90px_-44px_rgba(56,38,16,0.4)] p-7 sm:p-12 lg:p-14 overflow-hidden">
                 <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
                   {/* LEFT: Topic Blueprint & Custom Roadmap */}
                   <div className="order-2 lg:order-1">
@@ -971,7 +971,7 @@ export default function App() {
             >
               <StepRail active={3} />
 
-              <div className="mt-8 relative overflow-hidden rounded-[2.5rem] border border-amber/30 bg-gradient-to-br from-champagne/80 via-ivory to-amber-pale/50 shadow-[0_24px_90px_-44px_rgba(196,162,101,0.7)] p-9 sm:p-16 text-center">
+              <div className="mt-8 relative overflow-hidden rounded-[2.5rem] border border-amber/30 bg-gradient-to-br from-champagne/80 via-ivory to-amber-pale/50 shadow-[0_24px_90px_-44px_rgba(190,145,82,0.7)] p-9 sm:p-16 text-center">
                 <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-96 h-96 rounded-full bg-amber/15 blur-3xl pointer-events-none" />
 
                 <div className="relative z-10">

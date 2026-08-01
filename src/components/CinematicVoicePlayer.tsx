@@ -152,7 +152,7 @@ export default function CinematicVoicePlayer({ topic }: Props) {
   };
 
   return (
-    <div className="relative overflow-hidden rounded-3xl border border-amber/35 bg-gradient-to-br from-ivory via-parchment/70 to-champagne/60 p-6 sm:p-8 shadow-[0_12px_45px_-15px_rgba(196,162,101,0.35)]">
+    <div className="relative overflow-hidden rounded-3xl border border-amber/35 bg-gradient-to-br from-ivory via-parchment/70 to-champagne/60 p-6 sm:p-8 shadow-[0_12px_45px_-15px_rgba(190,145,82,0.35)]">
       {/* Background radial glow */}
       <div className="absolute top-0 right-0 w-72 h-72 bg-radial from-amber/15 to-transparent rounded-full blur-2xl pointer-events-none" />
 
@@ -288,7 +288,7 @@ export default function CinematicVoicePlayer({ topic }: Props) {
                   aria-label="Seek narration"
                   className="voice-seek w-full appearance-none h-2 rounded-full outline-none cursor-pointer"
                   style={{
-                    background: `linear-gradient(to right, #C4A265 0%, #A8854A ${Math.round(progress * 100)}%, rgba(45,36,24,0.14) ${Math.round(progress * 100)}%, rgba(45,36,24,0.14) 100%)`,
+                    background: `linear-gradient(to right, #BE9152 0%, #996F33 ${Math.round(progress * 100)}%, rgba(56,38,16,0.14) ${Math.round(progress * 100)}%, rgba(56,38,16,0.14) 100%)`,
                   }}
                 />
               ) : (

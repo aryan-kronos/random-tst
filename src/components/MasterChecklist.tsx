@@ -40,7 +40,7 @@ export default function MasterChecklist({
   const progressPct = Math.round((mastered / total) * 100);
 
   return (
-    <div className="rounded-[2.5rem] border border-ink-wash/15 bg-ivory/90 backdrop-blur-md p-7 sm:p-10 lg:p-12 shadow-[0_20px_70px_-30px_rgba(45,36,24,0.15)]">
+    <div className="rounded-[2.5rem] border border-ink-wash/15 bg-ivory/90 backdrop-blur-md p-7 sm:p-10 lg:p-12 shadow-[0_20px_70px_-30px_rgba(56,38,16,0.15)]">
       {/* Header & Global Progress Bar */}
       <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 pb-8 border-b border-ink-wash/10">
         <div>

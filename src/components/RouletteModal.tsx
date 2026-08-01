@@ -18,14 +18,14 @@ interface Props {
 
 const SPIN_STEPS = 24;
 const CONFETTI: { Icon: LucideIcon; color: string }[] = [
-  { Icon: PartyPopper, color: '#C4A265' },
-  { Icon: Sparkles, color: '#A8854A' },
-  { Icon: Star, color: '#D9BE83' },
-  { Icon: Mic, color: '#8C6C38' },
-  { Icon: Lightbulb, color: '#C4A265' },
-  { Icon: Flame, color: '#A8854A' },
-  { Icon: AudioLines, color: '#8C6C38' },
-  { Icon: Sparkle, color: '#D9BE83' },
+  { Icon: PartyPopper, color: '#BE9152' },
+  { Icon: Sparkles, color: '#996F33' },
+  { Icon: Star, color: '#E0BE7E' },
+  { Icon: Mic, color: '#8A5F26' },
+  { Icon: Lightbulb, color: '#BE9152' },
+  { Icon: Flame, color: '#996F33' },
+  { Icon: AudioLines, color: '#8A5F26' },
+  { Icon: Sparkle, color: '#E0BE7E' },
 ];
 
 export default function RouletteModal({
@@ -122,7 +122,7 @@ export default function RouletteModal({
         initial={{ opacity: 0, scale: 0.9, y: 24 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{ type: 'spring', stiffness: 280, damping: 24 }}
-        className="relative w-full max-w-xl overflow-hidden rounded-[2.5rem] border border-amber/40 bg-gradient-to-b from-ivory via-parchment to-champagne/80 shadow-[0_25px_100px_-20px_rgba(196,162,101,0.6)] p-6 sm:p-9"
+        className="relative w-full max-w-xl overflow-hidden rounded-[2.5rem] border border-amber/40 bg-gradient-to-b from-ivory via-parchment to-champagne/80 shadow-[0_25px_100px_-20px_rgba(190,145,82,0.6)] p-6 sm:p-9"
       >
         {/* Aura */}
         <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-80 h-80 rounded-full bg-gradient-to-br from-amber/30 via-champagne/40 to-transparent blur-3xl pointer-events-none" />

@@ -27,9 +27,9 @@ export default function LogoMark({ className = 'w-10 h-10', title = 'Verbalis' }
       <title>{`${title} — Master of Speech`}</title>
       <defs>
         <linearGradient id="vbGold" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#E0C68F" />
-          <stop offset="52%" stopColor="#B6925E" />
-          <stop offset="100%" stopColor="#8A6B38" />
+          <stop offset="0%" stopColor="#E4C88D" />
+          <stop offset="52%" stopColor="#BE9152" />
+          <stop offset="100%" stopColor="#8A5F26" />
         </linearGradient>
         <clipPath id="vbSealClip">
           <rect x="0" y="0" width="64" height="64" rx="15" />
