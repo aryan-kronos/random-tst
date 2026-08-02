@@ -22,6 +22,16 @@ export function useNarration(active = true) {
   const [rate, setRate] = useState(0.95);
   const utterRef = useRef<SpeechSynthesisUtterance | null>(null);
   const textLenRef = useRef(1);
+  const boundaryRef = useRef(0);
+  const startRef = useRef(0);
+  const clockRef = useRef<number | null>(null);
+
+  const clearClock = useCallback(() => {
+    if (clockRef.current !== null) {
+      window.clearInterval(clockRef.current);
+      clockRef.current = null;
+    }
+  }, []);
 
   useEffect(() => {
     if (!state.supported || !active) return;
@@ -47,30 +57,52 @@ export function useNarration(active = true) {
   }, [voices]);
 
   const stop = useCallback(() => {
+    clearClock();
     if (!state.supported) return;
     window.speechSynthesis.cancel();
     setState(s => ({ ...s, speaking: false, paused: false, progress: 0 }));
-  }, [state.supported]);
+  }, [state.supported, clearClock]);
 
   const speak = useCallback((text: string) => {
     if (!state.supported) return;
     window.speechSynthesis.cancel();
+    clearClock();
     const u = new SpeechSynthesisUtterance(text);
     const v = pickVoice();
     if (v) u.voice = v;
     u.rate = rate;
     u.pitch = 1;
     textLenRef.current = Math.max(1, text.length);
+    boundaryRef.current = 0;
+    startRef.current = Date.now();
+
+    // Safari sometimes never fires boundary events for certain voices —
+    // after a 2s stall, fall back to a time-based estimate so the seek bar
+    // never freezes at 0
+    const estMs = (text.length / (13 * rate)) * 1000; // ~13 chars/sec at 1x
+    clockRef.current = window.setInterval(() => {
+      if (boundaryRef.current !== 0 && Date.now() - boundaryRef.current < 2000) return;
+      const p = Math.min(0.99, (Date.now() - startRef.current) / estMs);
+      setState(s => (s.speaking ? { ...s, progress: Math.max(s.progress, p) } : s));
+    }, 250);
+
     u.onstart = () => setState(s => ({ ...s, speaking: true, paused: false, progress: 0 }));
-    u.onend = () => setState(s => ({ ...s, speaking: false, paused: false, progress: 1 }));
-    u.onerror = () => setState(s => ({ ...s, speaking: false, paused: false }));
+    u.onend = () => {
+      clearClock();
+      setState(s => ({ ...s, speaking: false, paused: false, progress: 1 }));
+    };
+    u.onerror = () => {
+      clearClock();
+      setState(s => ({ ...s, speaking: false, paused: false }));
+    };
     u.onboundary = (e) => {
+      boundaryRef.current = Date.now();
       const p = Math.min(1, (e.charIndex || 0) / textLenRef.current);
       setState(s => ({ ...s, progress: p }));
     };
     utterRef.current = u;
     window.speechSynthesis.speak(u);
-  }, [state.supported, pickVoice, rate]);
+  }, [state.supported, pickVoice, rate, clearClock]);
 
   const pause = useCallback(() => {
     if (!state.supported) return;
