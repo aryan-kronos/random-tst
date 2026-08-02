@@ -29,6 +29,7 @@ import KineticText from './components/KineticText';
 import Parallax from './components/Parallax';
 import WaxSeal from './components/WaxSeal';
 import BloomPortal, { startBloom } from './components/BloomPortal';
+import InstallPrompt from './components/InstallPrompt';
 import SettingsDrawer from './components/SettingsDrawer';
 import DynamicGreeting from './components/DynamicGreeting';
 import { hasNoteArt, noteArtUrls } from './data/assets';
@@ -1341,6 +1342,7 @@ export default function App() {
 
       {/* ================= SETTINGS + CURSOR ================= */}
       <SettingsDrawer open={settingsOpen} onClose={() => setSettingsOpen(false)} />
+      <InstallPrompt />
       <CursorPreview />
       <BloomPortal />
       <CustomCursor />
