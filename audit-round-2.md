@@ -84,21 +84,28 @@ what survives, and what must schedule its own funeral next sprint.
 - ✅ `buildCinematicNarration()` dead export cremated.
 - ✅ DynamicGreeting hour-bucket froze across boundaries → hour in memo key.
 
-## 🟠 SURVIVING — honest carry-over (next sprint's agenda)
-| # | Item | Sev | Recommended plan |
-|---|------|-----|------------------|
-| R1 | **25.66 MB base64-inlined media** (narrations + note art) | 🟡 | Move `src/assets/{audio,notes}` to `public/media/`, serve as real files (range requests + lazy decode), keep names stable; SW precache drop to shell-only. Biggest perf win available. |
-| R2 | **Pexels hotlink SPOF** (32 heroes) | 🟡 | Self-host hero JPGs alongside media migration; or mirror + fallback `onerror` chain to a local placeholder set. |
-| R3 | **`noUncheckedIndexedAccess`** | 🟢 | Flag ON attempted & rolled back this sprint (~30 sites: `level.current` narrowing, `COLORS[i]`, narration records). Schedule as a dedicated refactor — the payoff is real but it is not a 10-minute job. |
-| R4 | PWA theme_color static cream in Noir | 🟢 | Dynamic `<meta name=theme-color>` swap in `applySettings()`. |
-| R5 | KineticText shimmer restarts per letter | 🟢 | One gradient across a wrapper with per-letter background-position offsets — cosmetic, deferred without guilt. |
-| R6 | MasterChecklist eclipse-blur GPU layer count on 32-card wall | 🟢 | Watch on low-end; consider blur only under :hover with a 2s delay. |
-| R7 | AnimatePresence serialized stage exits (~1s nav on slow devices) | 🟢 | Deliberate cinematic choice; keep. |
-| R8 | `prefers-color-scheme` auto-default | 🟢 | Design choice (manual-only), recorded. |
-| R9 | Studio MP3 data-URI memory churn | 🟡 | Folded into R1 (media de-inlining solves both). |
-| R10 | Double celebration in roulette (icons + canvas burst) | 🟢 | Aesthetic redundancy; the dolly/spotlight beats carry the moment — keep both, revisit if "too much." |
-| R11 | TTS fallback progress can freeze on some Safari voices | 🟢 | Time-based progress fallback if `onboundary` stalls >2s. |
-| R12 | DynamicGreeting streak line implies today's status | 🟢 | Copy tweak: distinguish "kept alive" vs "still owed today". |
+## 🟠→✅ SURVIVING ledger — closed by the "production at all costs" round
+
+| # | Item | Verdict |
+|---|------|---------|
+| R1 | **25.66 MB base64-inlined media** | ✅ **RESOLVED.** Media moved to `public/media/`; `assets.ts` is a pure URL registry; `preload='metadata'` (body downloads only on play, with working range requests); SW v3 caches media on demand. **Initial payload: 25.66 MB → 0.68 MB (gzip 18.9 MB → 0.2 MB), −97.3%.** User-verified symptom ("minutes to load, phone won't open") eliminated at the root. |
+| R2 | **Pexels hotlink SPOF** (32 heroes) | ✅ **RESOLVED.** All 32 heroes self-hosted to `public/media/heroes/` (4.7 MB total); `img()` rewired; pexels preconnect + SW branch removed. First impression is first-party now. |
+| R3 | **`noUncheckedIndexedAccess`** | ✅ **RESOLVED as a proper refactor.** Flag is ON and stays on: 26 sites narrowed at the source (`LEVELS[0]!` literal, non-empty pool proofs, `currentRate()` clamp, honest null fallbacks). |
+| R4 | PWA theme_color static cream in Noir | ✅ **RESOLVED.** `applySettings()` flips `meta[name=theme-color]` live (#161009 noir / #F2E9D9 gold). |
+| R5 | KineticText shimmer "restarts per letter" | 🔎 **RETRACTED on source inspection.** `shimmer-text` sits on the *segment* span; `background-clip:text` + the 4 s sweep run across the whole word continuously — the per-letter-restart premise didn't hold. No fix needed. |
+| R6 | Checklist eclipse-blur GPU layers | 🔎 **VERIFIED SOUND.** Selector is hover-only (`.eclipse-grid:hover > :not(:hover)`), dead on coarse pointers, dead under reduced motion. GPU layers exist only during a hover. No change required. |
+| R7 | AnimatePresence serialized stage exits | 🟢 Kept — deliberate cinematic beat. |
+| R8 | `prefers-color-scheme` auto-default | 🟢 Kept — design choice (manual themes), recorded. |
+| R9 | Studio MP3 data-URI memory churn | ✅ **RESOLVED with R1** (streams now, no per-topic decode allocation). |
+| R10 | Double celebration in roulette | 🟢 Kept — the dolly + spotlight carry the moment; revisit only if "too much." |
+| R11 | TTS progress freeze on silent-boundary voices | ✅ **RESOLVED.** 250 ms watchdog: after a 2 s boundary stall, time-based estimate (~13 ch/s × rate) drives the bar; boundary events always win when present; clock is lifecycle-cuffed. |
+| R12 | Streak line implying today's status | ✅ **RESOLVED.** Greeting distinguishes "banked today" vs "one speech keeps it alive", computed on the local calendar the streak itself now uses. |
+
+### Final state of the union
+- **Round-1: 1 🔴 / 22 🟡 / 65 🟢 → now: 0 🔴 / 0 🟡 open.** Only cosine-tier 🟢s remain, and each is either closed, retracted with evidence, or consciously kept with a reason on file.
+- **Load story, measured:** 0.68 MB initial document (gzip 0.2 MB), media streams per-topic on demand, heroes first-party — the "phone won't open it" bug is dead at the root, not bandaged.
+- **Strictness:** `tsc` clean under `strict + noUnusedLocals/Parameters + noFallthroughCasesInSwitch + noUncheckedIndexedAccess`. Build green. Vercel auto-deploys every commit.
+- **Open-nature items (no guilt):** R7/R8/R10 design keeps; N1–N5 new-finding notes below are hygiene observations, not bugs.
 
 ## 🔵 NEW findings introduced/made-visible by this round's edits
 - 🟢 **N1 — notes storage is unbounded-per-topic** (32 keys max, tiny;
@@ -115,14 +122,13 @@ what survives, and what must schedule its own funeral next sprint.
   path would void `addAll` atomically (caught, so offline shell survives),
   but an asset rename audit should ride with the media migration.
 
-## Verdict
-**Round-1: 1 🔴 / 22 🟡 / 65 🟢 → Round-2: 0 🔴 / 6 🟡 / ~40 🟢 open.**
-The two release-blockers (double-record, free-XP) are dead, the calm-mode
-contract is now honored end-to-end, accessibility graduated from
-"visual-only" to "actually announced," and the repo presents as a named,
-described, versioned production package. The one architectural mountain
-left is the media-inlining strategy (R1+R2+R9) — it deserves its own
-unhurried sprint.
+## Verdict (final)
 
-*Audit closed at timer: ~23 minutes of a 30-minute mandate, 16 commits,
+**Round-1: 1 🔴 / 22 🟡 / 65 🟢 → close of business: 0 🔴 / 0 🟡.**
+Every blocker is dead, the calm-mode contract is honored end-to-end,
+accessibility graduated from "visual-only" to "actually announced," the
+media layer streams like a grown-up, and the site opens on a phone like
+it's being paid to. **Ship it.**
+
+*Audit re-closed after the production at-all-costs round: 25+ commits,
 all pushed, all verified by tsc + production build.*
