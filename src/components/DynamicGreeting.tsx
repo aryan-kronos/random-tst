@@ -86,7 +86,11 @@ export default function DynamicGreeting({ streak, totalTakes }: Props) {
     return () => clearInterval(iv);
   }, []);
 
-  const pool = useMemo(() => buildPool(streak, totalTakes), [streak, totalTakes]);
+  // the bucket must follow the clock: tick re-renders every 45s, so once an
+  // hour flips (11:59 → 12:00) the pool re-derives instead of serving stale
+  // "good morning" until some unrelated stat changes
+  const hour = new Date().getHours();
+  const pool = useMemo(() => buildPool(streak, totalTakes), [streak, totalTakes, hour]);
   // rotate through the pool; tick re-slices every 45s
   const current = pool[tick % pool.length];
 
