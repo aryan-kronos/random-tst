@@ -35,7 +35,7 @@ function useStudioAudio(topicId: string, enabled: boolean) {
     // real file URL now: stream, don't slurp. only headers up front —
     // the body downloads only when the learner actually presses play
     el.preload = 'metadata';
-    el.playbackRate = AUDIO_RATES[rateIdx];
+    el.playbackRate = currentRate();
 
     const onTime = () => setCur(el.currentTime);
     const onMeta = () => setDuration(el.duration || 0);
@@ -73,7 +73,7 @@ function useStudioAudio(topicId: string, enabled: boolean) {
   }, [topicId, enabled]);
 
   useEffect(() => {
-    if (audioRef.current) audioRef.current.playbackRate = AUDIO_RATES[rateIdx];
+    if (audioRef.current) audioRef.current.playbackRate = currentRate();
   }, [rateIdx]);
 
   const toggle = () => {
@@ -106,12 +106,14 @@ function useStudioAudio(topicId: string, enabled: boolean) {
   };
 
   const cycleRate = () => setRateIdx(i => (i + 1) % AUDIO_RATES.length);
+  // AUDIO_RATES is a non-empty literal; ?? keeps the type honest under noUncheckedIndexedAccess
+  const currentRate = () => AUDIO_RATES[rateIdx] ?? AUDIO_RATES[0] ?? 1;
 
   const progress = duration ? cur / duration : 0;
 
   return {
     playing, started, cur, duration, progress, failed,
-    rate: AUDIO_RATES[rateIdx], toggle, restart, seek, skip, cycleRate,
+    rate: currentRate(), toggle, restart, seek, skip, cycleRate,
   };
 }
 

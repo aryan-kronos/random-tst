@@ -43,7 +43,7 @@ export function useNarration(active = true) {
     const en = voices.filter(v => v.lang.startsWith('en'));
     // the studio MP3s are a masculine storyteller — the TTS fallback must carry the same character
     const preferred = en.find(v => /Daniel|Google UK English Male|Microsoft Guy|Microsoft David|Google US English|Alex|Arthur/i.test(v.name));
-    return preferred || en[0] || voices[0];
+    return preferred ?? en[0] ?? voices[0] ?? null;
   }, [voices]);
 
   const stop = useCallback(() => {

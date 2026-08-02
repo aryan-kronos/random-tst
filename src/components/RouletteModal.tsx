@@ -38,7 +38,7 @@ export default function RouletteModal({
   onClose,
 }: Props) {
   const [phase, setPhase] = useState<'idle' | 'spinning' | 'revealed'>('idle');
-  const [display, setDisplay] = useState<Topic>(topics[0]);
+  const [display, setDisplay] = useState<Topic>(topics[0]!); // catalog is statically non-empty
   const [tick, setTick] = useState(0);
   const poolRef = useRef<Topic[]>(topics);
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
@@ -59,7 +59,7 @@ export default function RouletteModal({
   const startSpin = () => {
     clearTimers();
     const p = poolRef.current.length ? poolRef.current : topics;
-    const winner = p[Math.floor(Math.random() * p.length)];
+    const winner = p[Math.floor(Math.random() * p.length)] ?? topics[0]!;
     setPhase('spinning');
     setTick(0);
 
@@ -67,7 +67,7 @@ export default function RouletteModal({
     for (let i = 0; i < SPIN_STEPS; i++) {
       const at = delay;
       timers.current.push(setTimeout(() => {
-        setDisplay(p[Math.floor(Math.random() * p.length)]);
+        setDisplay(p[Math.floor(Math.random() * p.length)] ?? topics[0]!);
         setTick(i);
         playTickSound(520 + i * 22);
       }, at));

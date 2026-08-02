@@ -39,7 +39,7 @@ export const LEVELS = [
 ];
 
 export function levelInfo(xp: number) {
-  let current = LEVELS[0];
+  let current = LEVELS[0]!; // literal: LEVELS is statically non-empty
   for (const l of LEVELS) if (xp >= l.min) current = l;
   const next = LEVELS.find(l => l.min > xp) || null;
   const spanMin = current.min;

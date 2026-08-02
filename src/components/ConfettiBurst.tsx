@@ -50,7 +50,7 @@ export default function ConfettiBurst({ fire }: { fire: boolean }) {
         h: 3 + Math.random() * 4,
         rot: Math.random() * Math.PI,
         vr: (Math.random() - 0.5) * 0.3,
-        color: COLORS[Math.floor(Math.random() * COLORS.length)],
+        color: COLORS[Math.floor(Math.random() * COLORS.length)] ?? '#E8C276',
         life: 0,
         ttl: 150 + Math.random() * 60,
         shape: Math.random() > 0.3 ? 'rect' : 'circle',

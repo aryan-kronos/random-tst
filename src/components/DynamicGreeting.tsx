@@ -92,7 +92,7 @@ export default function DynamicGreeting({ streak, totalTakes }: Props) {
   const hour = new Date().getHours();
   const pool = useMemo(() => buildPool(streak, totalTakes), [streak, totalTakes, hour]);
   // rotate through the pool; tick re-slices every 45s
-  const current = pool[tick % pool.length];
+  const current = pool[tick % pool.length]!; // buildPool guarantees a non-empty pool
 
   return (
     <span className="inline-flex items-center gap-2.5 min-h-[18px]">

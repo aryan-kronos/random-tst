@@ -1395,7 +1395,7 @@ export function getRandomTopic(category?: CategoryId | null, difficulty?: Diffic
   if (difficulty) pool = pool.filter(t => t.difficulty === difficulty);
   if (pool.length === 0) pool = topics;
   if (excludeId && pool.length > 1) pool = pool.filter(t => t.id !== excludeId);
-  return pool[Math.floor(Math.random() * pool.length)];
+  return pool[Math.floor(Math.random() * pool.length)]!; // pool is non-empty by construction above
 }
 
 export function getTopicsByCategory(category: CategoryId): Topic[] {
