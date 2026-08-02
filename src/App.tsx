@@ -62,9 +62,22 @@ export default function App() {
   } = useStats();
 
   const topRef = useRef<HTMLDivElement>(null);
+  const completedRef = useRef(false);
+  const speakStartRef = useRef(0);
+  const [claimWarn, setClaimWarn] = useState<number | null>(null);
 
   useEffect(() => {
-    topRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    const reduced = document.documentElement.dataset.motion === 'reduced';
+    topRef.current?.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
+  }, [stage]);
+
+  // arm the completion guard every time a speaking round begins
+  useEffect(() => {
+    if (stage === 'speak') {
+      completedRef.current = false;
+      speakStartRef.current = Date.now();
+      setClaimWarn(null);
+    }
   }, [stage]);
 
   // deep links: #/topic/<id> — shareable, refresh-safe, back-button aware
@@ -114,6 +127,8 @@ export default function App() {
   };
 
   const handleComplete = (secs: number) => {
+    if (completedRef.current) return; // guard: timer-finish + manual claim within the 800ms window must never double-record
+    completedRef.current = true;
     if (topic) {
       recordSession({
         topicId: topic.id,
@@ -127,6 +142,23 @@ export default function App() {
     }
     setTimeout(() => setStage('done'), 800);
   };
+
+  // mastery is earned: require at least 20 seconds at the lectern before victory can be claimed
+  const MIN_CLAIM_SECONDS = 20;
+  const claimVictory = () => {
+    const remaining = MIN_CLAIM_SECONDS - (Date.now() - speakStartRef.current) / 1000;
+    if (remaining > 0) {
+      setClaimWarn(Math.ceil(remaining));
+      return;
+    }
+    handleComplete(60);
+  };
+
+  useEffect(() => {
+    if (claimWarn === null) return;
+    const t = window.setTimeout(() => setClaimWarn(null), 4000);
+    return () => window.clearTimeout(t);
+  }, [claimWarn]);
 
   const catOf = (id: string) => categories.find(c => c.id === id);
 
@@ -1147,12 +1179,19 @@ export default function App() {
                 >
                   <ChevronLeft className="w-4 h-4" /> Back to Masterclass View
                 </button>
-                <button
-                  onClick={() => handleComplete(60)}
-                  className="flex-1 inline-flex items-center justify-center gap-2.5 px-7 py-4 rounded-2xl bg-espresso/90 text-ivory font-medium hover:bg-espresso transition shadow-md"
-                >
-                  <CheckCircle2 className="w-4 h-4" /> Finished Speaking — Claim Victory
-                </button>
+                <div className="flex-1 flex flex-col gap-1.5">
+                  <button
+                    onClick={claimVictory}
+                    className="w-full inline-flex items-center justify-center gap-2.5 px-7 py-4 rounded-2xl bg-espresso/90 text-ivory font-medium hover:bg-espresso transition shadow-md"
+                  >
+                    <CheckCircle2 className="w-4 h-4" /> Finished Speaking — Claim Victory
+                  </button>
+                  {claimWarn !== null && (
+                    <p role="status" className="text-center text-xs font-semibold text-[#A34A2A]">
+                      Own the silence first — at least {MIN_CLAIM_SECONDS}s at the lectern. {claimWarn}s to go.
+                    </p>
+                  )}
+                </div>
               </div>
             </motion.div>
           )}
