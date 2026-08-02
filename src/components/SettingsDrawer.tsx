@@ -171,6 +171,11 @@ export default function SettingsDrawer({ open, onClose }: Props) {
 
             <div className="p-6 border-t border-ink-wash/12 text-[11px] text-ink-faint leading-relaxed">
               Verbalis remembers your choices here — themes, motion and sound persist across sessions.
+              <span className="block mt-2.5 text-[10px] uppercase tracking-[0.22em]">
+                Crafted by <span className="font-handwritten text-[15px] font-bold tracking-normal lowercase text-amber-deep">aryan</span>
+                <span className="normal-case tracking-normal"> · CEO, </span>
+                <a href="https://examcodes.site" target="_blank" rel="noopener noreferrer" className="normal-case tracking-normal font-semibold text-warm-stone hover:text-amber-deep underline decoration-amber/40 underline-offset-2 transition">examcodes.site</a>
+              </span>
             </div>
           </motion.aside>
         </>

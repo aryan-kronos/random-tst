@@ -5,7 +5,7 @@ import {
   Clock3, Layers, ArrowRight, Lightbulb, PenLine, Sparkles,
   History, Trophy, X, Zap, Award, Gauge, Star,
   CheckSquare, NotebookPen, StickyNote, Heart, BookmarkPlus, Bookmark,
-  Settings2,
+  Settings2, ArrowUpRight,
 } from 'lucide-react';
 import {
   categories, getTopicsByCategory, countByDifficulty, topics,
@@ -1349,11 +1349,58 @@ export default function App() {
 
       {/* ================= FOOTER ================= */}
       <footer className="relative z-10 border-t border-ink-wash/10 bg-cream/80 backdrop-blur-md">
-        <div className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 py-10 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 py-10 flex flex-col lg:flex-row items-center justify-between gap-7">
           <div className="flex items-center gap-2.5">
             <LogoMark className="w-8 h-8 drop-shadow-sm" />
             <span className="font-editorial text-xl font-bold">Verbalis</span>
           </div>
+
+          {/* The maker's signature — one quiet flourish, front and centre */}
+          <div className="flex flex-col items-center -my-1 select-none">
+            <span className="text-[9px] uppercase tracking-[0.34em] text-ink-faint font-bold mb-0.5">
+              Designed &amp; built by
+            </span>
+            <span className="relative inline-block">
+              <span className="font-handwritten font-bold text-[42px] leading-none shimmer-text">
+                Aryan
+              </span>
+              {/* hand-drawn flourish underline */}
+              <svg
+                viewBox="0 0 120 12"
+                className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-[110px] h-[10px] text-amber opacity-80"
+                fill="none"
+                aria-hidden="true"
+              >
+                <path
+                  d="M4 8 C 30 2, 60 10, 116 5"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                />
+              </svg>
+            </span>
+            <span className="mt-3 flex items-center gap-1.5 text-[11px] text-warm-stone">
+              <span className="text-ink-faint">CEO of</span>
+              <a
+                href="https://examcodes.site"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-0.5 font-semibold text-espresso border-b border-amber/50 hover:text-amber-deep hover:border-amber-deep transition"
+              >
+                examcodes.site <ArrowUpRight className="w-3 h-3" />
+              </a>
+              <span className="mx-1 text-ink-wash">·</span>
+              <a
+                href="https://ptflaryan.vercel.app"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-0.5 font-semibold text-espresso border-b border-amber/50 hover:text-amber-deep hover:border-amber-deep transition"
+              >
+                portfolio <ArrowUpRight className="w-3 h-3" />
+              </a>
+            </span>
+          </div>
+
           <p className="text-xs text-ink-faint text-center sm:text-right">
             {topics.length} Master Topics · Cinematic Narration & Visual Descriptions · 10 Orator Ranks · Responsive on all devices
           </p>
