@@ -30,6 +30,7 @@ import Parallax from './components/Parallax';
 import WaxSeal from './components/WaxSeal';
 import BloomPortal, { startBloom } from './components/BloomPortal';
 import InstallPrompt from './components/InstallPrompt';
+import SignatureAryan from './components/SignatureAryan';
 import SettingsDrawer from './components/SettingsDrawer';
 import DynamicGreeting from './components/DynamicGreeting';
 import { hasNoteArt, noteArtUrls } from './data/assets';
@@ -95,20 +96,21 @@ export default function App() {
   // the reader reverses even a few pixels — always one flick away, never a
   // trip to the top. GPU transform only; passive throttled listener.
   useEffect(() => {
+    // high-res trackpads (hello macbook) emit HUNDREDS of ±0.5-2px events —
+    // a single-event threshold never trips, the bar hid and seemingly never
+    // returned. accumulate net direction instead: any true reversal of even
+    // a few pixels pours into the bucket and wins.
     let lastY = window.scrollY;
-    let ticking = false;
+    let bucket = 0;
     const onScroll = () => {
-      if (ticking) return;
-      ticking = true;
-      requestAnimationFrame(() => {
-        const y = window.scrollY;
-        const delta = y - lastY;
-        if (y < 64) setNavHidden(false);           // near the top: always home
-        else if (delta > 6) setNavHidden(true);    // purposeful dive: exit
-        else if (delta < -4) setNavHidden(false);  // the moment you look back: reappear
-        lastY = y;
-        ticking = false;
-      });
+      const y = window.scrollY;
+      const d = y - lastY;
+      lastY = y;
+      if (y < 10) { bucket = 0; setNavHidden(false); return; }
+      if (d === 0) return;
+      bucket = Math.sign(d) === Math.sign(bucket) ? bucket + d : d; // reset on reversal
+      if (bucket > 48) { setNavHidden(true); bucket = 0; }   // deliberate dive: exit
+      else if (bucket < -3) { setNavHidden(false); bucket = 0; } // look back, instantly home
     };
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
@@ -1384,25 +1386,7 @@ export default function App() {
             <span className="text-[9px] uppercase tracking-[0.34em] text-ink-faint font-bold mb-0.5">
               Designed &amp; built by
             </span>
-            <span className="relative inline-block">
-              <span className="font-handwritten font-bold text-[42px] leading-none signature-stream">
-                Aryan
-              </span>
-              {/* hand-drawn flourish underline */}
-              <svg
-                viewBox="0 0 120 12"
-                className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-[110px] h-[10px] text-amber opacity-80"
-                fill="none"
-                aria-hidden="true"
-              >
-                <path
-                  d="M4 8 C 30 2, 60 10, 116 5"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                />
-              </svg>
-            </span>
+            <SignatureAryan className="my-1" />
             <span className="mt-3 flex items-center gap-1.5 text-[11px] text-warm-stone">
               <span className="text-ink-faint">CEO of</span>
               <a

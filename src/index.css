@@ -381,3 +381,38 @@ html[data-motion='reduced'] .signature-stream {
 .site-nav[data-hidden='true'] {
   transform: translateY(-101%);
 }
+
+/* ============ SignatureAryan — the invisible hand ============ */
+/* letters: trace outline → flood with ink → hold → release → rewritten.
+   JS sets per-letter delay; keyframes are a percentage of the 6.8s cycle. */
+@keyframes sig-draw {
+  0%   { stroke-dashoffset: 560; fill-opacity: 0; stroke-opacity: 1; }
+  13%  { stroke-dashoffset: 0; }
+  17%  { fill-opacity: 1; }
+  82%  { fill-opacity: 1; stroke-opacity: 1; }
+  93%, 100% { stroke-dashoffset: 0; fill-opacity: 0; stroke-opacity: 0; }
+}
+.sig-letter-flow {
+  stroke-dasharray: 560;
+  animation: sig-draw cubic-bezier(0.5, 0, 0.45, 1) infinite;
+}
+/* flourish underline — same ceremony, drawn last */
+@keyframes sig-swish {
+  0%   { stroke-dashoffset: 240; stroke-opacity: 0.9; }
+  8%   { stroke-dashoffset: 240; }
+  13%  { stroke-dashoffset: 0; }
+  82%  { stroke-opacity: 0.9; }
+  93%, 100% { stroke-dashoffset: 0; stroke-opacity: 0; }
+}
+.sig-flourish-flow {
+  stroke-dasharray: 240;
+  animation: sig-swish cubic-bezier(0.5, 0, 0.5, 1) infinite;
+}
+/* calm mode: the signature is simply complete and still */
+html[data-motion='reduced'] .sig-letter-flow,
+html[data-motion='reduced'] .sig-flourish-flow {
+  animation: none;
+  stroke-dashoffset: 0;
+  fill-opacity: 1;
+  stroke-opacity: 0.55;
+}
