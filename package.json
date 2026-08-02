@@ -1,7 +1,9 @@
 {
-  "name": "react-vite-tailwind",
+  "name": "verbalis",
+  "description": "Master of Speech — draw a random topic, learn it deeply, speak it in 60 seconds. An offline-capable PWA gym for your voice.",
+  "author": "aryan-kronos",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -9,12 +11,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "clsx": "2.1.1",
     "framer-motion": "^12.43.0",
     "lucide-react": "^1.28.0",
     "react": "19.2.6",
-    "react-dom": "19.2.6",
-    "tailwind-merge": "3.4.0"
+    "react-dom": "19.2.6"
   },
   "devDependencies": {
     "@tailwindcss/vite": "4.1.17",

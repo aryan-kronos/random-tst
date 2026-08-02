@@ -1409,14 +1409,4 @@ export function countByDifficulty(d: Difficulty): number {
 }
 
 /** Build a natural cinematic narration script from a topic for voice player. */
-export function buildCinematicNarration(t: Topic): string {
-  const parts: string[] = [];
-  parts.push(`${t.title}. ${t.subtitle}.`);
-  parts.push(t.cinematicVoiceStory);
-  parts.push('Here are the foundational essentials.');
-  t.keyPoints.forEach(k => parts.push(k));
-  parts.push('Now, here is your 60-second speaking blueprint.');
-  t.speechBlueprint.forEach(s => parts.push(`At ${s.time}, ${s.phase}: ${s.scriptPrompt}`));
-  parts.push('Take a deep breath. Focus your voice. And speak for sixty seconds.');
-  return parts.join(' ');
-}
+
