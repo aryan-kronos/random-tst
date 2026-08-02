@@ -1,16 +1,20 @@
 /* Verbalis service worker — offline-capable PWA shell.
    Strategy: network-first for the app document, cache-first for identity
    assets, stale-while-revalidate for remote topic imagery. */
-const APP_CACHE = 'verbalis-app-v1';
-const IMG_CACHE = 'verbalis-img-v1';
+const APP_CACHE = 'verbalis-app-v2';
+const IMG_CACHE = 'verbalis-img-v2';
 
 self.addEventListener('install', (event) => {
   self.skipWaiting();
   event.waitUntil(
     caches.open(APP_CACHE)
       .then((cache) => cache.addAll([
-        '/', '/index.html', '/manifest.webmanifest',
-        '/favicon.svg', '/favicon-32.png', '/apple-touch-icon.png',
+        // the single-file shell is cached ONCE under its canonical key —
+        // '/' and '/index.html' are the same 25MB document, caching both
+        // doubles the storage bill on every device
+        '/index.html', '/manifest.webmanifest',
+        '/favicon.svg', '/favicon-16.png', '/favicon-32.png', '/apple-touch-icon.png',
+        '/icons/icon-192.png', '/icons/icon-512.png', '/icons/icon-maskable-512.png',
       ]))
       .catch(() => {})
   );
