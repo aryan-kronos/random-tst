@@ -49,6 +49,7 @@ export default function App() {
   const [isRouletteOpen, setIsRouletteOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [notes, setNotes] = useState('');
+  const [navHidden, setNavHidden] = useState(false);
   const [activeTab, setActiveTab] = useState<'learn' | 'checklist'>('learn');
 
   // typed angles are sacred: notes live per-topic on this device, reloading
@@ -89,6 +90,29 @@ export default function App() {
     const reduced = document.documentElement.dataset.motion === 'reduced';
     topRef.current?.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
   }, [stage]);
+
+  // smart-hide navbar: exits on deliberate scroll-down, returns the moment
+  // the reader reverses even a few pixels — always one flick away, never a
+  // trip to the top. GPU transform only; passive throttled listener.
+  useEffect(() => {
+    let lastY = window.scrollY;
+    let ticking = false;
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        const y = window.scrollY;
+        const delta = y - lastY;
+        if (y < 64) setNavHidden(false);           // near the top: always home
+        else if (delta > 6) setNavHidden(true);    // purposeful dive: exit
+        else if (delta < -4) setNavHidden(false);  // the moment you look back: reappear
+        lastY = y;
+        ticking = false;
+      });
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   // arm the completion guard every time a speaking round begins
   useEffect(() => {
@@ -208,7 +232,7 @@ export default function App() {
       <LiquidLight />
 
       {/* ================= TOP BAR ================= */}
-      <header className="sticky top-0 z-50 backdrop-blur-xl bg-cream/80 border-b border-ink-wash/10">
+      <header className="site-nav sticky top-0 z-50 backdrop-blur-xl bg-cream/80 border-b border-ink-wash/10" data-hidden={navHidden}>
         <div className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 h-16 sm:h-18 flex items-center justify-between">
           <button onClick={goDashboard} className="flex items-center gap-3 group text-left">
             <LogoMark className="w-9 h-9 sm:w-10 sm:h-10 drop-shadow-md group-hover:drop-shadow-lg transition" />
