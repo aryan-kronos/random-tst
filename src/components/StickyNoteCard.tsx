@@ -42,7 +42,8 @@ export default function StickyNoteCard({ note }: Props) {
       whileHover={{ scale: 1.03, rotate: 0, y: -4 }}
       transition={{ type: 'spring', stiffness: 400, damping: 20 }}
       className={`relative p-5 sm:p-6 rounded-2xl border paper-curl ${colorStyles[note.color]} transition-shadow duration-300`}
-      style={{ transform: `rotate(${rotate}deg)` }}
+      // framer owns the resting rotation so the corkboard tilt returns after hover ends
+      style={{ rotate }}
     >
       {/* Tape effect on top */}
       <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-20 h-5 bg-white/60 border border-amber/20 backdrop-blur-xs rotate-[-1deg] shadow-xs" />

@@ -18,6 +18,10 @@ export default function ConfettiBurst({ fire }: { fire: boolean }) {
 
   useEffect(() => {
     if (!fire) return;
+    // calm-first: users who asked for reduced motion (in-app OR OS) get no 110-particle physics burst
+    const reduced = document.documentElement.dataset.motion === 'reduced' ||
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduced) return;
     const cvs = canvasRef.current;
     if (!cvs) return;
     const ctx = cvs.getContext('2d');
