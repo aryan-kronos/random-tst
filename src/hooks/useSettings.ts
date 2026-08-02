@@ -50,6 +50,9 @@ export function applySettings(s: Settings = state) {
   root.dataset.motion = s.reducedMotion ? 'reduced' : 'full';
   const fine = window.matchMedia('(pointer: fine)').matches;
   root.dataset.customCursor = s.customCursor && fine && !s.reducedMotion ? 'on' : 'off';
+  // installed-PWA title bar should wear the theme too, not stay buttermilk in noir
+  const metaTheme = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]');
+  if (metaTheme) metaTheme.content = s.theme === 'noir' ? '#161009' : '#F2E9D9';
   setAudioMuted(!s.sound);
 }
 

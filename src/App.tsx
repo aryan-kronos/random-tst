@@ -282,7 +282,11 @@ export default function App() {
               <div className="pt-10 sm:pt-16 pb-8">
                 <div className="flex items-center gap-3 mb-4">
                   <span className="h-px w-10 bg-gradient-to-r from-transparent to-amber" />
-                  <DynamicGreeting streak={stats.streak} totalTakes={stats.sessions.length} />
+                  <DynamicGreeting
+                    streak={stats.streak}
+                    totalTakes={stats.sessions.length}
+                    doneToday={(() => { const d = new Date(); return stats.lastDay === `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; })()}
+                  />
                 </div>
                 <h1 className="font-display text-4xl sm:text-6xl lg:text-7xl leading-[0.96] tracking-tight max-w-4xl">
                   Learn <span className="font-editorial italic font-light text-amber-deep">deeply.</span><br />

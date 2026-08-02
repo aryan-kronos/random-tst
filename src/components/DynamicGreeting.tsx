@@ -6,6 +6,7 @@ import {
 
 interface Props {
   streak: number;
+  doneToday: boolean;
   totalTakes: number;
 }
 
@@ -17,7 +18,7 @@ interface Greeting {
 const ROTATE_MS = 45_000;
 
 /** Builds a pool of greetings from time-of-day, weekday and practice momentum. */
-function buildPool(streak: number, totalTakes: number): Greeting[] {
+function buildPool(streak: number, totalTakes: number, doneToday: boolean): Greeting[] {
   const now = new Date();
   const h = now.getHours();
   const day = now.getDay(); // 0 = Sunday
@@ -27,7 +28,11 @@ function buildPool(streak: number, totalTakes: number): Greeting[] {
   // momentum beats everything — celebrate the streak first
   if (streak >= 7) pool.push({ line: `Day ${streak} streak — one week of fire`, Icon: Flame });
   else if (streak >= 3) pool.push({ line: `Day ${streak} streak — protect the flame`, Icon: Flame });
-  else if (streak >= 1) pool.push({ line: `Streak day ${streak} — keep it alive`, Icon: Flame });
+  // speak the truth about TODAY: "alive" reads like the run is already banked
+  else if (streak >= 1) pool.push({
+    line: doneToday ? `Streak day ${streak} — banked today` : `Day ${streak}: one speech keeps it alive`,
+    Icon: Flame,
+  });
 
   // weekday flavour
   if (day === 1) pool.push({ line: "Monday — set the week's tone", Icon: Sun });
@@ -78,7 +83,7 @@ function buildPool(streak: number, totalTakes: number): Greeting[] {
   return pool;
 }
 
-export default function DynamicGreeting({ streak, totalTakes }: Props) {
+export default function DynamicGreeting({ streak, totalTakes, doneToday }: Props) {
   const [tick, setTick] = useState(0);
 
   useEffect(() => {
@@ -90,7 +95,7 @@ export default function DynamicGreeting({ streak, totalTakes }: Props) {
   // hour flips (11:59 → 12:00) the pool re-derives instead of serving stale
   // "good morning" until some unrelated stat changes
   const hour = new Date().getHours();
-  const pool = useMemo(() => buildPool(streak, totalTakes), [streak, totalTakes, hour]);
+  const pool = useMemo(() => buildPool(streak, totalTakes, doneToday), [streak, totalTakes, doneToday, hour]);
   // rotate through the pool; tick re-slices every 45s
   const current = pool[tick % pool.length]!; // buildPool guarantees a non-empty pool
 
