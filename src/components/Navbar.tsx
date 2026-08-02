@@ -3,14 +3,16 @@ import { ChevronLeft, CheckSquare, Flame, Settings2 } from 'lucide-react';
 import LogoMark from './Logo';
 
 /**
- * Navbar — rebuilt from zero.
+ * Navbar — rebuilt from zero (third generation).
  *
- * Smart-chrome physics (second generation):
- * hiding needs ~40px of CONTINUOUS net downward travel, returning needs a
- * 3px net flick upward. Scroll energy accumulates through the hundreds of
- * microscopic events a trackpad emits, and instantly resets on any real
- * reversal — so the bar can never get "stuck" hiding the way single-event
- * thresholds did on MacBook glass.
+ * Anchor physics: an invisible anchor pins where the bar last changed state.
+ *   · visible + you scroll DOWN 56px past the anchor  -> bar glides away
+ *   · hidden  + you scroll UP a mere 6px              -> bar glides home
+ *   · scrolling further in the current direction drags the anchor along,
+ *     so the reversal budget is always fresh and cheap
+ * MacBook trackpads emit ±1-2px rubber-band shimmer between real deltas;
+ * those micro-blips are below both budgets, so they cancel out inside the
+ * anchor distance instead of resetting anything. The bar can never wedge.
  *
  * Plus a scroll-progress hairline along the bottom edge: the reader always
  * knows how deep the page goes, even while the chrome is away.
@@ -38,36 +40,42 @@ export default function Navbar({
   hiddenRef.current = hidden;
 
   useEffect(() => {
-    let lastY = window.scrollY;
-    let bucket = 0;
+    let anchor = window.scrollY;
     let raf = 0;
 
     const measure = () => {
       raf = 0;
       const y = window.scrollY;
-      const d = y - lastY;
-      lastY = y;
 
       // progress hairline
       const doc = document.documentElement;
       const range = doc.scrollHeight - doc.clientHeight;
       if (range > 0) setProgress(Math.min(1, Math.max(0, y / range)));
 
+      // always home at the top of the page
       if (y < 12) {
-        if (bucket !== 0 || hiddenRef.current) { setHidden(false); hiddenRef.current = false; }
-        bucket = 0;
+        if (hiddenRef.current) { hiddenRef.current = false; setHidden(false); }
+        anchor = y;
         return;
       }
-      if (d === 0) return;
-      bucket = Math.sign(d) === Math.sign(bucket) ? bucket + d : d; // reversal earns a fresh bucket
-      if (bucket > 40 && !hiddenRef.current) {
-        hiddenRef.current = true;
-        setHidden(true);
-        bucket = 0;
-      } else if (bucket < -3 && hiddenRef.current) {
-        hiddenRef.current = false;
-        setHidden(false);
-        bucket = 0;
+
+      const d = y - anchor;
+      if (!hiddenRef.current) {
+        if (d > 56) {              // ~one nav-height of committed downward travel
+          hiddenRef.current = true;
+          setHidden(true);
+          anchor = y;
+        } else if (d < -4) {       // genuine upward intent: fresh budget for hiding
+          anchor = y;
+        }
+      } else {
+        if (d < -6) {              // a whisper of upward scroll, and the bar returns
+          hiddenRef.current = false;
+          setHidden(false);
+          anchor = y;
+        } else if (d > 4) {        // still descending: keep the anchor under us
+          anchor = y;
+        }
       }
     };
 

@@ -9,10 +9,25 @@ import { applySettings, useSettings } from "./hooks/useSettings";
 // paint settings before the first frame so the theme never flashes
 applySettings();
 
-// production: offline-capable PWA shell
+// production: offline-capable PWA shell that NEVER strands you on a stale
+// build. When a freshly-deployed worker takes control, we reload exactly once
+// into the new world (guarded so the very first install doesn't bounce).
 if (import.meta.env.PROD && "serviceWorker" in navigator) {
+  let refreshing = false;
+  const hadController = !!navigator.serviceWorker.controller;
+  navigator.serviceWorker.addEventListener("controllerchange", () => {
+    if (!hadController || refreshing) return;
+    refreshing = true;
+    window.location.reload();
+  });
   window.addEventListener("load", () => {
-    navigator.serviceWorker.register("/sw.js").catch(() => {});
+    navigator.serviceWorker
+      .register("/sw.js")
+      .then((reg) => {
+        // nudge the update check so deploys surface even in long-lived tabs
+        setInterval(() => reg.update().catch(() => {}), 30 * 60 * 1000);
+      })
+      .catch(() => {});
   });
 }
 

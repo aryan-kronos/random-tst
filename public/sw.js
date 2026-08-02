@@ -1,9 +1,8 @@
 /* Verbalis service worker — offline-capable PWA shell.
    Strategy: network-first for the app document, cache-first for identity
    assets, stale-while-revalidate for remote topic imagery. */
-const APP_CACHE = 'verbalis-app-v6';
-const IMG_CACHE = 'verbalis-img-v6';
-const MEDIA_CACHE = 'verbalis-media-v6';
+const APP_CACHE = 'verbalis-app-v7';
+const MEDIA_CACHE = 'verbalis-media-v7';
 
 
 
@@ -27,7 +26,7 @@ self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys()
       .then((keys) => Promise.all(
-        keys.filter((k) => k !== APP_CACHE && k !== IMG_CACHE && k !== MEDIA_CACHE).map((k) => caches.delete(k))
+        keys.filter((k) => k !== APP_CACHE && k !== MEDIA_CACHE).map((k) => caches.delete(k))
       ))
       .then(() => self.clients.claim())
   );
