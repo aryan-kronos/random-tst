@@ -49,7 +49,7 @@ export default function KineticText({ segments, className, delay = 0.05, stagger
             /^\s+$/.test(tok) ? (
               <span key={wi}>{'\u00A0'}</span>
             ) : (
-              <span key={wi} className="inline-block whitespace-nowrap">
+              <span key={wi} className="inline-block whitespace-nowrap" aria-hidden="true">
                 {tok.split('').map((ch, ci) => (
                   <span key={ci} className="inline-block overflow-hidden pb-[0.08em] -mb-[0.08em] align-baseline">
                     <motion.span

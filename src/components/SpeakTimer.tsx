@@ -124,7 +124,7 @@ export default function SpeakTimer({ duration, onComplete }: Props) {
           />
         )}
 
-        <svg viewBox="0 0 300 300" className="absolute inset-0 w-full h-full -rotate-90">
+        <svg aria-hidden="true" viewBox="0 0 300 300" className="absolute inset-0 w-full h-full -rotate-90">
           <defs>
             <linearGradient id="arcGrad" x1="0" y1="0" x2="1" y2="1">
               <stop offset="0%" stopColor="#E8C276" />
@@ -148,7 +148,7 @@ export default function SpeakTimer({ duration, onComplete }: Props) {
         </svg>
 
         {/* tick marks */}
-        <svg viewBox="0 0 300 300" className="absolute inset-0 w-full h-full">
+        <svg aria-hidden="true" viewBox="0 0 300 300" className="absolute inset-0 w-full h-full">
           {Array.from({ length: 60 }).map((_, i) => {
             const a = (i / 60) * Math.PI * 2 - Math.PI / 2;
             const r1 = 110, r2 = i % 5 === 0 ? 100 : 105;

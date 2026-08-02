@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Sun, Moon, Volume2, VolumeX, MousePointer2, Sparkles, Wind, Check, Images, Waves } from 'lucide-react';
 import { useSettings, setSettings, type ThemeId } from '../hooks/useSettings';
@@ -39,6 +40,15 @@ const THEMES: { id: ThemeId; label: string; sub: string; swatch: string; Icon: t
 ];
 
 export default function SettingsDrawer({ open, onClose }: Props) {
+  // Escape closes — same contract as the roulette modal; keyboard users
+  // shouldn't have to tab-hunt the X
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [open, onClose]);
+
   const s = useSettings();
 
   return (

@@ -121,6 +121,9 @@ export default function RouletteModal({
     >
       <motion.div
         onClick={e => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Topic spotlight draw"
         initial={{ opacity: 0, scale: 0.9, y: 24 }}
         animate={{ opacity: 1, scale: revealed ? 1.012 : 1, y: 0 }}
         transition={{ type: 'spring', stiffness: 280, damping: 24 }}
@@ -147,7 +150,7 @@ export default function RouletteModal({
           <div className="flex items-center justify-between gap-3 mb-6">
             <button
               onClick={onClose}
-              className="inline-flex items-center gap-2 rounded-full border border-ink-wash/25 bg-ivory/90 pl-3.5 pr-4.5 pr-4 py-2 text-xs sm:text-sm font-semibold text-warm-stone hover:text-espresso hover:border-amber transition shadow-sm"
+              className="inline-flex items-center gap-2 rounded-full border border-ink-wash/25 bg-ivory/90 pl-3.5 pr-4 py-2 text-xs sm:text-sm font-semibold text-warm-stone hover:text-espresso hover:border-amber transition shadow-sm"
             >
               <ArrowLeft className="w-4 h-4" /> Back
             </button>

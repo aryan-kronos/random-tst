@@ -1,3 +1,4 @@
+import { useId } from 'react';
 /**
  * Verbalis LogoMark — "The Fibonacci Voice Seal"
  *
@@ -16,6 +17,11 @@ interface LogoMarkProps {
 }
 
 export default function LogoMark({ className = 'w-10 h-10', title = 'Verbalis' }: LogoMarkProps) {
+  // every instance gets its own defs namespace — duplicate IDs across the
+  // header/footer logos are invalid HTML and one day they'd diverge
+  const uid = useId().replace(/:/g, '');
+  const goldId = `vbGold-${uid}`;
+  const clipId = `vbSealClip-${uid}`;
   return (
     <svg
       viewBox="0 0 64 64"
@@ -26,21 +32,21 @@ export default function LogoMark({ className = 'w-10 h-10', title = 'Verbalis' }
     >
       <title>{`${title} — Master of Speech`}</title>
       <defs>
-        <linearGradient id="vbGold" x1="0" y1="0" x2="1" y2="1">
+        <linearGradient id={goldId} x1="0" y1="0" x2="1" y2="1">
           <stop offset="0%" stopColor="#E9C582" />
           <stop offset="52%" stopColor="#BE8B3F" />
           <stop offset="100%" stopColor="#8A5F26" />
         </linearGradient>
-        <clipPath id="vbSealClip">
+        <clipPath id={clipId}>
           <rect x="0" y="0" width="64" height="64" rx="15" />
         </clipPath>
       </defs>
 
       {/* the seal */}
-      <rect x="0" y="0" width="64" height="64" rx="15" fill="url(#vbGold)" />
+      <rect x="0" y="0" width="64" height="64" rx="15" fill="url(#{goldId})" />
 
       {/* golden halo ripples — r = 25 and r·phi ≈ 40.5, clipped to the seal */}
-      <g clipPath="url(#vbSealClip)">
+      <g clipPath="url(#{clipId})">
         <circle cx="32" cy="32" r="25" stroke="#FFFFFF" strokeOpacity="0.30" strokeWidth="1.5" />
         <circle cx="32" cy="32" r="40.5" stroke="#FFFFFF" strokeOpacity="0.13" strokeWidth="1.5" />
       </g>
