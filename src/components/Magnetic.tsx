@@ -29,9 +29,30 @@ export default function Magnetic({ children, strength = 0.32, className }: Props
     let tx = 0, ty = 0, sx = 0, sy = 0, lx = 0, ly = 0;
     let raf = 0;
     let running = true;
+    let sleeping = false;
+
+    // rect caching, throttled — no sync layout reads at 120Hz
+    let rect = shell.getBoundingClientRect();
+    let rectAt = 0;
+    const freshRect = () => {
+      const now = performance.now();
+      if (now - rectAt > 150) { rect = shell.getBoundingClientRect(); rectAt = now; }
+      return rect;
+    };
+    const invalidate = () => { rectAt = 0; };
+    window.addEventListener('scroll', invalidate, { passive: true });
+    window.addEventListener('resize', invalidate);
+
+    const wake = () => {
+      if (!sleeping) return;
+      sleeping = false;
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(loop);
+    };
 
     const onMove = (e: PointerEvent) => {
-      const r = shell.getBoundingClientRect();
+      wake();
+      const r = freshRect();
       const cx = r.left + r.width / 2;
       const cy = r.top + r.height / 2;
       const dx = e.clientX - cx;
@@ -53,6 +74,11 @@ export default function Magnetic({ children, strength = 0.32, className }: Props
       ly += (ty * 0.55 - ly) * 0.11;
       shell.style.transform = `translate3d(${sx.toFixed(2)}px, ${sy.toFixed(2)}px, 0)`;
       label.style.transform = `translate3d(${lx.toFixed(2)}px, ${ly.toFixed(2)}px, 0)`;
+      // settle-and-sleep: fully home? park the loop until the pointer stirs
+      if (tx === 0 && ty === 0 && Math.abs(sx) < 0.02 && Math.abs(sy) < 0.02 && Math.abs(lx) < 0.02 && Math.abs(ly) < 0.02) {
+        sleeping = true;
+        return;
+      }
       raf = requestAnimationFrame(loop);
     };
     raf = requestAnimationFrame(loop);
@@ -62,6 +88,8 @@ export default function Magnetic({ children, strength = 0.32, className }: Props
       running = false;
       cancelAnimationFrame(raf);
       window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('scroll', invalidate);
+      window.removeEventListener('resize', invalidate);
     };
   }, [disabled, strength]);
 

@@ -31,9 +31,30 @@ export default function Tilt({ children, className, style, max = 6 }: Props) {
     let shx = 0, shy = 0, tshx = 0, tshy = 0;
     let raf = 0;
     let running = true;
+    let sleeping = false;
+
+    // rect reads force sync layout — cache it, refresh throttled or on scroll
+    let rect = root.getBoundingClientRect();
+    let rectAt = 0;
+    const freshRect = () => {
+      const now = performance.now();
+      if (now - rectAt > 150) { rect = root.getBoundingClientRect(); rectAt = now; }
+      return rect;
+    };
+    const invalidate = () => { rectAt = 0; };
+    window.addEventListener('scroll', invalidate, { passive: true });
+    window.addEventListener('resize', invalidate);
+
+    const wake = () => {
+      if (!sleeping) return;
+      sleeping = false;
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(loop);
+    };
 
     const onMove = (e: PointerEvent) => {
-      const r = root.getBoundingClientRect();
+      wake();
+      const r = freshRect();
       const nx = (e.clientX - r.left) / r.width;
       const ny = (e.clientY - r.top) / r.height;
       if (nx < -0.15 || nx > 1.15 || ny < -0.15 || ny > 1.15) {
@@ -58,6 +79,12 @@ export default function Tilt({ children, className, style, max = 6 }: Props) {
       shy += (tshy - shy) * 0.12;
       root.style.transform = `perspective(950px) rotateX(${rx.toFixed(2)}deg) rotateY(${ry.toFixed(2)}deg)`;
       sheen.style.transform = `translate3d(${shx.toFixed(1)}px, ${shy.toFixed(1)}px, 0)`;
+      // settle-and-sleep: at rest with no hover the loop parks itself instead
+      // of burning 60fps of math on battery forever
+      if (!hovering && Math.abs(rx - tx) < 0.005 && Math.abs(ry - ty) < 0.005) {
+        sleeping = true;
+        return;
+      }
       raf = requestAnimationFrame(loop);
     };
     raf = requestAnimationFrame(loop);
@@ -68,6 +95,8 @@ export default function Tilt({ children, className, style, max = 6 }: Props) {
       running = false;
       cancelAnimationFrame(raf);
       window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('scroll', invalidate);
+      window.removeEventListener('resize', invalidate);
       root.removeEventListener('pointerleave', onLeave);
     };
   }, [disabled, max]);
