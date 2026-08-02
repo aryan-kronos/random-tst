@@ -65,7 +65,9 @@ export const difficultyMeta: Record<Difficulty, { label: string; level: string; 
   Bold: { label: 'High', level: 'Challenging', hint: 'Abstract philosophical debate', color: '#9A5537' },
 };
 
-const img = (id: number) => `https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg?auto=compress&cs=tinysrgb&fit=crop&h=760&w=1280`;
+// self-hosted hero art (was pexels hotlinks — one CDN outage used to blank
+// every first impression; now first-party, cache-first, offline-safe)
+const img = (id: number) => `/media/heroes/${id}.jpg`;
 
 export const categories: Category[] = [
   { id: 'philosophy', label: 'Philosophy', icon: 'Flame', blurb: 'Ideas that resist easy answers', coverImage: img(38765544) },

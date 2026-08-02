@@ -77,17 +77,4 @@ self.addEventListener('fetch', (event) => {
     }
   }
 
-  // remote topic imagery: stale-while-revalidate
-  if (url.hostname === 'images.pexels.com') {
-    event.respondWith(
-      caches.match(req).then((cached) => {
-        const network = fetch(req).then((res) => {
-          const copy = res.clone();
-          caches.open(IMG_CACHE).then((cache) => cache.put(req, copy));
-          return res;
-        }).catch(() => cached);
-        return cached || network;
-      })
-    );
-  }
 });
