@@ -67,7 +67,7 @@ export const difficultyMeta: Record<Difficulty, { label: string; level: string; 
 
 // self-hosted hero art (was pexels hotlinks — one CDN outage used to blank
 // every first impression; now first-party, cache-first, offline-safe)
-const img = (id: number) => `/media/heroes/${id}.jpg`;
+const img = (id: number) => `/media/heroes/${id}.webp`;
 
 export const categories: Category[] = [
   { id: 'philosophy', label: 'Philosophy', icon: 'Flame', blurb: 'Ideas that resist easy answers', coverImage: img(38765544) },

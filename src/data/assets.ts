@@ -2,7 +2,7 @@
  * Premium asset registry — URL-based.
  *
  * Studio voice narrations  -> /media/audio/<topicId>.mp3
- * Handwritten note art     -> /media/notes/<topicId>.jpg (+ -short/-sketch variants)
+ * Handwritten note art     -> /media/notes/<topicId>.webp (+ -short/-sketch variants)
  *
  * THE BIG DIET: media used to be imported through the bundler, which
  * base64-inlined ~24 MB of audio + imagery into the single-file HTML.
@@ -29,7 +29,7 @@ const NARRATED_IDS = [
 const FULL_GALLERY = new Set(['p1', 'p2', 'p3', 'p4', 'p5']);
 
 const audio = (id: string) => `/media/audio/${id}.mp3`;
-const note = (id: string) => `/media/notes/${id}.jpg`;
+const note = (id: string) => `/media/notes/${id}.webp`;
 
 export const hasNarration = (id: string) => NARRATED_IDS.includes(id);
 export const hasNoteArt = (id: string) => NARRATED_IDS.includes(id);

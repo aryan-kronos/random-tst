@@ -1,9 +1,9 @@
 /* Verbalis service worker — offline-capable PWA shell.
    Strategy: network-first for the app document, cache-first for identity
    assets, stale-while-revalidate for remote topic imagery. */
-const APP_CACHE = 'verbalis-app-v5';
-const IMG_CACHE = 'verbalis-img-v5';
-const MEDIA_CACHE = 'verbalis-media-v5';
+const APP_CACHE = 'verbalis-app-v6';
+const IMG_CACHE = 'verbalis-img-v6';
+const MEDIA_CACHE = 'verbalis-media-v6';
 
 
 
