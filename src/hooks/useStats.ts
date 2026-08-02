@@ -49,7 +49,20 @@ export function levelInfo(xp: number) {
   return { current, next, progress: Math.max(0, Math.min(1, progress)), toNext };
 }
 
-function dayKey(d = new Date()) { return d.toISOString().slice(0, 10); }
+// STREAK DAY = LOCAL CALENDAR DAY. toISOString() is UTC — for IST users the
+// "day" used to flip at 05:30 local, snapping true streaks at midnight.
+function dayKey(d = new Date()) {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
+// yesterday as a real calendar step (24h-subtraction wobbles across DST)
+function yesterdayKey(d = new Date()) {
+  const prev = new Date(d.getFullYear(), d.getMonth(), d.getDate() - 1);
+  return dayKey(prev);
+}
 
 function load(): Stats {
   try {
@@ -66,25 +79,18 @@ export function useStats() {
 
   useEffect(() => { setStats(load()); }, []);
 
-  const persist = useCallback((next: Stats) => {
-    setStats(next);
-    try { localStorage.setItem(KEY, JSON.stringify(next)); } catch { /* ignore */ }
-  }, []);
-
   const recordSession = useCallback((rec: Omit<SessionRecord, 'date' | 'xp'> & { xp: number }) => {
+    // derive everything from `prev` OUTSIDE the updater so the setter stays
+    // pure (StrictMode double-invokes updaters; side effects inside are landmines)
     setStats(prev => {
       const today = dayKey();
-      const yesterday = dayKey(new Date(Date.now() - 86400000));
+      const yesterday = yesterdayKey();
       let streak = prev.streak;
       if (prev.lastDay === today) { /* same day */ }
       else if (prev.lastDay === yesterday) streak = prev.streak + 1;
       else streak = 1;
 
-      const prevLevel = levelInfo(prev.xp).current.level;
       const newXp = prev.xp + rec.xp;
-      const newLevel = levelInfo(newXp).current.level;
-      setLastGain({ xp: rec.xp, leveledTo: newLevel > prevLevel ? newLevel : null });
-
       const alreadyMastered = prev.masteredTopicIds.includes(rec.topicId);
       const masteredTopicIds = alreadyMastered ? prev.masteredTopicIds : [...prev.masteredTopicIds, rec.topicId];
 
@@ -96,6 +102,11 @@ export function useStats() {
         lastDay: today,
         xp: newXp,
       };
+      const prevLevel = levelInfo(prev.xp).current.level;
+      const newLevel = levelInfo(newXp).current.level;
+      queueMicrotask(() =>
+        setLastGain({ xp: rec.xp, leveledTo: newLevel > prevLevel ? newLevel : null })
+      );
       try { localStorage.setItem(KEY, JSON.stringify(next)); } catch { /* ignore */ }
       return next;
     });
@@ -113,10 +124,9 @@ export function useStats() {
     });
   }, []);
 
-  const todayCount = stats.sessions.filter(s => s.date.slice(0, 10) === dayKey()).length;
   const totalMinutes = Math.round(stats.sessions.reduce((a, s) => a + s.seconds, 0) / 60);
   const level = levelInfo(stats.xp);
   const masteredCount = stats.masteredTopicIds.length;
 
-  return { stats, recordSession, toggleMastered, todayCount, totalMinutes, level, lastGain, masteredCount, persist };
+  return { stats, recordSession, toggleMastered, totalMinutes, level, lastGain, masteredCount };
 }
