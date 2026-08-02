@@ -80,15 +80,25 @@ export default function App() {
     }
   }, [stage]);
 
+  // true after the user deliberately returns to the dashboard — browser BACK
+  // replaying a topic hash afterwards must NOT drag them back into the topic
+  const leaveRef = useRef(false);
+
   // deep links: #/topic/<id> — shareable, refresh-safe, back-button aware
   useEffect(() => {
     const applyHash = () => {
       const m = window.location.hash.match(/^#\/topic\/([a-z0-9-]+)$/i);
       if (m) {
+        if (leaveRef.current) {
+          // SPA-trap guard: user asked for the dashboard; swallow the stale hash
+          window.history.replaceState('', document.title, window.location.pathname + window.location.search);
+          return;
+        }
         const t = topics.find(x => x.id === m[1]);
         if (t) {
           setTopic(t);
           setNotes('');
+          setActiveTab('learn');
           setStage('learn');
         }
       }
@@ -99,6 +109,7 @@ export default function App() {
   }, []);
 
   const goDashboard = () => {
+    leaveRef.current = true;
     window.history.pushState('', document.title, window.location.pathname + window.location.search);
     setStage('dashboard');
     setTopic(null);
@@ -111,17 +122,21 @@ export default function App() {
   };
 
   const handleSelectTopicFromDraw = (chosen: Topic) => {
+    leaveRef.current = false;
     startBloom(chosen.image);
     setTopic(chosen);
     setNotes('');
+    setActiveTab('learn');
     setStage('learn');
     window.location.hash = `/topic/${chosen.id}`;
   };
 
   const chooseTopicDirectly = (t: Topic) => {
+    leaveRef.current = false;
     startBloom(t.image);
     setTopic(t);
     setNotes('');
+    setActiveTab('learn');
     setStage('learn');
     window.location.hash = `/topic/${t.id}`;
   };
@@ -207,7 +222,7 @@ export default function App() {
             </div>
 
             {/* Streak */}
-            <div className="hidden xs:flex items-center gap-2 bg-ivory border border-ink-wash/15 rounded-full px-3 py-1.5 shadow-xs">
+            <div className="flex sm:hidden items-center gap-2 bg-ivory border border-ink-wash/15 rounded-full px-3 py-1.5 shadow-xs">
               <Flame className={`w-4 h-4 ${stats.streak > 0 ? 'text-[#C4703A]' : 'text-ink-wash'}`} />
               <span className="text-xs font-semibold tabular-nums">{stats.streak}d</span>
             </div>
