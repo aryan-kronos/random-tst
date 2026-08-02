@@ -111,6 +111,7 @@ export default function MasterChecklist({
 
           {/* Category Dropdown */}
           <select
+            aria-label="Filter by field"
             value={catFilter}
             onChange={e => setCatFilter(e.target.value as CategoryId | 'all')}
             className="bg-cream text-xs font-semibold uppercase tracking-wider text-warm-stone border border-ink-wash/20 rounded-full px-3 py-2 focus:outline-none shrink-0 cursor-pointer"
@@ -123,6 +124,7 @@ export default function MasterChecklist({
 
           {/* Difficulty Dropdown */}
           <select
+            aria-label="Filter by difficulty"
             value={diffFilter}
             onChange={e => setDiffFilter(e.target.value as Difficulty | 'all')}
             className="bg-cream text-xs font-semibold uppercase tracking-wider text-warm-stone border border-ink-wash/20 rounded-full px-3 py-2 focus:outline-none shrink-0 cursor-pointer"
@@ -149,7 +151,7 @@ export default function MasterChecklist({
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ duration: 0.25, delay: idx * 0.02 }}
+                transition={{ duration: 0.25, delay: Math.min(idx, 6) * 0.02 }}
                 onMouseEnter={() => previewTopic(t.image, t.title)}
                 onMouseLeave={() => clearPreview()}
                 className={`group relative flex flex-col justify-between rounded-2xl border p-5 transition-all duration-300 ${
@@ -193,8 +195,11 @@ export default function MasterChecklist({
 
                   {/* Title & Subtitle */}
                   <h4
+                    role="button"
+                    tabIndex={0}
                     onClick={() => onSelectTopic(t)}
-                    className={`font-editorial text-xl leading-snug cursor-pointer transition ${
+                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onSelectTopic(t); } }}
+                    className={`font-editorial text-xl leading-snug cursor-pointer transition focus:outline-none focus-visible:ring-2 focus-visible:ring-amber/60 rounded ${
                       isDone ? 'line-through text-warm-stone opacity-75' : 'text-espresso group-hover:text-amber-deep'
                     }`}
                   >
