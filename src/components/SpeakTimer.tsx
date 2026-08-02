@@ -6,19 +6,47 @@ interface Props {
   onComplete: (secondsSpoken: number) => void;
 }
 
+const EXHALE_MARKS = [45, 30, 15];
+
 export default function SpeakTimer({ duration, onComplete }: Props) {
   const [remaining, setRemaining] = useState(duration);
   const [running, setRunning] = useState(false);
   const [finished, setFinished] = useState(false);
+  const [pulses, setPulses] = useState<number[]>([]);
   const raf = useRef<number | null>(null);
   const endAt = useRef<number>(0);
+  const prevRemaining = useRef(duration);
+  const pulseSeq = useRef(0);
+  const pulseTimers = useRef<ReturnType<typeof setTimeout>[]>([]);
   const completeRef = useRef(onComplete);
   completeRef.current = onComplete;
 
-  useEffect(() => { setRemaining(duration); setFinished(false); setRunning(false); }, [duration]);
+  useEffect(() => {
+    setRemaining(duration);
+    setFinished(false);
+    setRunning(false);
+    setPulses([]);
+    prevRemaining.current = duration;
+  }, [duration]);
+
+  useEffect(() => () => {
+    pulseTimers.current.forEach(clearTimeout);
+  }, []);
+
+  const firePulse = () => {
+    const id = ++pulseSeq.current;
+    setPulses(p => [...p.slice(-2), id]);
+    const t = setTimeout(() => setPulses(p => p.filter(x => x !== id)), 1300);
+    pulseTimers.current.push(t);
+  };
 
   const tick = useCallback(() => {
     const left = Math.max(0, (endAt.current - Date.now()) / 1000);
+    // exhale pulses at the quarter marks
+    for (const m of EXHALE_MARKS) {
+      if (prevRemaining.current > m && left <= m) firePulse();
+    }
+    prevRemaining.current = left;
     setRemaining(left);
     if (left <= 0) {
       setRunning(false);
@@ -49,12 +77,14 @@ export default function SpeakTimer({ duration, onComplete }: Props) {
     setRunning(false);
     setFinished(false);
     setRemaining(duration);
+    prevRemaining.current = duration;
+    setPulses([]);
   };
 
   return (
     <div className="flex flex-col items-center">
       <div className="relative w-[280px] h-[280px] sm:w-[320px] sm:h-[320px]">
-        {/* glow */}
+        {/* ambient glow */}
         <div
           className="absolute inset-6 rounded-full blur-2xl transition-opacity duration-700"
           style={{
@@ -64,6 +94,35 @@ export default function SpeakTimer({ duration, onComplete }: Props) {
               : 'radial-gradient(circle, rgba(190,139,63,0.35), transparent 70%)',
           }}
         />
+
+        {/* breathing halo while speaking */}
+        {running && (
+          <div
+            className="halo-breathe absolute -inset-4 rounded-full pointer-events-none"
+            style={{
+              background: urgent
+                ? 'radial-gradient(circle, transparent 60%, rgba(194,106,74,0.20) 68%, transparent 76%)'
+                : 'radial-gradient(circle, transparent 60%, rgba(232,194,118,0.24) 68%, transparent 76%)',
+            }}
+          />
+        )}
+
+        {/* quarter-mark exhale pulses */}
+        {pulses.map(id => (
+          <span
+            key={id}
+            className="halo-pulse absolute -inset-2 rounded-full border-2 pointer-events-none"
+            style={{ borderColor: urgent ? 'rgba(180,89,47,0.7)' : 'rgba(150,105,44,0.7)' }}
+          />
+        ))}
+
+        {/* finish bloom */}
+        {finished && (
+          <div
+            className="bloom-flash absolute -inset-10 rounded-full pointer-events-none"
+            style={{ background: 'radial-gradient(circle, rgba(232,194,118,0.55), rgba(190,139,63,0.25) 45%, transparent 65%)' }}
+          />
+        )}
 
         <svg viewBox="0 0 300 300" className="absolute inset-0 w-full h-full -rotate-90">
           <defs>
