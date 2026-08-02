@@ -328,3 +328,24 @@ html[data-motion='reduced'] .bloom-flash,
 html[data-motion='reduced'] .spotlight-sweep,
 html[data-motion='reduced'] .seal-stamp,
 html[data-motion='reduced'] .seal-particle { animation: none !important; }
+
+/* ============ LogoMark hover sheen — the Apple-store light pass ============ */
+/* GPU transform-only; rides the .group ancestor, dead on touch + calm mode */
+.vb-sheen {
+  transform-box: fill-box;
+  transform: translateX(0);
+}
+@media (hover: hover) and (pointer: fine) {
+  .group:hover .vb-sheen {
+    animation: vb-sheen-sweep 0.85s cubic-bezier(0.4, 0, 0.2, 1) 1 forwards;
+  }
+}
+@keyframes vb-sheen-sweep {
+  0% { opacity: 0; transform: translateX(0); }
+  12% { opacity: 1; }
+  100% { opacity: 0; transform: translateX(96px); }
+}
+html[data-motion='reduced'] .vb-sheen {
+  animation: none !important;
+  opacity: 0 !important;
+}
