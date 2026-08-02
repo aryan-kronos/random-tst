@@ -21,7 +21,7 @@
   --color-espresso-soft: #40301A;
   --color-warm-stone: #6F5C40;
   --color-amber: #BE8B3F;
-  --color-amber-deep: #96692C;
+  --color-amber-deep: #85561D; /* AA-passing antique amber (was #96692C ≈ 4.0:1 on cream — micro-labels failed WCAG) */
   --color-amber-glow: #E8C276;
   --color-amber-pale: #F3E0B8;
   --color-champagne: #F4E5C2;
