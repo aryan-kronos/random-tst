@@ -5,7 +5,7 @@ import {
   Clock3, Layers, ArrowRight, Lightbulb, PenLine, Sparkles,
   History, Trophy, X, Zap, Award, Gauge, Star,
   CheckSquare, NotebookPen, StickyNote, Heart, BookmarkPlus, Bookmark,
-  Settings2, ArrowUpRight,
+  ArrowUpRight,
 } from 'lucide-react';
 import {
   categories, getTopicsByCategory, countByDifficulty, topics,
@@ -31,6 +31,7 @@ import WaxSeal from './components/WaxSeal';
 import BloomPortal, { startBloom } from './components/BloomPortal';
 import InstallPrompt from './components/InstallPrompt';
 import SignatureAryan from './components/SignatureAryan';
+import Navbar from './components/Navbar';
 import SettingsDrawer from './components/SettingsDrawer';
 import DynamicGreeting from './components/DynamicGreeting';
 import { hasNoteArt, noteArtUrls } from './data/assets';
@@ -50,7 +51,6 @@ export default function App() {
   const [isRouletteOpen, setIsRouletteOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [notes, setNotes] = useState('');
-  const [navHidden, setNavHidden] = useState(false);
   const [activeTab, setActiveTab] = useState<'learn' | 'checklist'>('learn');
 
   // typed angles are sacred: notes live per-topic on this device, reloading
@@ -91,30 +91,6 @@ export default function App() {
     const reduced = document.documentElement.dataset.motion === 'reduced';
     topRef.current?.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
   }, [stage]);
-
-  // smart-hide navbar: exits on deliberate scroll-down, returns the moment
-  // the reader reverses even a few pixels — always one flick away, never a
-  // trip to the top. GPU transform only; passive throttled listener.
-  useEffect(() => {
-    // high-res trackpads (hello macbook) emit HUNDREDS of ±0.5-2px events —
-    // a single-event threshold never trips, the bar hid and seemingly never
-    // returned. accumulate net direction instead: any true reversal of even
-    // a few pixels pours into the bucket and wins.
-    let lastY = window.scrollY;
-    let bucket = 0;
-    const onScroll = () => {
-      const y = window.scrollY;
-      const d = y - lastY;
-      lastY = y;
-      if (y < 10) { bucket = 0; setNavHidden(false); return; }
-      if (d === 0) return;
-      bucket = Math.sign(d) === Math.sign(bucket) ? bucket + d : d; // reset on reversal
-      if (bucket > 48) { setNavHidden(true); bucket = 0; }   // deliberate dive: exit
-      else if (bucket < -3) { setNavHidden(false); bucket = 0; } // look back, instantly home
-    };
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
 
   // arm the completion guard every time a speaking round begins
   useEffect(() => {
@@ -234,62 +210,17 @@ export default function App() {
       <LiquidLight />
 
       {/* ================= TOP BAR ================= */}
-      <header className="site-nav sticky top-0 z-50 backdrop-blur-xl bg-cream/80 border-b border-ink-wash/10" data-hidden={navHidden}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 h-16 sm:h-18 flex items-center justify-between">
-          <button onClick={goDashboard} className="flex items-center gap-3 group text-left">
-            <LogoMark className="w-9 h-9 sm:w-10 sm:h-10 drop-shadow-md group-hover:drop-shadow-lg transition" />
-            <div className="leading-none">
-              <div className="font-editorial text-xl sm:text-2xl tracking-tight">Verbalis</div>
-              <div className="text-[9px] sm:text-[10px] uppercase tracking-[0.22em] text-ink-faint mt-0.5">Master of Speech</div>
-            </div>
-          </button>
-
-          <div className="flex items-center gap-2 sm:gap-3">
-            {/* Level Chip */}
-            <div className="hidden md:flex items-center gap-2 bg-ivory border border-ink-wash/15 rounded-full pl-1.5 pr-4 py-1.5 shadow-xs">
-              <span className="w-7 h-7 rounded-full bg-gradient-to-br from-amber to-amber-deep grid place-items-center text-ivory text-xs font-bold shadow-inner">
-                {level.current.level}
-              </span>
-              <div className="leading-none">
-                <div className="text-xs font-semibold">{level.current.title}</div>
-                <div className="text-[9px] text-ink-faint">{stats.xp} XP</div>
-              </div>
-            </div>
-
-            {/* Mastered Topics Counter */}
-            <div className="hidden sm:flex items-center gap-2 bg-ivory border border-ink-wash/15 rounded-full px-3.5 py-1.5 shadow-xs">
-              <CheckSquare className="w-3.5 h-3.5 text-[#5A6B4A]" />
-              <span className="text-xs font-semibold tabular-nums text-espresso">{masteredCount}/32</span>
-              <span className="text-[10px] uppercase tracking-wider text-ink-faint">Mastered</span>
-            </div>
-
-            {/* Streak */}
-            <div className="flex sm:hidden items-center gap-2 bg-ivory border border-ink-wash/15 rounded-full px-3 py-1.5 shadow-xs">
-              <Flame className={`w-4 h-4 ${stats.streak > 0 ? 'text-[#C4703A]' : 'text-ink-wash'}`} />
-              <span className="text-xs font-semibold tabular-nums">{stats.streak}d</span>
-            </div>
-
-            {stage !== 'dashboard' && (
-              <button
-                onClick={goDashboard}
-                className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-medium text-warm-stone hover:text-espresso border border-ink-wash/20 hover:border-amber/50 bg-ivory rounded-full px-4 py-2 transition"
-              >
-                <ChevronLeft className="w-4 h-4" /> <span>Dashboard</span>
-              </button>
-            )}
-
-            {/* Settings */}
-            <button
-              onClick={() => setSettingsOpen(true)}
-              className="inline-flex items-center justify-center text-warm-stone hover:text-espresso border border-ink-wash/20 hover:border-amber/50 bg-ivory rounded-full w-9 h-9 sm:w-10 sm:h-10 transition"
-              aria-label="Open settings"
-              title="Settings"
-            >
-              <Settings2 className="w-4 h-4" />
-            </button>
-          </div>
-        </div>
-      </header>
+      <Navbar
+        levelNum={level.current.level}
+        levelTitle={level.current.title}
+        xp={stats.xp}
+        masteredCount={masteredCount}
+        totalTopics={topics.length}
+        streak={stats.streak}
+        showDashboard={stage !== 'dashboard'}
+        onDashboard={goDashboard}
+        onSettings={() => setSettingsOpen(true)}
+      />
 
       <main className="relative z-10 max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 pb-24">
         <AnimatePresence mode="wait">

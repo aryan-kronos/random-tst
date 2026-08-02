@@ -17,11 +17,27 @@ interface Greeting {
 
 const ROTATE_MS = 45_000;
 
+/** Time-of-day in INDIA — Asia/Kolkata, always.
+ * Intl with an explicit timeZone ignores both the device clock's zone and
+ * any server UTC: the greeting follows Bharat wherever the box lives. */
+function istNow(): { hour: number; day: number } {
+  try {
+    const parts = new Intl.DateTimeFormat('en-US', {
+      timeZone: 'Asia/Kolkata', hour: 'numeric', hour12: false, weekday: 'numeric' as never,
+    }).formatToParts(new Date());
+    let hour = 0;
+    for (const p of parts) if (p.type === 'hour') hour = parseInt(p.value, 10) % 24;
+    const jsDay = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' })).getDay();
+    return { hour, day: jsDay };
+  } catch {
+    const d = new Date();
+    return { hour: d.getHours(), day: d.getDay() }; // ancient engine: device-local fallback
+  }
+}
+
 /** Builds a pool of greetings from time-of-day, weekday and practice momentum. */
 function buildPool(streak: number, totalTakes: number, doneToday: boolean): Greeting[] {
-  const now = new Date();
-  const h = now.getHours();
-  const day = now.getDay(); // 0 = Sunday
+  const { hour: h, day } = istNow(); // 0 = Sunday, on Asia/Kolkata time
 
   const pool: Greeting[] = [];
 
@@ -94,7 +110,7 @@ export default function DynamicGreeting({ streak, totalTakes, doneToday }: Props
   // the bucket must follow the clock: tick re-renders every 45s, so once an
   // hour flips (11:59 → 12:00) the pool re-derives instead of serving stale
   // "good morning" until some unrelated stat changes
-  const hour = new Date().getHours();
+  const { hour } = istNow();
   const pool = useMemo(() => buildPool(streak, totalTakes, doneToday), [streak, totalTakes, doneToday, hour]);
   // rotate through the pool; tick re-slices every 45s
   const current = pool[tick % pool.length]!; // buildPool guarantees a non-empty pool
