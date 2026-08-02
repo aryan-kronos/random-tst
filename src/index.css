@@ -349,3 +349,26 @@ html[data-motion='reduced'] .vb-sheen {
   animation: none !important;
   opacity: 0 !important;
 }
+
+/* ============ Signature stream — "Aryan" as an endless river of gold ============ */
+/* tiled gradient the exact width of one cycle: at every instant light is
+   flowing somewhere through the letterforms; one full tile per loop = no
+   visible seam, ever */
+@keyframes signature-stream {
+  0% { background-position: 0% center; }
+  100% { background-position: -200% center; }
+}
+.signature-stream {
+  background-image: linear-gradient(90deg, #9A6E26 0%, #E8C276 22%, #FFF6DA 50%, #E8C276 78%, #9A6E26 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: signature-stream 3.4s linear infinite;
+}
+html[data-theme='noir'] .signature-stream {
+  background-image: linear-gradient(90deg, #C79A4C 0%, #F2D49B 25%, #FFF9E6 50%, #F2D49B 75%, #C79A4C 100%);
+}
+html[data-motion='reduced'] .signature-stream {
+  animation: none;
+}

@@ -1361,7 +1361,7 @@ export default function App() {
               Designed &amp; built by
             </span>
             <span className="relative inline-block">
-              <span className="font-handwritten font-bold text-[42px] leading-none shimmer-text">
+              <span className="font-handwritten font-bold text-[42px] leading-none signature-stream">
                 Aryan
               </span>
               {/* hand-drawn flourish underline */}
