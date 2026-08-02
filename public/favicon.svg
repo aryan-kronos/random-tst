@@ -1,25 +1,23 @@
 <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <linearGradient id="vbGold" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#E9C582"/>
-      <stop offset="52%" stop-color="#BE8B3F"/>
-      <stop offset="100%" stop-color="#8A5F26"/>
-    </linearGradient>
-    <clipPath id="vbSealClip">
-      <rect x="0" y="0" width="64" height="64" rx="15"/>
-    </clipPath>
-  </defs>
-  <rect x="0" y="0" width="64" height="64" rx="15" fill="url(#vbGold)"/>
-  <g clip-path="url(#vbSealClip)">
-    <circle cx="32" cy="32" r="25" stroke="#FFFFFF" stroke-opacity="0.30" stroke-width="1.5"/>
-    <circle cx="32" cy="32" r="40.5" stroke="#FFFFFF" stroke-opacity="0.13" stroke-width="1.5"/>
-  </g>
-  <rect x="1.5" y="1.5" width="61" height="61" rx="13.5" fill="none" stroke="#FFFFFF" stroke-opacity="0.22" stroke-width="1.2"/>
-  <g fill="#FCFAF5">
-    <rect x="9.6"  y="15"   width="6" height="34" rx="3"/>
-    <rect x="19.3" y="21.5" width="6" height="21" rx="3"/>
-    <rect x="29"   y="25.5" width="6" height="13" rx="3"/>
-    <rect x="38.7" y="21.5" width="6" height="21" rx="3"/>
-    <rect x="48.4" y="15"   width="6" height="34" rx="3"/>
-  </g>
+<defs><linearGradient id="gold" x1="0.08" y1="0" x2="0.82" y2="1">
+  <stop offset="0%" stop-color="#F5DC9F"/><stop offset="34%" stop-color="#E3B160"/>
+  <stop offset="68%" stop-color="#B7812F"/><stop offset="100%" stop-color="#7E5419"/>
+</linearGradient><linearGradient id="toplight" x1="0" y1="0" x2="0" y2="1">
+  <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.42"/>
+  <stop offset="38%" stop-color="#FFFFFF" stop-opacity="0.10"/>
+  <stop offset="62%" stop-color="#FFFFFF" stop-opacity="0"/>
+</linearGradient><linearGradient id="shade" x1="0" y1="0" x2="0" y2="1">
+  <stop offset="76%" stop-color="#3C2608" stop-opacity="0"/>
+  <stop offset="100%" stop-color="#3C2608" stop-opacity="0.26"/>
+</linearGradient><linearGradient id="barlight" x1="0" y1="0" x2="0" y2="1">
+  <stop offset="0%" stop-color="#FFFDF7"/><stop offset="100%" stop-color="#F3E7CE"/>
+</linearGradient><clipPath id="clip"><path d="M32 1.6 Q1.6 1.6 1.6 32 Q1.6 62.4 32 62.4 Q62.4 62.4 62.4 32 Q62.4 1.6 32 1.6 Z"/></clipPath></defs>
+<path d="M32 1.6 Q1.6 1.6 1.6 32 Q1.6 62.4 32 62.4 Q62.4 62.4 62.4 32 Q62.4 1.6 32 1.6 Z" fill="url(#gold)"/>
+<g clip-path="url(#clip)">
+  <rect width="64" height="64" fill="url(#toplight)"/>
+  <rect width="64" height="64" fill="url(#shade)"/>
+  <circle cx="32" cy="32" r="23.5" fill="none" stroke="#FFF6DE" stroke-opacity="0.20" stroke-width="0.9"/>
+</g>
+<path d="M32 3.2 Q3.2 3.2 3.2 32 Q3.2 60.8 32 60.8 Q60.8 60.8 60.8 32 Q60.8 3.2 32 3.2 Z" fill="none" stroke="#FFF9E8" stroke-opacity="0.4" stroke-width="0.8"/>
+<g fill="url(#barlight)"><rect x="9.90" y="15.00" width="6.1" height="34" rx="3.05" /><rect x="19.10" y="21.50" width="6.1" height="21" rx="3.05" /><rect x="28.30" y="25.50" width="6.1" height="13" rx="3.05" /><rect x="37.50" y="21.50" width="6.1" height="21" rx="3.05" /><rect x="46.70" y="15.00" width="6.1" height="34" rx="3.05" /></g>
 </svg>
