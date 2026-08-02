@@ -14,8 +14,9 @@ function load(): Library {
     if (!raw) return { favorites: [], queue: [] };
     const parsed = JSON.parse(raw);
     return {
-      favorites: Array.isArray(parsed.favorites) ? parsed.favorites : [],
-      queue: Array.isArray(parsed.queue) ? parsed.queue : [],
+      // element-wise: a hand-edited localStorage payload must not poison the pool
+      favorites: Array.isArray(parsed.favorites) ? parsed.favorites.filter((x: unknown) => typeof x === 'string') : [],
+      queue: Array.isArray(parsed.queue) ? parsed.queue.filter((x: unknown) => typeof x === 'string') : [],
     };
   } catch {
     return { favorites: [], queue: [] };

@@ -49,6 +49,24 @@ export default function App() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [notes, setNotes] = useState('');
   const [activeTab, setActiveTab] = useState<'learn' | 'checklist'>('learn');
+
+  // typed angles are sacred: notes live per-topic on this device, reloading
+  // when the topic changes and writing through on every keystroke
+  useEffect(() => {
+    if (!topic) { setNotes(''); return; }
+    try { setNotes(localStorage.getItem(`verbalis.notes.${topic.id}`) ?? ''); }
+    catch { setNotes(''); }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [topic?.id]);
+
+  const updateNotes = (v: string) => {
+    setNotes(v);
+    if (!topic) return;
+    try {
+      if (v.trim()) localStorage.setItem(`verbalis.notes.${topic.id}`, v);
+      else localStorage.removeItem(`verbalis.notes.${topic.id}`);
+    } catch { /* private mode: memory-only notes */ }
+  };
   const library = useLibrary();
 
   const {
@@ -97,7 +115,6 @@ export default function App() {
         const t = topics.find(x => x.id === m[1]);
         if (t) {
           setTopic(t);
-          setNotes('');
           setActiveTab('learn');
           setStage('learn');
         }
@@ -125,7 +142,6 @@ export default function App() {
     leaveRef.current = false;
     startBloom(chosen.image);
     setTopic(chosen);
-    setNotes('');
     setActiveTab('learn');
     setStage('learn');
     window.location.hash = `/topic/${chosen.id}`;
@@ -135,7 +151,6 @@ export default function App() {
     leaveRef.current = false;
     startBloom(t.image);
     setTopic(t);
-    setNotes('');
     setActiveTab('learn');
     setStage('learn');
     window.location.hash = `/topic/${t.id}`;
@@ -804,7 +819,7 @@ export default function App() {
                           {difficultyMeta[topic.difficulty].label} ({difficultyMeta[topic.difficulty].level})
                         </span>
                         <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] bg-espresso/70 backdrop-blur text-ivory rounded-full px-3.5 py-1">
-                          <BookOpen className="w-3 h-3" /> {topic.minutes} min Masterclass
+                          <BookOpen className="w-3 h-3" /> {topic.minutes}-min Masterclass · 60s on stage
                         </span>
                         <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] bg-amber-deep/90 text-ivory rounded-full px-3.5 py-1 shadow-sm">
                           <Zap className="w-3 h-3 text-amber-glow" /> +{xpFor[topic.difficulty]} XP on Speech
@@ -920,7 +935,7 @@ export default function App() {
                         </span>
                       </div>
                       <span className="text-xs uppercase tracking-wider text-ink-faint font-semibold">
-                        Tap or hover to tilt
+                        Hover to tilt — tap a note to step in
                       </span>
                     </div>
 
@@ -1073,7 +1088,7 @@ export default function App() {
                         </h4>
                         <textarea
                           value={notes}
-                          onChange={e => setNotes(e.target.value)}
+                          onChange={e => updateNotes(e.target.value)}
                           placeholder={'Hook: ...\nCore idea: ...\nFinal punchline: ...'}
                           className="w-full h-36 bg-cream/70 rounded-2xl border border-ink-wash/15 p-4 text-xs sm:text-sm leading-relaxed placeholder:text-ink-wash/70 focus:outline-none focus:border-amber/50 focus:ring-4 focus:ring-amber/10 resize-none transition"
                         />
@@ -1232,6 +1247,9 @@ export default function App() {
                   <div className="flex items-center justify-center mb-6">
                     <WaxSeal size={104} label="Topic mastered" />
                   </div>
+                  <p className="text-xs uppercase tracking-[0.2em] text-amber-deep font-bold mb-5 flex items-center justify-center gap-1.5">
+                    <CheckSquare className="w-3.5 h-3.5" /> Sealed &amp; stamped into your Master Checklist
+                  </p>
 
                   {lastGain?.leveledTo && (
                     <motion.div
@@ -1331,7 +1349,7 @@ export default function App() {
             <span className="font-editorial text-xl font-bold">Verbalis</span>
           </div>
           <p className="text-xs text-ink-faint text-center sm:text-right">
-            32 Master Topics · Cinematic Narration & Visual Descriptions · 10 Orator Ranks · Responsive on all devices
+            {topics.length} Master Topics · Cinematic Narration & Visual Descriptions · 10 Orator Ranks · Responsive on all devices
           </p>
         </div>
       </footer>
