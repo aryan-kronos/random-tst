@@ -11,7 +11,7 @@ interface NarrationState {
  * Text-to-speech narration using the browser SpeechSynthesis API.
  * Scales to unlimited topics with zero audio files.
  */
-export function useNarration() {
+export function useNarration(active = true) {
   const [state, setState] = useState<NarrationState>({
     supported: typeof window !== 'undefined' && 'speechSynthesis' in window,
     speaking: false,
@@ -24,18 +24,25 @@ export function useNarration() {
   const textLenRef = useRef(1);
 
   useEffect(() => {
-    if (!state.supported) return;
-    const load = () => setVoices(window.speechSynthesis.getVoices());
+    if (!state.supported || !active) return;
+    const synth = window.speechSynthesis;
+    const load = () => setVoices(synth.getVoices());
     load();
-    window.speechSynthesis.onvoiceschanged = load;
-    return () => { try { window.speechSynthesis.cancel(); } catch { /* ignore */ } };
+    // add/removeEventListener — assigning onvoiceschanged clobbers other
+    // listeners and a stale handler outlives the unmounted player
+    synth.addEventListener('voiceschanged', load);
+    return () => {
+      synth.removeEventListener('voiceschanged', load);
+      try { synth.cancel(); } catch { /* ignore */ }
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [active]);
 
   const pickVoice = useCallback((): SpeechSynthesisVoice | null => {
     if (!voices.length) return null;
     const en = voices.filter(v => v.lang.startsWith('en'));
-    const preferred = en.find(v => /Google UK English Female|Samantha|Google US English|Daniel|Karen|Serena|Libby/i.test(v.name));
+    // the studio MP3s are a masculine storyteller — the TTS fallback must carry the same character
+    const preferred = en.find(v => /Daniel|Google UK English Male|Microsoft Guy|Microsoft David|Google US English|Alex|Arthur/i.test(v.name));
     return preferred || en[0] || voices[0];
   }, [voices]);
 

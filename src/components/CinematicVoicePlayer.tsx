@@ -115,7 +115,9 @@ function useStudioAudio(topicId: string, enabled: boolean) {
 
 export default function CinematicVoicePlayer({ topic }: Props) {
   const studioAvailable = hasNarration(topic.id);
-  const narration = useNarration();
+  // TTS only warms up when it's actually needed — no global voice listeners
+  // and no synthesis state held for topics with studio narration
+  const narration = useNarration(!studioAvailable);
   const audio = useStudioAudio(topic.id, studioAvailable);
   const studio = studioAvailable && !audio.failed;
   const [showFullTranscript, setShowFullTranscript] = useState(false);
