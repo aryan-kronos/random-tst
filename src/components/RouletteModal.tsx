@@ -7,6 +7,8 @@ import {
 import { topics, type Topic, type CategoryId, type Difficulty, difficultyMeta, categories } from '../data/topics';
 import { playTickSound, playRevealChime } from '../utils/audio';
 import { CatIcon } from './Icon';
+import ConfettiBurst from './ConfettiBurst';
+import Magnetic from './Magnetic';
 
 interface Props {
   isOpen: boolean;
@@ -120,12 +122,25 @@ export default function RouletteModal({
       <motion.div
         onClick={e => e.stopPropagation()}
         initial={{ opacity: 0, scale: 0.9, y: 24 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
+        animate={{ opacity: 1, scale: revealed ? 1.012 : 1, y: 0 }}
         transition={{ type: 'spring', stiffness: 280, damping: 24 }}
         className="relative w-full max-w-xl overflow-hidden rounded-[2.5rem] border border-amber/40 bg-gradient-to-b from-ivory via-parchment to-champagne/80 shadow-[0_25px_100px_-20px_rgba(190,139,63,0.6)] p-6 sm:p-9"
       >
         {/* Aura */}
         <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-80 h-80 rounded-full bg-gradient-to-br from-amber/30 via-champagne/40 to-transparent blur-3xl pointer-events-none" />
+
+        {/* physics confetti on reveal */}
+        <ConfettiBurst fire={revealed} />
+
+        {/* spotlight cone landing on the chosen topic */}
+        {revealed && (
+          <div
+            className="spotlight-sweep absolute -top-8 inset-x-10 h-[70%] pointer-events-none z-[5]"
+            style={{
+              background: 'radial-gradient(ellipse 55% 100% at 50% 0%, rgba(232,194,118,0.5), rgba(232,194,118,0.12) 55%, transparent 75%)',
+            }}
+          />
+        )}
 
         <div className="relative z-10">
           {/* ====== TOP BAR: Back · Oracle badge · Close ====== */}
@@ -271,20 +286,24 @@ export default function RouletteModal({
 
           {revealed && (
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-              <button
-                onClick={() => { onSelect(display); onClose(); }}
-                className="w-full sm:w-auto flex-1 inline-flex items-center justify-center gap-3 rounded-full bg-espresso px-8 py-4 text-sm font-medium tracking-wide text-ivory shadow-xl shadow-espresso/25 hover:bg-espresso-ink hover:scale-105 active:scale-95 transition duration-300"
-              >
-                <span>Enter Deep Masterclass</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
+              <Magnetic strength={0.3} className="w-full sm:w-auto flex-1">
+                <button
+                  onClick={() => { onSelect(display); onClose(); }}
+                  className="w-full inline-flex items-center justify-center gap-3 rounded-full bg-espresso px-8 py-4 text-sm font-medium tracking-wide text-ivory shadow-xl shadow-espresso/25 hover:bg-espresso-ink hover:scale-105 active:scale-95 transition duration-300"
+                >
+                  <span>Enter Deep Masterclass</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </Magnetic>
 
-              <button
-                onClick={startSpin}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full border border-ink-wash/25 bg-ivory px-6 py-4 text-sm font-semibold text-warm-stone hover:border-amber hover:text-amber-deep transition"
-              >
-                <RefreshCw className="w-4 h-4" /> Spin Again
-              </button>
+              <Magnetic strength={0.3} className="w-full sm:w-auto">
+                <button
+                  onClick={startSpin}
+                  className="w-full inline-flex items-center justify-center gap-2 rounded-full border border-ink-wash/25 bg-ivory px-6 py-4 text-sm font-semibold text-warm-stone hover:border-amber hover:text-amber-deep transition"
+                >
+                  <RefreshCw className="w-4 h-4" /> Spin Again
+                </button>
+              </Magnetic>
 
               <button
                 onClick={onClose}
