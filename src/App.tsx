@@ -800,7 +800,7 @@ export default function App() {
                         src={topic.image}
                         alt={topic.imageAlt}
                         className="w-full h-72 sm:h-[26rem] lg:h-[540px] -mt-8 sm:-mt-12 lg:-mt-16 object-cover filter saturate-105"
-                        loading="eager"
+                        loading="eager" decoding="async" fetchPriority="high"
                       />
                     </Parallax>
                     <div className="img-scrim" />
@@ -882,7 +882,7 @@ export default function App() {
                                 src={arts[0]}
                                 alt={`Handwritten study notes for ${topic.title}`}
                                 className="w-full rounded-2xl object-cover select-none"
-                                loading="lazy"
+                                loading="lazy" decoding="async"
                               />
                               <figcaption className="pt-3 pb-1 text-center text-xs sm:text-sm text-ink-faint font-editorial italic">
                                 Your desk page for &ldquo;{topic.title}&rdquo; — the full spread.
@@ -906,7 +906,7 @@ export default function App() {
                                       src={src}
                                       alt={`${meta.label} for ${topic.title}`}
                                       className="w-full rounded-xl object-cover select-none"
-                                      loading="lazy"
+                                      loading="lazy" decoding="async"
                                     />
                                     <figcaption className="pt-2.5 pb-1 text-center">
                                       <span className="inline-flex items-center gap-1.5 text-xs font-bold text-espresso">

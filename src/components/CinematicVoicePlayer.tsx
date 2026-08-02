@@ -32,7 +32,9 @@ function useStudioAudio(topicId: string, enabled: boolean) {
   useEffect(() => {
     if (!enabled) return;
     const el = new Audio(narrationUrl(topicId));
-    el.preload = 'auto';
+    // real file URL now: stream, don't slurp. only headers up front —
+    // the body downloads only when the learner actually presses play
+    el.preload = 'metadata';
     el.playbackRate = AUDIO_RATES[rateIdx];
 
     const onTime = () => setCur(el.currentTime);

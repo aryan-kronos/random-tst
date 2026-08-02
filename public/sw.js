@@ -1,8 +1,9 @@
 /* Verbalis service worker — offline-capable PWA shell.
    Strategy: network-first for the app document, cache-first for identity
    assets, stale-while-revalidate for remote topic imagery. */
-const APP_CACHE = 'verbalis-app-v2';
-const IMG_CACHE = 'verbalis-img-v2';
+const APP_CACHE = 'verbalis-app-v3';
+const IMG_CACHE = 'verbalis-img-v3';
+const MEDIA_CACHE = 'verbalis-media-v3';
 
 self.addEventListener('install', (event) => {
   self.skipWaiting();
@@ -24,7 +25,7 @@ self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys()
       .then((keys) => Promise.all(
-        keys.filter((k) => k !== APP_CACHE && k !== IMG_CACHE).map((k) => caches.delete(k))
+        keys.filter((k) => k !== APP_CACHE && k !== IMG_CACHE && k !== MEDIA_CACHE).map((k) => caches.delete(k))
       ))
       .then(() => self.clients.claim())
   );
@@ -37,6 +38,19 @@ self.addEventListener('fetch', (event) => {
 
   // same-origin app document: network-first so deploys arrive instantly
   if (url.origin === self.location.origin) {
+    // narrations + note art: cache-first so a played topic goes fully
+    // offline; fetched on demand, never precached (phones stay light)
+    if (url.pathname.startsWith('/media/')) {
+      event.respondWith(
+        caches.open(MEDIA_CACHE).then((cache) =>
+          cache.match(req).then((cached) => cached || fetch(req).then((res) => {
+            if (res.ok) cache.put(req, res.clone());
+            return res;
+          }))
+        )
+      );
+      return;
+    }
     if (req.mode === 'navigate' || url.pathname === '/' || url.pathname.endsWith('.html')) {
       event.respondWith(
         fetch(req)
