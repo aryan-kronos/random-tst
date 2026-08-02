@@ -78,7 +78,8 @@ export default function CursorPreview() {
     settings.hoverPreviews &&
     !settings.reducedMotion &&
     typeof window !== 'undefined' &&
-    window.matchMedia('(pointer: fine)').matches;
+    window.matchMedia('(pointer: fine)').matches &&
+    !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   const mvX = useMotionValue(-600);
   const mvY = useMotionValue(-600);

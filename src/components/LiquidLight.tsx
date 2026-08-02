@@ -65,7 +65,8 @@ void main() {
 export default function LiquidLight() {
   const settings = useSettings();
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const enabled = settings.liquidBg && !settings.reducedMotion;
+  const enabled = settings.liquidBg && !settings.reducedMotion &&
+    (typeof window === 'undefined' || !window.matchMedia('(prefers-reduced-motion: reduce)').matches);
 
   useEffect(() => {
     if (!enabled) return;
@@ -84,7 +85,10 @@ export default function LiquidLight() {
     gl.attachShader(prog, compile(gl.VERTEX_SHADER, VERT));
     gl.attachShader(prog, compile(gl.FRAGMENT_SHADER, FRAG));
     gl.linkProgram(prog);
-    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) return;
+    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
+      console.warn('[verbalis] liquid-light shader link failed — background stays calm', gl.getProgramInfoLog(prog));
+      return;
+    }
     gl.useProgram(prog);
 
     const buf = gl.createBuffer();
@@ -144,8 +148,17 @@ export default function LiquidLight() {
     };
     document.addEventListener('visibilitychange', onVis);
 
+    const onLost = (e: Event) => {
+      e.preventDefault(); // allow restore
+      running = false;
+      cancelAnimationFrame(raf);
+      console.warn('[verbalis] liquid-light GPU context lost — parked until remount');
+    };
+    cvs.addEventListener('webglcontextlost', onLost);
+
     return () => {
       running = false;
+      cvs.removeEventListener('webglcontextlost', onLost);
       cancelAnimationFrame(raf);
       window.removeEventListener('resize', resize);
       if (fine) window.removeEventListener('pointermove', onMove);

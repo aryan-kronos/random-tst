@@ -87,8 +87,16 @@ export default function BloomPortal() {
           exit={{ opacity: 0, transition: { duration: 0.28, ease: 'easeOut' } }}
           transition={{ type: 'spring', stiffness: 145, damping: 21 }}
           onAnimationComplete={() => {
-            // fade out soon after landing; the real hero is underneath
-            setTimeout(() => { current = null; listeners.forEach(l => l()); }, 380);
+            // fade out soon after landing — but ONLY retire the bloom we
+            // actually are; a queue-jumping second bloom must not be nulled
+            // by the first one's stale timer
+            const id = bloom.id;
+            setTimeout(() => {
+              if (current && current.id === id) {
+                current = null;
+                listeners.forEach(l => l());
+              }
+            }, 380);
           }}
           style={{ willChange: 'transform, width, height' }}
         >
