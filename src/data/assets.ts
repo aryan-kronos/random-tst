@@ -38,6 +38,8 @@ import audioL4 from '../assets/audio/l4.mp3';
 import audioSo1 from '../assets/audio/so1.mp3';
 import audioSo2 from '../assets/audio/so2.mp3';
 import audioSo3 from '../assets/audio/so3.mp3';
+import audioB1 from '../assets/audio/b1.mp3';
+import audioB2 from '../assets/audio/b2.mp3';
 import audioB3 from '../assets/audio/b3.mp3';
 
 // ---- Handwritten note art: main desk page ----
@@ -70,6 +72,8 @@ import noteL4 from '../assets/notes/l4.jpg';
 import noteSo1 from '../assets/notes/so1.jpg';
 import noteSo2 from '../assets/notes/so2.jpg';
 import noteSo3 from '../assets/notes/so3.jpg';
+import noteB1 from '../assets/notes/b1.jpg';
+import noteB2 from '../assets/notes/b2.jpg';
 import noteB3 from '../assets/notes/b3.jpg';
 
 // ---- Handwritten note art: pocket short notes (corkboard) ----
@@ -116,6 +120,8 @@ const NARRATIONS: Record<string, string> = {
   so1: audioSo1,
   so2: audioSo2,
   so3: audioSo3,
+  b1: audioB1,
+  b2: audioB2,
   b3: audioB3,
 };
 
@@ -150,6 +156,8 @@ const NOTE_ART: Record<string, string[]> = {
   so1: [noteSo1],
   so2: [noteSo2],
   so3: [noteSo3],
+  b1: [noteB1],
+  b2: [noteB2],
   b3: [noteB3],
 };
 
