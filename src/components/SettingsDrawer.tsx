@@ -1,5 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Sun, Moon, Volume2, VolumeX, MousePointer2, Sparkles, Wind, Check, Images } from 'lucide-react';
+import { X, Sun, Moon, Volume2, VolumeX, MousePointer2, Sparkles, Wind, Check, Images, Waves } from 'lucide-react';
 import { useSettings, setSettings, type ThemeId } from '../hooks/useSettings';
 
 interface Props {
@@ -141,6 +141,13 @@ export default function SettingsDrawer({ open, onClose }: Props) {
                   icon={Images}
                   label="Magnetic previews"
                   sub="thumbnails that glide along with your cursor"
+                />
+                <Toggle
+                  on={s.liquidBg}
+                  onClick={() => setSettings({ liquidBg: !s.liquidBg })}
+                  icon={Waves}
+                  label="Liquid light"
+                  sub="a slow amber gradient flowing behind the page"
                 />
                 <Toggle
                   on={s.reducedMotion}

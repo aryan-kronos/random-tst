@@ -10,6 +10,7 @@ export interface Settings {
   cursorGlow: boolean;
   customCursor: boolean;
   hoverPreviews: boolean;
+  liquidBg: boolean;
   reducedMotion: boolean;
 }
 
@@ -21,6 +22,7 @@ const DEFAULTS: Settings = {
   cursorGlow: true,
   customCursor: true,
   hoverPreviews: true,
+  liquidBg: true,
   reducedMotion: false,
 };
 

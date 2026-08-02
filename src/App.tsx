@@ -20,6 +20,7 @@ import MasterChecklist from './components/MasterChecklist';
 import CategoryHoverCard from './components/CategoryHoverCard';
 import LogoMark from './components/Logo';
 import CursorGlow from './components/CursorGlow';
+import LiquidLight from './components/LiquidLight';
 import CustomCursor from './components/CustomCursor';
 import CursorPreview from './components/CursorPreview';
 import SettingsDrawer from './components/SettingsDrawer';
@@ -133,6 +134,7 @@ export default function App() {
 
       {/* Cursor-chasing golden aura (desktop only, GPU-only) */}
       <CursorGlow />
+      <LiquidLight />
 
       {/* ================= TOP BAR ================= */}
       <header className="sticky top-0 z-50 backdrop-blur-xl bg-cream/80 border-b border-ink-wash/10">
