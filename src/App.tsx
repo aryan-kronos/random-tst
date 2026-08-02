@@ -23,6 +23,12 @@ import CursorGlow from './components/CursorGlow';
 import LiquidLight from './components/LiquidLight';
 import CustomCursor from './components/CustomCursor';
 import CursorPreview from './components/CursorPreview';
+import Tilt from './components/Tilt';
+import Magnetic from './components/Magnetic';
+import KineticText from './components/KineticText';
+import Parallax from './components/Parallax';
+import WaxSeal from './components/WaxSeal';
+import BloomPortal, { startBloom } from './components/BloomPortal';
 import SettingsDrawer from './components/SettingsDrawer';
 import DynamicGreeting from './components/DynamicGreeting';
 import { hasNoteArt, noteArtUrls } from './data/assets';
@@ -92,6 +98,7 @@ export default function App() {
   };
 
   const handleSelectTopicFromDraw = (chosen: Topic) => {
+    startBloom(chosen.image);
     setTopic(chosen);
     setNotes('');
     setStage('learn');
@@ -99,6 +106,7 @@ export default function App() {
   };
 
   const chooseTopicDirectly = (t: Topic) => {
+    startBloom(t.image);
     setTopic(t);
     setNotes('');
     setStage('learn');
@@ -410,8 +418,14 @@ export default function App() {
                     Interactive Topic Oracle
                   </div>
 
-                  <h2 className="font-display text-3xl sm:text-5xl lg:text-6xl leading-[1.02] tracking-tight mb-5">
-                    Choose a <span className="font-editorial italic font-light text-amber-deep">random</span> topic.
+                  <h2 className="font-display text-3xl sm:text-5xl lg:text-6xl leading-[1.02] tracking-tight mb-5 text-espresso">
+                    <KineticText
+                      segments={[
+                        { text: 'Choose a ' },
+                        { text: 'random', className: 'font-editorial italic font-light text-amber-deep shimmer-text' },
+                        { text: ' topic.' },
+                      ]}
+                    />
                   </h2>
 
                   <p className="text-base sm:text-lg text-warm-stone leading-relaxed mb-8 font-light">
@@ -465,14 +479,16 @@ export default function App() {
 
                   {/* ACTION LAUNCH BUTTON */}
                   <div className="flex flex-wrap items-center gap-4">
-                    <button
-                      onClick={() => handleStartRoulette()}
-                      className="group relative inline-flex items-center gap-3.5 bg-espresso text-ivory pl-8 pr-9 py-4 sm:py-5 rounded-full text-base sm:text-lg font-medium tracking-wide shadow-2xl shadow-espresso/30 hover:shadow-espresso/45 hover:scale-105 active:scale-95 transition duration-300 overflow-hidden"
-                    >
-                      <span className="absolute inset-0 bg-gradient-to-r from-transparent via-amber/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
-                      <Shuffle className="w-5 h-5 text-amber-glow group-hover:rotate-180 transition duration-500" />
-                      <span>Choose a Random Topic</span>
-                    </button>
+                    <Magnetic strength={0.3}>
+                      <button
+                        onClick={() => handleStartRoulette()}
+                        className="group relative inline-flex items-center gap-3.5 bg-espresso text-ivory pl-8 pr-9 py-4 sm:py-5 rounded-full text-base sm:text-lg font-medium tracking-wide shadow-2xl shadow-espresso/30 hover:shadow-espresso/45 hover:scale-105 active:scale-95 transition duration-300 overflow-hidden"
+                      >
+                        <span className="absolute inset-0 bg-gradient-to-r from-transparent via-amber/30 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+                        <Shuffle className="w-5 h-5 text-amber-glow group-hover:rotate-180 transition duration-500" />
+                        <span>Choose a Random Topic</span>
+                      </button>
+                    </Magnetic>
 
                     {filter && (
                       <button
@@ -507,17 +523,18 @@ export default function App() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-60px' }}
                 transition={{ duration: 0.6, ease }}
-                className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-16"
+                className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-16 eclipse-grid"
               >
                 {categories.map(c => (
-                  <CategoryHoverCard
-                    key={c.id}
-                    category={c}
-                    topics={getTopicsByCategory(c.id)}
-                    isFilterActive={filter === c.id}
-                    onDrawCategory={() => handleStartRoulette(c.id)}
-                    onSelectTopic={chooseTopicDirectly}
-                  />
+                  <Tilt key={c.id} max={5}>
+                    <CategoryHoverCard
+                      category={c}
+                      topics={getTopicsByCategory(c.id)}
+                      isFilterActive={filter === c.id}
+                      onDrawCategory={() => handleStartRoulette(c.id)}
+                      onSelectTopic={chooseTopicDirectly}
+                    />
+                  </Tilt>
                 ))}
               </motion.div>
 
@@ -715,13 +732,15 @@ export default function App() {
               ) : (
                 <>
                   {/* 1. CINEMATIC HERO IMAGE BANNER */}
-                  <div className="relative rounded-[2.5rem] overflow-hidden border border-ink-wash/15 shadow-[0_24px_80px_-40px_rgba(56,38,16,0.5)] bg-espresso-ink">
-                    <img
-                      src={topic.image}
-                      alt={topic.imageAlt}
-                      className="w-full h-64 sm:h-96 lg:h-[460px] object-cover filter saturate-105"
-                      loading="eager"
-                    />
+                  <div data-bloom-hero className="relative rounded-[2.5rem] overflow-hidden border border-ink-wash/15 shadow-[0_24px_80px_-40px_rgba(56,38,16,0.5)] bg-espresso-ink">
+                    <Parallax speed={0.08}>
+                      <img
+                        src={topic.image}
+                        alt={topic.imageAlt}
+                        className="w-full h-72 sm:h-[26rem] lg:h-[540px] -mt-8 sm:-mt-12 lg:-mt-16 object-cover filter saturate-105"
+                        loading="eager"
+                      />
+                    </Parallax>
                     <div className="img-scrim" />
 
                     <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-10 lg:p-14">
@@ -1156,14 +1175,9 @@ export default function App() {
                 <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-96 h-96 rounded-full bg-amber/15 blur-3xl pointer-events-none" />
 
                 <div className="relative z-10">
-                  <motion.div
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    transition={{ delay: 0.1, type: 'spring', stiffness: 200, damping: 14 }}
-                    className="inline-grid place-items-center w-20 h-20 rounded-full bg-gradient-to-br from-amber to-amber-deep text-ivory shadow-2xl shadow-amber/40 mb-6"
-                  >
-                    <CheckCircle2 className="w-9 h-9" />
-                  </motion.div>
+                  <div className="flex items-center justify-center mb-6">
+                    <WaxSeal size={104} label="Topic mastered" />
+                  </div>
 
                   {lastGain?.leveledTo && (
                     <motion.div
@@ -1208,13 +1222,15 @@ export default function App() {
                   </div>
 
                   <div className="flex flex-col sm:flex-row gap-3.5 justify-center">
-                    <button
-                      onClick={() => handleStartRoulette()}
-                      className="group inline-flex items-center justify-center gap-3 bg-espresso text-ivory px-8 py-4 rounded-full font-medium shadow-xl shadow-espresso/25 hover:bg-espresso-ink hover:scale-105 active:scale-95 transition duration-300"
-                    >
-                      <Shuffle className="w-4 h-4 group-hover:rotate-180 transition duration-500" />
-                      <span>Draw Next Topic</span>
-                    </button>
+                    <Magnetic strength={0.28}>
+                      <button
+                        onClick={() => handleStartRoulette()}
+                        className="group inline-flex items-center justify-center gap-3 bg-espresso text-ivory px-8 py-4 rounded-full font-medium shadow-xl shadow-espresso/25 hover:bg-espresso-ink hover:scale-105 active:scale-95 transition duration-300"
+                      >
+                        <Shuffle className="w-4 h-4 group-hover:rotate-180 transition duration-500" />
+                        <span>Draw Next Topic</span>
+                      </button>
+                    </Magnetic>
 
                     <button
                       onClick={() => setStage('learn')}
@@ -1250,6 +1266,7 @@ export default function App() {
       {/* ================= SETTINGS + CURSOR ================= */}
       <SettingsDrawer open={settingsOpen} onClose={() => setSettingsOpen(false)} />
       <CursorPreview />
+      <BloomPortal />
       <CustomCursor />
 
       {/* ================= FOOTER ================= */}

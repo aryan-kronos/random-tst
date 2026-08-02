@@ -7,6 +7,7 @@ import {
 import { topics, categories, difficultyMeta, type Topic, type CategoryId, type Difficulty } from '../data/topics';
 import { CatIcon } from './Icon';
 import { previewTopic, clearPreview } from './CursorPreview';
+import WaxSeal from './WaxSeal';
 
 interface Props {
   masteredTopicIds: string[];
@@ -135,7 +136,7 @@ export default function MasterChecklist({
       </div>
 
       {/* Topics Grid */}
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-2">
+      <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-2 eclipse-grid">
         <AnimatePresence>
           {filteredTopics.map((t, idx) => {
             const isDone = masteredTopicIds.includes(t.id);
@@ -176,6 +177,7 @@ export default function MasterChecklist({
                     </button>
 
                     <div className="flex items-center gap-1.5 flex-wrap justify-end">
+                      {isDone && <WaxSeal mini />}
                       <span className="inline-flex items-center gap-1 rounded-full bg-ivory px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-ink-faint border border-ink-wash/10">
                         <CatIcon name={cat?.icon || 'Sparkles'} className="w-2.5 h-2.5 text-amber-deep" />
                         {cat?.label}
