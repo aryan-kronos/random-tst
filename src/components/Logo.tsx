@@ -36,6 +36,7 @@ export default function LogoMark({ className = 'w-10 h-10', title = 'Verbalis' }
   const topLightId = `vbTopLight-${uid}`;
   const shadeId = `vbShade-${uid}`;
   const barLightId = `vbBarLight-${uid}`;
+  const glowId = `vbGlow-${uid}`;
   const clipId = `vbSealClip-${uid}`;
 
   return (
@@ -71,6 +72,12 @@ export default function LogoMark({ className = 'w-10 h-10', title = 'Verbalis' }
           <stop offset="0%" stopColor="#FFFDF7" />
           <stop offset="100%" stopColor="#F3E7CE" />
         </linearGradient>
+        {/* the soul: warm light pouring from behind the V */}
+        <radialGradient id={glowId} cx="0.5" cy="0.46" r="0.58">
+          <stop offset="0%" stopColor="#FFE9B8" stopOpacity="0.5" />
+          <stop offset="55%" stopColor="#FFE9B8" stopOpacity="0.16" />
+          <stop offset="100%" stopColor="#FFE9B8" stopOpacity="0" />
+        </radialGradient>
         <linearGradient id={sheenId} x1="0" y1="0" x2="1" y2="0">
           <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0" />
           <stop offset="50%" stopColor="#FFFFFF" stopOpacity="0.55" />
@@ -88,6 +95,8 @@ export default function LogoMark({ className = 'w-10 h-10', title = 'Verbalis' }
       <g clipPath={`url(#${clipId})`}>
         <rect x="0" y="0" width="64" height="64" fill={`url(#${topLightId})`} />
         <rect x="0" y="0" width="64" height="64" fill={`url(#${shadeId})`} />
+        {/* lit from within — the glow the seal was missing */}
+        <ellipse cx="32" cy="30" rx="24" ry="22" fill={`url(#${glowId})`} />
         {/* one whisper ripple — voice made visible, nothing more
             (fill="none" is not optional: default fill is black) */}
         <circle cx="32" cy="32" r="23.5" fill="none" stroke="#FFF6DE" strokeOpacity="0.20" strokeWidth="0.9" />
@@ -100,13 +109,29 @@ export default function LogoMark({ className = 'w-10 h-10', title = 'Verbalis' }
       {/* jewel hairline — inset, breath-thin */}
       <path d={SQUIRCLE_INNER} fill="none" stroke="#FFF9E8" strokeOpacity="0.4" strokeWidth="0.8" />
 
-      {/* the V of voice — Fibonacci heights 34 : 21 : 13 : 21 : 34 */}
+      {/* rim glint — the apple-store catch-light, top-left */}
+      <ellipse cx="19" cy="9" rx="10" ry="3.1" fill="#FFFFFF" opacity="0.42" transform="rotate(-14 19 9)" />
+
+      {/* the V of voice — grounded in the wax, not floating on it:
+          a contact shadow under every bar, then the crown-lit ivory */}
+      <g fill="#3C2608" opacity="0.22" transform="translate(0,1.5)">
+        <rect x="9.9"  y="15"   width="6.1" height="34" rx="3.05" />
+        <rect x="19.1" y="21.5" width="6.1" height="21" rx="3.05" />
+        <rect x="28.95" y="26"  width="6.1" height="13" rx="3.05" />
+        <rect x="38.8" y="21.5" width="6.1" height="21" rx="3.05" />
+        <rect x="48"   y="15"   width="6.1" height="34" rx="3.05" />
+      </g>
       <g fill={`url(#${barLightId})`}>
         <rect x="9.9"  y="15"   width="6.1" height="34" rx="3.05" />
         <rect x="19.1" y="21.5" width="6.1" height="21" rx="3.05" />
         <rect x="28.95" y="26"  width="6.1" height="13" rx="3.05" />
         <rect x="38.8" y="21.5" width="6.1" height="21" rx="3.05" />
         <rect x="48"   y="15"   width="6.1" height="34" rx="3.05" />
+      </g>
+      {/* crown dust — a breath of light on the two tallest bars */}
+      <g fill="#FFFFFF" opacity="0.5">
+        <rect x="11.1" y="16.4" width="3.6" height="2.2" rx="1.1" />
+        <rect x="49.2" y="16.4" width="3.6" height="2.2" rx="1.1" />
       </g>
     </svg>
   );

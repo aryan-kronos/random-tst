@@ -43,11 +43,36 @@ export default function KineticText({ segments, className, delay = 0.05, stagger
       }}
       aria-label={segments.map(s => s.text).join('')}
     >
-      {segments.map((seg, si) => (
-        <span key={si} className={seg.className}>
+      {segments.map((seg, si) => {
+        // shimmer words can't be cut into inline-block letters:
+        // background-clip:text does not paint through transformed/inline-block
+        // descendants in Chromium — the gradient never reaches the per-letter
+        // masks while text-fill inherits transparency → INVISIBLE WORD.
+        // the whole word becomes one masked unit carrying the gradient
+        // directly (which also makes the gold sweep one continuous pass).
+        const shimmer = /shimmer-text/.test(seg.className ?? '');
+        const segClass = shimmer ? (seg.className ?? '').replace(/ ?shimmer-text/, '') : seg.className;
+        return (
+        <span key={si} className={segClass}>
           {seg.text.split(/(\s+)/).map((tok, wi) =>
             /^\s+$/.test(tok) ? (
               <span key={wi}>{'\u00A0'}</span>
+            ) : shimmer ? (
+              <span key={wi} className="inline-block overflow-hidden pb-[0.08em] -mb-[0.08em] align-baseline" aria-hidden="true">
+                <motion.span
+                  className="inline-block will-change-transform shimmer-text"
+                  variants={{
+                    hidden: { y: '115%', rotate: 2 },
+                    show: {
+                      y: '0%',
+                      rotate: 0,
+                      transition: { type: 'spring', stiffness: 300, damping: 24 },
+                    },
+                  }}
+                >
+                  {tok}
+                </motion.span>
+              </span>
             ) : (
               <span key={wi} className="inline-block whitespace-nowrap" aria-hidden="true">
                 {tok.split('').map((ch, ci) => (
@@ -71,7 +96,8 @@ export default function KineticText({ segments, className, delay = 0.05, stagger
             ),
           )}
         </span>
-      ))}
+        );
+      })}
     </motion.span>
   );
 }

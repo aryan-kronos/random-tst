@@ -1,23 +1,38 @@
 <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-<defs><linearGradient id="gold" x1="0.08" y1="0" x2="0.82" y2="1">
-  <stop offset="0%" stop-color="#F5DC9F"/><stop offset="34%" stop-color="#E3B160"/>
-  <stop offset="68%" stop-color="#B7812F"/><stop offset="100%" stop-color="#7E5419"/>
-</linearGradient><linearGradient id="toplight" x1="0" y1="0" x2="0" y2="1">
-  <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.42"/>
-  <stop offset="38%" stop-color="#FFFFFF" stop-opacity="0.10"/>
-  <stop offset="62%" stop-color="#FFFFFF" stop-opacity="0"/>
-</linearGradient><linearGradient id="shade" x1="0" y1="0" x2="0" y2="1">
-  <stop offset="76%" stop-color="#3C2608" stop-opacity="0"/>
-  <stop offset="100%" stop-color="#3C2608" stop-opacity="0.26"/>
-</linearGradient><linearGradient id="barlight" x1="0" y1="0" x2="0" y2="1">
-  <stop offset="0%" stop-color="#FFFDF7"/><stop offset="100%" stop-color="#F3E7CE"/>
-</linearGradient><clipPath id="clip"><path d="M32 1.6 Q1.6 1.6 1.6 32 Q1.6 62.4 32 62.4 Q62.4 62.4 62.4 32 Q62.4 1.6 32 1.6 Z"/></clipPath></defs>
+<defs>
+<linearGradient id="gold" x1="0.08" y1="0" x2="0.82" y2="1">
+<stop offset="0%" stop-color="#F5DC9F"/><stop offset="34%" stop-color="#E3B160"/>
+<stop offset="68%" stop-color="#B7812F"/><stop offset="100%" stop-color="#7E5419"/>
+</linearGradient>
+<linearGradient id="toplight" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.42"/>
+<stop offset="38%" stop-color="#FFFFFF" stop-opacity="0.10"/>
+<stop offset="62%" stop-color="#FFFFFF" stop-opacity="0"/>
+</linearGradient>
+<linearGradient id="shade" x1="0" y1="0" x2="0" y2="1">
+<stop offset="76%" stop-color="#3C2608" stop-opacity="0"/>
+<stop offset="100%" stop-color="#3C2608" stop-opacity="0.26"/>
+</linearGradient>
+<linearGradient id="barlight" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0%" stop-color="#FFFDF7"/><stop offset="100%" stop-color="#F3E7CE"/>
+</linearGradient>
+<radialGradient id="glow" cx="0.5" cy="0.46" r="0.58">
+<stop offset="0%" stop-color="#FFE9B8" stop-opacity="0.5"/>
+<stop offset="55%" stop-color="#FFE9B8" stop-opacity="0.16"/>
+<stop offset="100%" stop-color="#FFE9B8" stop-opacity="0"/>
+</radialGradient>
+<clipPath id="clip"><path d="M32 1.6 Q1.6 1.6 1.6 32 Q1.6 62.4 32 62.4 Q62.4 62.4 62.4 32 Q62.4 1.6 32 1.6 Z"/></clipPath>
+</defs>
 <path d="M32 1.6 Q1.6 1.6 1.6 32 Q1.6 62.4 32 62.4 Q62.4 62.4 62.4 32 Q62.4 1.6 32 1.6 Z" fill="url(#gold)"/>
 <g clip-path="url(#clip)">
   <rect width="64" height="64" fill="url(#toplight)"/>
   <rect width="64" height="64" fill="url(#shade)"/>
+  <ellipse cx="32" cy="30" rx="24" ry="22" fill="url(#glow)"/>
   <circle cx="32" cy="32" r="23.5" fill="none" stroke="#FFF6DE" stroke-opacity="0.20" stroke-width="0.9"/>
 </g>
 <path d="M32 3.2 Q3.2 3.2 3.2 32 Q3.2 60.8 32 60.8 Q60.8 60.8 60.8 32 Q60.8 3.2 32 3.2 Z" fill="none" stroke="#FFF9E8" stroke-opacity="0.4" stroke-width="0.8"/>
-<g fill="url(#barlight)"><rect x="9.90" y="15.00" width="6.1" height="34" rx="3.05" /><rect x="19.10" y="21.50" width="6.1" height="21" rx="3.05" /><rect x="28.30" y="25.50" width="6.1" height="13" rx="3.05" /><rect x="37.50" y="21.50" width="6.1" height="21" rx="3.05" /><rect x="46.70" y="15.00" width="6.1" height="34" rx="3.05" /></g>
+<ellipse cx="19" cy="9" rx="10" ry="3.1" fill="#FFFFFF" opacity="0.42" transform="rotate(-14 19 9)"/>
+<g fill="#3C2608" opacity="0.22" transform="translate(0,1.5)"><rect x="9.90" y="15.00" width="6.1" height="34" rx="3.05"/><rect x="19.10" y="21.50" width="6.1" height="21" rx="3.05"/><rect x="28.30" y="25.50" width="6.1" height="13" rx="3.05"/><rect x="37.50" y="21.50" width="6.1" height="21" rx="3.05"/><rect x="46.70" y="15.00" width="6.1" height="34" rx="3.05"/></g>
+<g fill="url(#barlight)"><rect x="9.90" y="15.00" width="6.1" height="34" rx="3.05"/><rect x="19.10" y="21.50" width="6.1" height="21" rx="3.05"/><rect x="28.30" y="25.50" width="6.1" height="13" rx="3.05"/><rect x="37.50" y="21.50" width="6.1" height="21" rx="3.05"/><rect x="46.70" y="15.00" width="6.1" height="34" rx="3.05"/></g>
+<g fill="#FFFFFF" opacity="0.5"><rect x="11.1" y="16.4" width="3.6" height="2.2" rx="1.1"/><rect x="49.2" y="16.4" width="3.6" height="2.2" rx="1.1"/></g>
 </svg>
