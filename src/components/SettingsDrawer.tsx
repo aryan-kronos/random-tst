@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Sun, Moon, Volume2, VolumeX, MousePointer2, Sparkles, Wind, Check, Images, Waves } from 'lucide-react';
+import { X, Sun, Moon, Volume2, VolumeX, MousePointer2, Sparkles, Wind, Check, Images, Waves, Mic, MicOff } from 'lucide-react';
 import { useSettings, setSettings, type ThemeId } from '../hooks/useSettings';
 
 interface Props {
@@ -130,6 +130,13 @@ export default function SettingsDrawer({ open, onClose }: Props) {
                   icon={s.sound ? Volume2 : VolumeX}
                   label="Sound effects"
                   sub="roulette ticks, chimes, victory fanfare"
+                />
+                <Toggle
+                  on={s.recordTakes}
+                  onClick={() => setSettings({ recordTakes: !s.recordTakes })}
+                  icon={s.recordTakes ? Mic : MicOff}
+                  label="Record my takes"
+                  sub="mic listens with the timer — replay on the victory page; audio never leaves this device"
                 />
                 <Toggle
                   on={s.cursorGlow}

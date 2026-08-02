@@ -481,3 +481,51 @@ html[data-motion='reduced'] .sig-nib { display: none; }
   }
   .sig-nib { display: none !important; }
 }
+
+/* ============ Speaking Studio — live mic ping & branded sliders ============ */
+@keyframes rec-ping-kf {
+  0%   { transform: scale(1); opacity: 0.75; }
+  70%, 100% { transform: scale(2.6); opacity: 0; }
+}
+.rec-ping {
+  animation: rec-ping-kf 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+html[data-motion='reduced'] .rec-ping { animation: none; display: none; }
+
+/* gold-threaded range input (chromium + firefox), voice-quiet, keyboard-friendly */
+.vb-range {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #DFAF5E, #96692C);
+  outline: none;
+  cursor: pointer;
+}
+.vb-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #FFFCF4;
+  border: 2px solid #96692C;
+  box-shadow: 0 1px 6px rgba(56, 38, 16, 0.35);
+  transition: transform 0.15s ease;
+}
+.vb-range::-webkit-slider-thumb:hover { transform: scale(1.15); }
+.vb-range:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 4px rgba(190, 139, 63, 0.3); }
+.vb-range::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #FFFCF4;
+  border: 2px solid #96692C;
+  box-shadow: 0 1px 6px rgba(56, 38, 16, 0.35);
+}
+.vb-range::-moz-range-track {
+  height: 4px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #DFAF5E, #96692C);
+}
+html[data-motion='reduced'] .vb-range::-webkit-slider-thumb { transition: none; }

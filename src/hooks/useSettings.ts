@@ -12,6 +12,10 @@ export interface Settings {
   hoverPreviews: boolean;
   liquidBg: boolean;
   reducedMotion: boolean;
+  /** seconds on the lectern — 60 by default, up to the grand 10-minute speech */
+  speakSeconds: number;
+  /** capture takes locally so they can be replayed on this device */
+  recordTakes: boolean;
 }
 
 const KEY = 'verbalis-settings-v1';
@@ -24,13 +28,25 @@ const DEFAULTS: Settings = {
   hoverPreviews: true,
   liquidBg: true,
   reducedMotion: false,
+  speakSeconds: 60,
+  recordTakes: true,
 };
+
+export const MIN_SPEAK_SECONDS = 15;
+export const MAX_SPEAK_SECONDS = 600;
 
 function load(): Settings {
   try {
     const raw = localStorage.getItem(KEY);
     if (!raw) return { ...DEFAULTS };
-    return { ...DEFAULTS, ...JSON.parse(raw) };
+    const merged = { ...DEFAULTS, ...JSON.parse(raw) };
+    // a hand-edited or ancient store must never arm an impossible timer
+    if (typeof merged.speakSeconds !== 'number' || !Number.isFinite(merged.speakSeconds)
+      || merged.speakSeconds < MIN_SPEAK_SECONDS || merged.speakSeconds > MAX_SPEAK_SECONDS) {
+      merged.speakSeconds = DEFAULTS.speakSeconds;
+    }
+    merged.recordTakes = merged.recordTakes !== false;
+    return merged;
   } catch {
     return { ...DEFAULTS };
   }

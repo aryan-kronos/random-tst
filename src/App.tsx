@@ -12,7 +12,8 @@ import {
   difficultyMeta, totalTopics, type Topic, type CategoryId, type Difficulty,
 } from './data/topics';
 import { CatIcon } from './components/Icon';
-import SpeakTimer from './components/SpeakTimer';
+import SpeakTimer, { mmss } from './components/SpeakTimer';
+import TakePlayer from './components/TakePlayer';
 import CinematicVoicePlayer from './components/CinematicVoicePlayer';
 import StickyNoteCard from './components/StickyNoteCard';
 import RouletteModal from './components/RouletteModal';
@@ -37,6 +38,9 @@ import DynamicGreeting from './components/DynamicGreeting';
 import { hasNoteArt, noteArtUrls } from './data/assets';
 import { useStats, xpFor, LEVELS } from './hooks/useStats';
 import { useLibrary, toggleFavorite, toggleQueue, removeFromQueue } from './hooks/useLibrary';
+import { useSettings, setSettings } from './hooks/useSettings';
+import type { TakeResult } from './lib/recorder';
+import { saveTake, listTakesForTopic, deleteTake, type StoredTake } from './lib/takes';
 import { playCompleteFanfare } from './utils/audio';
 
 type Stage = 'dashboard' | 'learn' | 'speak' | 'done';
@@ -84,22 +88,42 @@ export default function App() {
 
   const topRef = useRef<HTMLDivElement>(null);
   const completedRef = useRef(false);
-  const speakStartRef = useRef(0);
   const [claimWarn, setClaimWarn] = useState<number | null>(null);
+
+  // the speaking studio: your clock, your mic, your tape
+  const settings = useSettings();
+  const [stopSignal, setStopSignal] = useState(0);
+  const [take, setTake] = useState<TakeResult | null>(null);
+  const [lastSeconds, setLastSeconds] = useState(60);
+  const [pastTakes, setPastTakes] = useState<StoredTake[]>([]);
+  const savedTakeId = useRef<string | null>(null);
 
   useEffect(() => {
     const reduced = document.documentElement.dataset.motion === 'reduced';
     topRef.current?.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
   }, [stage]);
 
-  // arm the completion guard every time a speaking round begins
+  // arm the completion guard every time a speaking round begins — and clear
+  // the tape table: the previous round's take belongs to the previous round
   useEffect(() => {
     if (stage === 'speak') {
       completedRef.current = false;
-      speakStartRef.current = Date.now();
       setClaimWarn(null);
+      setTake(null);
+      setPastTakes([]);
+      savedTakeId.current = null;
     }
   }, [stage]);
+
+  // the victory page collects this topic's earlier tapes from the vault
+  useEffect(() => {
+    if (stage !== 'done' || !topic) return;
+    let alive = true;
+    void listTakesForTopic(topic.id).then(list => {
+      if (alive) setPastTakes(list.filter(t => t.id !== savedTakeId.current).slice(0, 4));
+    });
+    return () => { alive = false; };
+  }, [stage, topic]);
 
   // true after the user deliberately returns to the dashboard — browser BACK
   // replaying a topic hash afterwards must NOT drag them back into the topic
@@ -159,9 +183,30 @@ export default function App() {
     window.location.hash = `/topic/${t.id}`;
   };
 
+  // a take arrives the instant the bell rings — then the vault keeps it safe
+  const handleTake = (t: TakeResult | null) => {
+    setTake(t);
+    if (!t || !topic) return;
+    const id =
+      typeof crypto !== 'undefined' && 'randomUUID' in crypto
+        ? crypto.randomUUID()
+        : `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+    savedTakeId.current = id;
+    void saveTake({
+      id,
+      topicId: topic.id,
+      topicTitle: topic.title,
+      seconds: t.seconds,
+      mime: t.mime,
+      createdAt: Date.now(),
+      blob: t.blob,
+    });
+  };
+
   const handleComplete = (secs: number) => {
     if (completedRef.current) return; // guard: timer-finish + manual claim within the 800ms window must never double-record
     completedRef.current = true;
+    setLastSeconds(secs);
     if (topic) {
       recordSession({
         topicId: topic.id,
@@ -173,19 +218,14 @@ export default function App() {
       });
       playCompleteFanfare();
     }
-    setTimeout(() => setStage('done'), 800);
+    // the confetti-page entrance waits a breath so the tape finishes sealing
+    setTimeout(() => setStage('done'), 900);
   };
 
-  // mastery is earned: require at least 20 seconds at the lectern before victory can be claimed
+  // honesty lives in the timer now — it measures real seconds at the lectern
+  // and scolds early claims itself via onClaimTooEarly
   const MIN_CLAIM_SECONDS = 20;
-  const claimVictory = () => {
-    const remaining = MIN_CLAIM_SECONDS - (Date.now() - speakStartRef.current) / 1000;
-    if (remaining > 0) {
-      setClaimWarn(Math.ceil(remaining));
-      return;
-    }
-    handleComplete(60);
-  };
+  const claimVictory = () => setStopSignal(s => s + 1);
 
   useEffect(() => {
     if (claimWarn === null) return;
@@ -781,7 +821,7 @@ export default function App() {
                           {difficultyMeta[topic.difficulty].label} ({difficultyMeta[topic.difficulty].level})
                         </span>
                         <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] bg-espresso/70 backdrop-blur text-ivory rounded-full px-3.5 py-1">
-                          <BookOpen className="w-3 h-3" /> {topic.minutes}-min Masterclass · 60s on stage
+                          <BookOpen className="w-3 h-3" /> {topic.minutes}-min Masterclass · {mmss(settings.speakSeconds)} on stage
                         </span>
                         <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] bg-amber-deep/90 text-ivory rounded-full px-3.5 py-1 shadow-sm">
                           <Zap className="w-3 h-3 text-amber-glow" /> +{xpFor[topic.difficulty]} XP on Speech
@@ -1065,7 +1105,7 @@ export default function App() {
                       className="group flex-1 inline-flex items-center justify-center gap-3.5 bg-espresso text-ivory py-5 rounded-2xl font-medium tracking-wide shadow-2xl shadow-espresso/30 hover:bg-espresso-ink hover:scale-105 active:scale-95 transition duration-300"
                     >
                       <Mic className="w-5 h-5 text-amber-glow" />
-                      <span>Ready to Speak — Begin 60 Seconds</span>
+                      <span>{settings.speakSeconds === 60 ? 'Ready to Speak — Begin 60 Seconds' : `Ready to Speak — Begin ${mmss(settings.speakSeconds)}`}</span>
                       <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition" />
                     </button>
 
@@ -1126,6 +1166,11 @@ export default function App() {
                       <div className="text-xs uppercase tracking-wider text-amber-deep font-bold">
                         Custom Speaking Timestamps:
                       </div>
+                      {settings.speakSeconds !== 60 && (
+                        <p className="text-[11px] text-ink-faint italic leading-snug">
+                          These beats are tuned for the classic 1:00 — stretch each phase to fill your {mmss(settings.speakSeconds)}.
+                        </p>
+                      )}
                       {topic.speechBlueprint.map((step, idx) => (
                         <div key={idx} className="flex gap-3 bg-cream/80 rounded-xl border border-ink-wash/10 p-3">
                           <span className="font-display font-bold text-xs text-espresso bg-amber/20 px-2 py-0.5 rounded shrink-0">
@@ -1159,7 +1204,15 @@ export default function App() {
 
                   {/* RIGHT: CIRCULAR TIMER */}
                   <div className="order-1 lg:order-2 flex justify-center">
-                    <SpeakTimer duration={60} onComplete={handleComplete} />
+                    <SpeakTimer
+                      duration={settings.speakSeconds}
+                      onDurationChange={s => setSettings({ speakSeconds: s })}
+                      recordEnabled={settings.recordTakes}
+                      onComplete={handleComplete}
+                      onTake={handleTake}
+                      stopSignal={stopSignal}
+                      onClaimTooEarly={w => setClaimWarn(Math.ceil(w))}
+                    />
                   </div>
                 </div>
               </div>
@@ -1224,17 +1277,69 @@ export default function App() {
                     </motion.div>
                   )}
 
-                  <h2 className="font-display text-4xl sm:text-6xl tracking-tight leading-none mb-3 text-espresso">
-                    60-Second Masterclass Complete
+                  <h2 className="font-display text-5xl sm:text-7xl tracking-tight leading-none mb-3 text-espresso">
+                    You did <span className="font-editorial italic font-light text-amber-deep">it.</span>
                   </h2>
 
                   <p className="text-warm-stone text-lg max-w-lg mx-auto leading-relaxed mb-4">
-                    You articulated <span className="font-editorial italic font-bold text-espresso">{topic.title}</span>. That is one more victory for your concision and voice.
+                    You held <span className="font-editorial italic font-bold text-espresso">{topic.title}</span> for{' '}
+                    <span className="font-semibold text-espresso tabular-nums">{mmss(lastSeconds)}</span>.
+                    {take
+                      ? ' The tape below is yours — listen back, judge it like a coach, and grow.'
+                      : ' One more victory for your concision and voice.'}
                   </p>
 
                   {lastGain && (
                     <div className="inline-flex items-center gap-2 text-amber-deep font-bold text-lg mb-8 bg-ivory/80 px-4 py-1.5 rounded-full border border-amber/30 shadow-xs">
                       <Zap className="w-5 h-5 text-amber-deep" /> +{lastGain.xp} XP Earned
+                    </div>
+                  )}
+
+                  {/* ================= THE TAPE ================= */}
+                  {take ? (
+                    <div className="max-w-md mx-auto mb-6 text-left">
+                      <div className="flex items-center gap-2 justify-center mb-2.5 text-[11px] uppercase tracking-[0.18em] text-amber-deep font-bold">
+                        <Mic className="w-3.5 h-3.5" /> Your take — recorded &amp; kept on this device
+                      </div>
+                      <TakePlayer
+                        blob={take.blob}
+                        label={`${topic.title} — ${mmss(take.seconds)}`}
+                        sub="just now · stored locally in this browser"
+                      />
+                    </div>
+                  ) : settings.recordTakes ? (
+                    <p className="max-w-md mx-auto mb-6 text-xs text-ink-faint leading-relaxed">
+                      No tape this round — the mic stayed off. Allow the microphone prompt next time,
+                      and your voice will be waiting right here for review. Takes never leave this device.
+                    </p>
+                  ) : (
+                    <p className="max-w-md mx-auto mb-6 text-xs text-ink-faint leading-relaxed">
+                      Takes are turned off in Settings — flip &ldquo;Record my takes&rdquo; on, and your
+                      voice will be waiting right here after every round.
+                    </p>
+                  )}
+
+                  {pastTakes.length > 0 && (
+                    <div className="max-w-md mx-auto mb-8">
+                      <div className="text-[10px] uppercase tracking-[0.18em] text-ink-faint font-bold mb-2.5">
+                        Earlier takes on this topic
+                      </div>
+                      <div className="space-y-2">
+                        {pastTakes.map(t => (
+                          <TakePlayer
+                            key={t.id}
+                            blob={t.blob}
+                            label={new Date(t.createdAt).toLocaleString(undefined, {
+                              month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit',
+                            })}
+                            sub={`${mmss(t.seconds)} on the clock`}
+                            onDelete={() => {
+                              void deleteTake(t.id);
+                              setPastTakes(list => list.filter(x => x.id !== t.id));
+                            }}
+                          />
+                        ))}
+                      </div>
                     </div>
                   )}
 
@@ -1267,10 +1372,17 @@ export default function App() {
                     </Magnetic>
 
                     <button
+                      onClick={() => setStage('speak')}
+                      className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full border border-amber/40 bg-champagne/60 text-amber-deep font-medium hover:bg-champagne transition"
+                    >
+                      <Mic className="w-4 h-4" /> Go Another Round
+                    </button>
+
+                    <button
                       onClick={() => setStage('learn')}
                       className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full border border-ink-wash/25 bg-ivory text-warm-stone font-medium hover:border-amber hover:text-amber-deep transition"
                     >
-                      Review Masterclass Content
+                      Review Masterclass
                     </button>
 
                     <button
